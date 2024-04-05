@@ -25,9 +25,9 @@ app.get('/employer', (req, res) => {
     address: "Ermou 33",
     region: "Athens",
     comp_name: "Kafe Mpampis",
-    comp_desc: "To kafe Mpampis einai ena poly omorfo kafe stous propodes ths akropolis.",
-    job_title: ["Kafetzis", "Mprizas", "Mhxanikos Autokiniton"],
-    job_desc: "Mia fora kai enan kairo htan h kokkinoskoufitsa kai efage ton kako ton lyko telos."
+    comp_desc: "To kafe Mpampis einai ena poly omorfo kafe stous propodes ths Akropolis.",
+    job_title: ["Barman", "Ydravlikos", "Mhxanikos Autokiniton"],
+    job_desc: "Edo einai to description! Edo tha leei pragmata gia thn douleia!"
   });
 });
 

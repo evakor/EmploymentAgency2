@@ -2,22 +2,34 @@ const express = require('express');
 const app = express();
 const path = require('path');
 const port = 3000;
+const { engine } = require('express-handlebars');
 
-app.set('view engine', 'ejs');
+app.engine('hbs', engine({
+    extname: '.hbs',
+    defaultLayout: 'main', 
+    layoutsDir: path.join(__dirname, 'views/layouts'),
+    partialsDir: path.join(__dirname, 'views/partials')
+}));
+
+
+app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 
+// REST Routes
 
+// View Routes
 app.get('/', (req, res) => {
-    res.render('pages/home');
+    res.render('home');
 });
 
 app.get('/employee', (req, res) => {
-    res.render('pages/employeeProfile');
+    res.render('employeeProfile');
 });
+
 app.get('/employer', (req, res) => {
-  res.render('pages/employerProfile', {
-    firstname:"Maria",
+  res.render('employerProfile', {
+    firstname: "Maria",
     lastname: "Rousou",
     email: "marpap@gmail.com",
     phone1: "6981234567",
@@ -32,19 +44,19 @@ app.get('/employer', (req, res) => {
 });
 
 app.get('/jobs', (req, res) => {
-  res.render('pages/jobs');
+  res.render('jobs');
 });
 
 app.get('/about', (req, res) => {
-  res.render('pages/about');
+  res.render('about');
 });
 
 app.get('/login', (req, res) => {
-  res.render('pages/login');
+  res.render('login');
 });
 
 app.get('/signup', (req, res) => {
-  res.render('pages/signup');
+  res.render('signup');
 });
 
 app.listen(port, () => {

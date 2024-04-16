@@ -18,8 +18,8 @@ const Employee = sequelize.define('Employee', {
     occupation: DataTypes.STRING,
     specialty: DataTypes.STRING,
     profilePicturePath: DataTypes.TEXT,
-    profilePicturePath: Sequelize.TEXT,
-    cvPath: Sequelize.TEXT,
+    profilePicturePath: DataTypes.TEXT,
+    cvPath: DataTypes.TEXT,
 }, {
     tableName: 'EMPLOYEE',
     timestamps: false

@@ -18,6 +18,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // REST Routes
 
+
 // JOB endpoints
 app.post('/job/', (req, res) => {
   res.send('Job created');
@@ -39,8 +40,8 @@ app.delete('/job/:id', (req, res) => {
   res.send(`Job with ID ${req.params.id} deleted`);
 });
 
-// EMPLOYEE endpoints
 
+// EMPLOYEE endpoints
 app.post('/employee/', (req, res) => {
   res.send('Employee created');
 });
@@ -63,7 +64,6 @@ app.delete('/employee/:id', (req, res) => {
 
 
 // EMPLOYER endpoints
-
 app.post('/employer/', (req, res) => {
   res.send('Employer created');
 });
@@ -86,7 +86,6 @@ app.delete('/employer/:id', (req, res) => {
 
 
 // APPLIES endpoints
-
 app.post('/application/', (req, res) => {
   res.send('Application created');
 });
@@ -105,6 +104,28 @@ app.put('/application/:id', (req, res) => {
 
 app.delete('/application/:id', (req, res) => {
   res.send(`Application with ID ${req.params.id} deleted`);
+});
+
+
+// SUBMITS endpoints
+app.post('/submition/', (req, res) => {
+  res.send('Submition created');
+});
+
+app.get('/submition/:id', (req, res) => {
+  res.send(`Retrieve submition with ID ${req.params.id}`);
+});
+
+app.get('/submitions/', (req, res) => {
+  res.send('All submitions retrieved');
+});
+
+app.put('/submition/:id', (req, res) => {
+  res.send(`Update submition with ID ${req.params.id}`);
+});
+
+app.delete('/submition/:id', (req, res) => {
+  res.send(`Submition with ID ${req.params.id} deleted`);
 });
 
 

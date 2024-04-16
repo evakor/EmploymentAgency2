@@ -9,7 +9,6 @@ CREATE TABLE IF NOT EXISTS "USER" (
 	"email" string,
 	"password" string,
 	"jobCategory" string,
-	"specialty" string,
 	"profilePicturePath" text,
 	PRIMARY KEY ("id")
 );
@@ -17,6 +16,8 @@ CREATE TABLE IF NOT EXISTS "USER" (
 CREATE TABLE IF NOT EXISTS "EMPLOYEE" (
 	"cvPath" text,
 	"id" integer,
+	"occupation" string,
+	"specialty" string,
 	PRIMARY KEY ("id"),
 	FOREIGN KEY ("id") REFERENCES "USER" ("id")
             ON UPDATE RESTRICT
@@ -31,6 +32,8 @@ CREATE TABLE IF NOT EXISTS "JOB" (
 	"extendedDescr" text,
 	"companyName" text,
 	"duration" date,
+	"occupation" string,
+	"specialty" string,
 	PRIMARY KEY ("id")
 );
 

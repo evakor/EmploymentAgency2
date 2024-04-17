@@ -52,6 +52,15 @@ app.get('/jobs', (req, res) => {
   res.render('jobs');
 });
 
+  // {
+  //   description: "The incumbent will be the Senior Engineer responsible for leading the team responsible for providing engineering services in support of COMSUBPAC (N4) in their delivery of technical assistance to the submarine fleet.",
+  //   title: "Senior Engineer",
+  //   extendedDescr: "Thousands of new roles. Fifty states. One mission. The Navy is on a once-in-a-generation journey to completely transform its nuclear-powered submarine fleet and maintain its critical undersea advantage. However, this military mandate will require the addition of more than 100,000 skilled workers with the training and commitment to ensure success. And there's not a moment to spare.",
+  //   companyName: "BuildSubmarines",
+  //   duration: null,
+  //   occupation: "Engineer",
+  //   specialty: "Mechanical Engineer"}
+
 app.get('/about', (req, res) => {
   res.render('about');
 });

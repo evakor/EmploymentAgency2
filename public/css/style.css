@@ -94,3 +94,33 @@ select {
 	background-color: #1c2135;
 	color: #ffffff;
 }
+
+
+/* Job's card buttons */
+
+.buttons {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.button {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: none;
+    margin-right: 5px;
+}
+
+.button.delete {
+    background-color: red;
+}
+
+.button.edit {
+    background-color: yellow;
+}
+
+.button.messages {
+    background-color: green;
+}
+

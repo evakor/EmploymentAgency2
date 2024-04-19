@@ -4,7 +4,7 @@ const tableName = "JOB";
 
 const getAll = async (req, res) => {
     const result = await database.query(`SELECT * FROM "${tableName}"`);
-    res.json(result.rows);
+    res.json("{'job': 1}");//result.rows);
 };
 
 const getById = async (req, res) => {

@@ -2,15 +2,16 @@ const express = require('express');
 
 const router = express.Router();
 const applicationController = require('../controllers/applicationController.js');
+const version = "v1";
 
-router.post('/application/', applicationController.create);
+router.post(`/${version}/application`, applicationController.create);
 
-router.get('/application/:id', applicationController.getById);
+router.get(`/${version}/application/:id`, applicationController.getById);
 
-router.get('/applications/', applicationController.getAll);
+router.get(`/${version}/applications`, applicationController.getAll);
 
-router.put('/application/:id', applicationController.updateById);
+router.put(`/${version}/application/:id`, applicationController.updateById);
 
-router.delete('/application/:id', applicationController.deleteById);
+router.delete(`/${version}/application/:id`, applicationController.deleteById);
 
 module.exports = router;

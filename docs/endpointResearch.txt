@@ -1,0 +1,42 @@
+GET /job/latest?page=0&size=3 -> Returns latest added jobs
+GET /job?page=0&size=N -> Returns all jobs NO FILTERS
+GET /job?occupation=ENUM&specialty=ENUM&page=0&size=N -> Returns all jobs WITH FILTERS
+
+For the apply button:
+If user is not logged in then it redirects the user to the login page
+If user is logged in then
+	1. A window object will implement the confirm() method as a mean to validate if the user wants to actually apply for the job (https://www.w3schools.com/jsref/tryit.asp?filename=tryjsref_confirm2)
+	2. POST /applies?employeeId={employeeId}&jobId={jobId} or just POST /applies with a JSON payload that includes employeeId and jobId
+	3. Send automated email to the employer that created the job
+
+POST /login
+POST /signup (Here the POST for employee and employer will take place)
+
+GET /employee/{employeeId} -> Returns all info for employee with id 
+GET /applies?employeeId={employeeId}&page=0&size=N -> Get all the jobs the employee has applied for
+Delete button will just delete the record from APPLIES table. Before deleting it will implement the confirm() method
+	DELETE /applies?employeeId={employeeId}&jobId={jobId}
+
+Edit button will open a pop up:
+	1. PUT /employee/{employeeId} -> To edit fields of the account
+	2. DELETE /employee/{employeeId} -> To delete account. Before deleting it will implement the confirm() method
+
+
+GET /employer/{employerId} -> Returns all info for employer with id 
+GET /submits?employerId={employerId}&page=0&size=N -> Get all the jobs the employer has submited to the app
+GET /applies/count?jobId={jobId} -> will return a number of how many applications for the job
+GET /applies?jobId={jobId} -> will return the employees that have applied for the job
+POST /job -> There will be a pop up form that when the button Submit is pressed it will create a new job
+PUT /job/{jobId} -> With a JSON payload updates the job info
+Delete button will just delete the record from JOB table. Before deleting it will implement the confirm() method. When the job gets deleted the the record from the SUBMITS table and the record from APPLIES table will aslo get deleted. There will be a CASCADE type of relation.
+	DELETE /job?jobId={jobId}
+
+Edit button will open a pop up:
+	1. PUT /employer/{employerId} -> To edit fields of the account
+	2. DELETE /employer/{employerId} -> To delete account. Before deleting it will implement the confirm() method
+
+
+For the files there will be a separate server. This will handle images, documents etc. Here for each user there should be only one picture (and for employee one documnet(CV)).
+So in this case we need to replace the file.
+POST /{fileName.fileType}
+GET /{fileName.fileType}

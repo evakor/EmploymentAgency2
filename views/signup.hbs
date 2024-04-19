@@ -1,0 +1,376 @@
+{{!< layout}} 
+{{!-- <section class="vh-50" style="background-color: #e7e9ee;">
+    <div class="container py-5 h-50">
+        <div class="row d-flex justify-content-center align-items-center h-50">
+            <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+                <div class="card shadow-2-strong" style="border-radius: 1rem;">
+                    <div class="card-body p-5 text-center" style="background-color: #ffffff;">
+
+                        <h3 class="mb-5">Sign Up</h3>
+
+                        <div class="form-outline mb-4">
+                            <label class="form-label" for="typeEmailX-2">Email</label>
+                            <input type="email" id="typeEmailX-2" class="form-control form-control-lg" />
+                        </div>
+
+                        <div class="form-outline mb-4">
+                            <label class="form-label" for="typePasswordX-2">Password</label>
+                            <input type="password" id="typePasswordX-2" class="form-control form-control-lg" />
+                        </div>
+
+                        <div class="form-check d-flex justify-content-start mb-4">
+                            <input class="form-check-input" type="checkbox" value="" id="form1Example3" />
+                            <label class="form-check-label" for="form1Example3"> Remember password </label>
+                        </div>
+
+                        <button class="btn btn-primary btn-lg btn-block" type="submit">Login</button>
+
+                        <br>
+                        <br>
+
+                        <a href="/login" class="text-muted">Registered? Sign In!</a>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section> --}}
+
+
+
+{{!-- <div class="section">
+    <div class="container">
+        <div class="row full-height justify-content-center">
+            <div class="col-12 text-center align-self-center py-5">
+                <div class="section pb-5 pt-5 pt-sm-2 text-center">
+                    <h6 class="mb-0 pb-3"><span>Employee </span><span>Employer</span></h6>
+                    <input class="checkbox" type="checkbox" id="reg-log" name="reg-log" />
+                    <label for="reg-log"></label>
+                    <div class="card-3d-wrap mx-auto">
+                        <div class="card-3d-wrapper">
+                            <div class="card-front">
+                                <div class="center-wrap">
+                                    <div class="section text-center">
+                                        <h4 class="mb-4 pb-3">Sign Up</h4>
+                                        <!-- Employee -->
+                                        <form>
+                                            <div class="row form-group">
+                                                <div class="col">
+                                                    <input type="text" name="employee_firstname" class="form-control"
+                                                        placeholder="First Name" id="employee_firstname"
+                                                        autocomplete="off">
+                                                </div>
+                                                <div class="col">
+                                                    <input type="text" name="employee_lastname" class="form-control"
+                                                        placeholder="Last Name" id="employee_lastname"
+                                                        autocomplete="off">
+                                                </div>
+                                            </div>
+                                            <div class="row form-group">
+                                                <div class="col">
+                                                    <input type="email" name="employee_email" class="form-control"
+                                                        placeholder="Your Email" id="employee_email" autocomplete="off"
+                                                        required>
+                                                </div>
+                                                <div class="col">
+                                                    <input type="password" name="employee_password" class="form-control"
+                                                        placeholder="Your Password" id="employee_password"
+                                                        autocomplete="off" required>
+                                                </div>
+                                            </div>
+                                            <div class="row form-group">
+                                                <div class="col">
+                                                    <input type="text" name="employee_region" class="form-control"
+                                                        placeholder="Region" id="employee_region" autocomplete="off"
+                                                        required>
+                                                </div>
+                                                <div class="col">
+                                                    <input type="text" name="employee_address" class="form-control"
+                                                        placeholder="Address" id="employee_address" autocomplete="off"
+                                                        required>
+                                                </div>
+                                            </div>
+                                            <div class="row form-group">
+                                                <div class="col">
+                                                    <input type="number" name="employee_phone1" class="form-control"
+                                                        placeholder="Phone 1" id="employee_phone1" autocomplete="off"
+                                                        required>
+                                                </div>
+                                                <div class="col">
+                                                    <input type="number" name="employee_phone2" class="form-control"
+                                                        placeholder="Phone2" id="employee_phone2" autocomplete="off">
+                                                </div>
+                                            </div>
+                                            <div class="row form-group">
+                                                <div class="col">
+                                                    <select class="form-control" name="profession" required>
+                                                        <option value="" disabled selected>Profession</option>
+                                                        <option value="engineer">Engineer</option>
+                                                        <option value="game_developer">Developer</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col">
+                                                    <select class="form-control" name="specialization" required>
+                                                        <option value="" disabled selected>Specialization</option>
+                                                        <option value="el_engineer">Electrical Engineer</option>
+                                                        <option value="mech_engineer">Mechanical Engineer</option>
+                                                        <option value="game_developer">Game Developer</option>
+                                                        <option value="web_developer">Web Developer</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Submit</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Employer -->
+                            <div class="card-back">
+                                <div class="center-wrap">
+                                    <div class="section text-center">
+                                        <h4 class="mb-4 pb-3">Sign Up</h4>
+                                        <form>
+                                            <div class="row form-group">
+                                                <div class="col">
+                                                    <input type="text" name="employer_firstname" class="form-control"
+                                                        placeholder="First Name" id="employer_firstname"
+                                                        autocomplete="off" required>
+                                                </div>
+                                                <div class="col">
+                                                    <input type="text" name="employer_lastname" class="form-control"
+                                                        placeholder="Last Name" id="employer_lastname"
+                                                        autocomplete="off" required>
+                                                </div>
+                                            </div>
+                                            <div class="row form-group">
+                                                <div class="col">
+                                                    <input type="email" name="employer_email" class="form-control"
+                                                        placeholder="Your Email" id="employer_email" autocomplete="off"
+                                                        required>
+                                                </div>
+                                                <div class="col">
+                                                    <input type="password" name="employer_password" class="form-control"
+                                                        placeholder="Your Password" id="employer_password"
+                                                        autocomplete="off" required>
+                                                </div>
+                                            </div>
+                                            <div class="row form-group">
+                                                <div class="col">
+                                                    <input type="text" name="employer_region" class="form-control"
+                                                        placeholder="Region" id="employer_region" autocomplete="off"
+                                                        required>
+                                                </div>
+                                                <div class="col">
+                                                    <input type="text" name="employer_address" class="form-control"
+                                                        placeholder="Address" id="employer_address" autocomplete="off"
+                                                        required>
+                                                </div>
+                                            </div>
+                                            <div class="row form-group">
+                                                <div class="col">
+                                                    <input type="number" name="employer_phone1" class="form-control"
+                                                        placeholder="Phone 1" id="employer_phone1" autocomplete="off"
+                                                        required>
+                                                </div>
+                                                <div class="col">
+                                                    <input type="number" name="employer_phone2" class="form-control"
+                                                        placeholder="Phone2" id="employer_phone2" autocomplete="off">
+                                                </div>
+                                            </div>
+                                            <div class="row form-group">
+                                                <div class="col">
+                                                    <input type="text" name="employer_company_name" class="form-control"
+                                                        placeholder="Company Name" id="employer_company_name1"
+                                                        autocomplete="off" required>
+                                                </div>
+                                                <div class="col">
+                                                    <input type="text" name="employer_company_desc" class="form-control"
+                                                        placeholder="Company Description" id="employer_company_desc"
+                                                        autocomplete="off" required>
+                                                </div>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Submit</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> --}}
+
+<div class="section">
+    <div class="container">
+        <div class="row full-height justify-content-center">
+            <div class="col-12 text-center align-self-center py-5">
+                <div class="section pb-5 pt-5 pt-sm-2 text-center">
+                    <h6 class="mb-0 pb-3"><span>Employee </span><span>Employer</span></h6>
+                    <input class="checkbox" type="checkbox" id="reg-log" name="reg-log" />
+                    <label for="reg-log"></label>
+                    <div class="card-3d-wrap mx-auto">
+                        <div class="card-3d-wrapper">
+                            <div class="card-front">
+                                <div class="center-wrap">
+                                    <div class="section text-center">
+                                        <h4 class="mb-4 pb-3">Sign Up</h4>
+                                        <!-- Employee -->
+                                        <form>
+                                            <div class="row form-group">
+                                                <div class="col">
+                                                    <input type="text" name="employee_firstname" class="form-control mb-3"
+                                                        placeholder="First Name" id="employee_firstname"
+                                                        autocomplete="off">
+                                                </div>
+                                                <div class="col">
+                                                    <input type="text" name="employee_lastname" class="form-control mb-3"
+                                                        placeholder="Last Name" id="employee_lastname"
+                                                        autocomplete="off">
+                                                </div>
+                                            </div>
+                                            <div class="row form-group">
+                                                <div class="col">
+                                                    <input type="email" name="employee_email" class="form-control mb-3"
+                                                        placeholder="Email" id="employee_email" autocomplete="off"
+                                                        required>
+                                                </div>
+                                                <div class="col">
+                                                    <input type="password" name="employee_password" class="form-control mb-3"
+                                                        placeholder="Password" id="employee_password"
+                                                        autocomplete="off" required>
+                                                </div>
+                                            </div>
+                                            <div class="row form-group">
+                                                <div class="col">
+                                                    <input type="text" name="employee_region" class="form-control mb-3"
+                                                        placeholder="Region" id="employee_region" autocomplete="off"
+                                                        required>
+                                                </div>
+                                                <div class="col">
+                                                    <input type="text" name="employee_address" class="form-control mb-3"
+                                                        placeholder="Address" id="employee_address" autocomplete="off"
+                                                        required>
+                                                </div>
+                                            </div>
+                                            <div class="row form-group">
+                                                <div class="col">
+                                                    <input type="number" name="employee_phone1" class="form-control mb-3"
+                                                        placeholder="Phone 1" id="employee_phone1" autocomplete="off"
+                                                        required>
+                                                </div>
+                                                <div class="col">
+                                                    <input type="number" name="employee_phone2" class="form-control mb-3"
+                                                        placeholder="Phone2" id="employee_phone2" autocomplete="off">
+                                                </div>
+                                            </div>
+                                            <div class="row form-group">
+                                                <div class="col">
+                                                    <select class="form-control custom-select mb-3" name="profession" required>
+                                                        <option value="" disabled selected>Profession</option>
+                                                        <option value="engineer">Engineer</option>
+                                                        <option value="game_developer">Developer</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col">
+                                                    <select class="form-control custom-select mb-3" name="specialization" required>
+                                                        <option value="" disabled selected>Specialization</option>
+                                                        <option value="el_engineer">Electrical Engineer</option>
+                                                        <option value="mech_engineer">Mechanical Engineer</option>
+                                                        <option value="game_developer">Game Developer</option>
+                                                        <option value="web_developer">Web Developer</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <button type="submit" class="btn btn-primary btn-block  mb-3" style="margin-top: 20px;">Submit</button>
+                                            </div>
+                                            <a href="/login" class="text-muted">Registered? Sign In!</a>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Employer -->
+                            <div class="card-back">
+                                <div class="center-wrap">
+                                    <div class="section text-center">
+                                        <h4 class="mb-4 pb-3">Sign Up</h4>
+                                        <form>
+                                            <div class="row form-group">
+                                                <div class="col">
+                                                    <input type="text" name="employer_firstname" class="form-control mb-3"
+                                                        placeholder="First Name" id="employer_firstname"
+                                                        autocomplete="off" required>
+                                                </div>
+                                                <div class="col">
+                                                    <input type="text" name="employer_lastname" class="form-control mb-3"
+                                                        placeholder="Last Name" id="employer_lastname"
+                                                        autocomplete="off" required>
+                                                </div>
+                                            </div>
+                                            <div class="row form-group">
+                                                <div class="col">
+                                                    <input type="email" name="employer_email" class="form-control mb-3"
+                                                        placeholder="Your Email" id="employer_email" autocomplete="off"
+                                                        required>
+                                                </div>
+                                                <div class="col">
+                                                    <input type="password" name="employer_password" class="form-control mb-3"
+                                                        placeholder="Your Password" id="employer_password"
+                                                        autocomplete="off" required>
+                                                </div>
+                                            </div>
+                                            <div class="row form-group">
+                                                <div class="col">
+                                                    <input type="text" name="employer_region" class="form-control mb-3"
+                                                        placeholder="Region" id="employer_region" autocomplete="off"
+                                                        required>
+                                                </div>
+                                                <div class="col">
+                                                    <input type="text" name="employer_address" class="form-control mb-3"
+                                                        placeholder="Address" id="employer_address" autocomplete="off"
+                                                        required>
+                                                </div>
+                                            </div>
+                                            <div class="row form-group">
+                                                <div class="col">
+                                                    <input type="number" name="employer_phone1" class="form-control"
+                                                        placeholder="Phone 1" id="employer_phone1" autocomplete="off"
+                                                        required>
+                                                </div>
+                                                <div class="col">
+                                                    <input type="number" name="employer_phone2" class="form-control mb-3"
+                                                        placeholder="Phone2" id="employer_phone2" autocomplete="off">
+                                                </div>
+                                            </div>
+                                            <div class="row form-group">
+                                                <div class="col">
+                                                    <input type="text" name="employer_company_name" class="form-control mb-3"
+                                                        placeholder="Company Name" id="employer_company_name1"
+                                                        autocomplete="off" required>
+                                                </div>
+                                                <div class="col">
+                                                    <input type="text" name="employer_company_desc" class="form-control mb-3"
+                                                        placeholder="Company Description" id="employer_company_desc"
+                                                        autocomplete="off" required>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <button type="submit" class="btn btn-primary btn-block mb-3" style="margin-top: 20px;">Submit</button>
+                                            </div>
+                                           
+                                        </form>
+                                        <a href="/login" class="text-muted" >Registered? Sign In!</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

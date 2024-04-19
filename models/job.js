@@ -9,12 +9,12 @@ const Job = sequelize.define('Job', {
     },
     imagePath: DataTypes.TEXT,
     description: DataTypes.TEXT,
-    title: DataTypes.STRING,
+    title: DataTypes.TEXT,
     extendedDescr: DataTypes.TEXT,
     creationDate: DataTypes.DATE,
     companyName: DataTypes.TEXT,
-    occupation: DataTypes.STRING,
-    specialty: DataTypes.STRING,
+    occupation: DataTypes.TEXT,
+    specialty: DataTypes.TEXT,
 }, { 
     tableName: 'JOB',
     timestamps: false 

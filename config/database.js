@@ -1,12 +1,13 @@
 const { Pool } = require('pg');
 const fs = require('fs');
 
+//TODO Get credentials from .env file
 const database = new Pool({
-    user: "postgres",
-    host: '0.0.0.0',
+    user: 'postgres',
+    host: 'localhost',
     database: 'postgres',
-    password: "admin2002",
-    port: 5433,
+    password: 'admin2002',
+    port: 5432,
    })
 
 async function readSQLFile(filePath) {

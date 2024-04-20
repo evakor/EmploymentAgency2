@@ -9,7 +9,26 @@
 <div class="text-center">
     <a href="/jobs" class="btn cards-button " style="margin-top: 20px;" value="view_more">View More</a>
 </div>
-<div class="container mt-5">
+<div class="cards">
+        {{#each jobs as |job|}}
+        <div class="card mb-3" style="max-width: 540px;">
+            <div class="row g-0">
+                <div class="col-md-4">
+                    <img src="{{job.image}}" class="card-img" alt="...">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <h5 class="card-title">{{job.title}}</h5>
+                        <p class="card-text">{{job.description}}</p>
+                        <p class="card-text"><small class="text-muted">Last updated {{job.updated}}</small></p>
+                        <button class="btn cards-button position-absolute bottom-0 end-0 mb-2">Apply</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+{{!-- <div class="container mt-5">
     {{#each jobs}}
     <div class="card mb-3" style="max-width: 540px;">
         <div class="row no-gutters">
@@ -28,4 +47,4 @@
         </div>
     </div>
     {{/each}}
-</div>
+</div> --}}

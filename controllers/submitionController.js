@@ -1,35 +1,53 @@
 const database = require('../config/database.js');
 
-const tableName = "SUBMITS";
+const tableName = "Submits";
 
 const getAll = async (req, res) => {
-    const result = await database.query(`SELECT * FROM "${tableName}"`);
-    res.json(result.rows);
+    try {
+        const result = await database.query(`SELECT * FROM "${tableName}"`);
+        res.json(result.rows);
+    } catch (error) {
+        console.error('Error getting all submits:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
 };
 
 const getById = async (req, res) => {
-    const { id } = req.params;
-    const result = await database.query(`SELECT * FROM "${tableName}" WHERE id = ${id}}`);
-    res.json(result.rows[0]);
+    const { employerId, jobId } = req.params;
+    try {
+        const result = await database.query(`SELECT * FROM "${tableName}" WHERE "employerId" = $1 AND "jobId" = $2`, [employerId, jobId]);
+        res.json(result.rows[0] || null);
+    } catch (error) {
+        console.error('Error getting submit by IDs:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
 };
 
 const create = async (req, res) => {
-    const { firstName, lastName, email } = req.body;
-    const result = await database.query(`INSERT INTO "${tableName}" (firstName, lastName, email) VALUES (${firstName}, ${lastName}, ${email}) RETURNING *`);
-    res.json(result.rows[0]);
+    const { employerId, jobId } = req.body;
+    try {
+        const result = await database.query(`INSERT INTO "${tableName}" ("employerId", "jobId") VALUES ($1, $2) RETURNING *`, [employerId, jobId]);
+        res.json(result.rows[0]);
+    } catch (error) {
+        console.error('Error creating submit:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
 };
 
 const updateById = async (req, res) => {
-    const { id } = req.params;
-    const { firstName, lastName, email } = req.body;
-    const result = await database.query(`UPDATE "${tableName}" SET firstName = ${firstName}, lastName = ${lastName}, email = ${email} WHERE id = ${id} RETURNING *`);
-    res.json(result.rows[0]);
+    // This method might not be applicable if there are no attributes to update.
+    res.status(405).send({ error: 'Method not allowed' });  // Assuming no updates allowed for submits
 };
 
 const deleteById = async (req, res) => {
-    const { id } = req.params;
-    await database.query(`DELETE FROM "${tableName}" WHERE id = ${id}`);
-    res.status(204).send();
+    const { employerId, jobId } = req.params;
+    try {
+        await database.query(`DELETE FROM "${tableName}" WHERE "employerId" = $1 AND "jobId" = $2`, [employerId, jobId]);
+        res.status(204).send();
+    } catch (error) {
+        console.error('Error deleting submit by IDs:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
 };
 
 module.exports = {

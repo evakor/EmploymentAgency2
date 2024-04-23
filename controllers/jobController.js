@@ -35,6 +35,20 @@ const getLatest = async (req, res) => {
     }
 };
 
+const getbyFilter = async (req, res) => {
+    const { occupation, specialty, region } = req.query;
+
+    console.info(occupation, specialty, region)
+    
+    try {
+        const result = await database.query(`SELECT * FROM "JOB" as j WHERE j.occupation = '${occupation}' AND j.specialty = '${specialty}' AND j.region = '${region}';`);
+        res.status(200).json(result.rows);
+    } catch (error) {
+        console.error('Error getting latest jobs:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
 
 const create = async (req, res) => {
     const { imagePath, description, title, extendedDescr, companyName, duration, occupation, specialty } = req.body;
@@ -74,6 +88,7 @@ module.exports = {
     getAll,
     getById,
     getLatest,
+    getbyFilter,
     create,
     updateById,
     deleteById,

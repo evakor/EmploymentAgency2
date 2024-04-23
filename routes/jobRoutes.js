@@ -7,6 +7,7 @@ const version = "v1";
 router.post(`/${version}/job`, jobController.create);
 router.get(`/${version}/jobs`, jobController.getAll); // Update route here
 router.get(`/${version}/jobs/latest`, jobController.getLatest);
+router.get(`/${version}/jobs/getbyfilters`, jobController.getbyFilter);
 router.get(`/${version}/job/:id`, jobController.getById);
 router.put(`/${version}/job/:id`, jobController.updateById);
 router.delete(`/${version}/job/:id`, jobController.deleteById);

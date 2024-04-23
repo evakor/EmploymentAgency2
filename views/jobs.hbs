@@ -1,21 +1,26 @@
-{{!< layout}} <div class="filters">
-    <select name="jobTitle">
-        <option value="">Select Job Title</option>
-        {{#each jobTitles as |title|}}
-        <option value="{{title}}">{{title}}</option>
-        {{/each}}
-    </select>
+{{!< layout}} <form method="GET" action="/v1/jobs/getbyfilters">
+    <div class="filters">
+        <select id="occupationDropdown" name="occupation" onchange="updateSpecialties()">
+            <option value="">Select Occupation</option>
+            {{#each jobCategories.occupations}}
+            <option value="{{@index}}">{{this.name}}</option>
+            {{/each}}
+        </select>
 
-    <select name="jobRegion">
-        <option value="">Select Region</option>
-        {{#each jobRegions as |region|}}
-        <option value="{{region}}">{{region}}</option>
-        {{/each}}
-    </select>
+        <select id="specialtyDropdown" name="specialty">
+            <option value="">Select Specialty</option>
+        </select>
 
-    <button class="btn simple-button" type="submit">Apply Filters</button>
+        <select id="regionDropdown" name="region">
+            <option value="">Select Region</option>
+            {{#each regions as |region|}}
+            <option value="{{region}}">{{region}}</option>
+            {{/each}}
+        </select>
+
+        <button class="btn simple-button" type="submit" id="submit-button">Apply Filters</button>
     </div>
-
+</form>
     <div class="cards">
         {{#each jobs as |job|}}
         <div class="card mb-3" style="max-width: 540px;">
@@ -35,3 +40,24 @@
         </div>
         {{/each}}
     </div>
+    
+    <script>
+        const occupationsData = {{{ json jobCategories }}};
+
+        function updateSpecialties() {
+            const occupationSelect = document.getElementById('occupationDropdown');
+            const specialtySelect = document.getElementById('specialtyDropdown');
+            const selectedOccupationIndex = occupationSelect.value;
+            specialtySelect.innerHTML = '<option value="">Select Specialty</option>';
+
+            if (selectedOccupationIndex !== "") {
+                const specialties = occupationsData.occupations[selectedOccupationIndex].specialties;
+                specialties.forEach(specialty => {
+                    const option = document.createElement('option');
+                    option.value = specialty;
+                    option.textContent = specialty;
+                    specialtySelect.appendChild(option);
+                });
+            }
+        }
+    </script>

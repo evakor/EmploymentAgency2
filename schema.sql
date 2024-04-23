@@ -23,7 +23,8 @@ CREATE TABLE IF NOT EXISTS "JOB" (
     "companyName" TEXT,
     "duration" INTEGER,
     "occupation" TEXT,
-    "specialty" TEXT
+    "specialty" TEXT,
+    "region" TEXT
 );
 
 CREATE TABLE IF NOT EXISTS "EMPLOYER" (

@@ -8,10 +8,45 @@ const { engine } = require('express-handlebars');
 
 app.engine('hbs', engine({
     extname: '.hbs',
+    helpers: {
+      json: function (context) {
+          return JSON.stringify(context);
+      }
+  },
     defaultLayout: 'main', 
     layoutsDir: path.join(__dirname, 'views/layouts'),
     partialsDir: path.join(__dirname, 'views/partials')
 }));
+
+const jobCategories = {
+  occupations: [
+      { name: "Software Development", specialties: ["Application Development", "Backend Development", "Frontend Development"] },
+      { name: "Cybersecurity", specialties: ["Ethical Hacking", "Information Security Analysis", "Network Security"] },
+      { name: "Data Science", specialties: ["Machine Learning", "Big Data Analytics", "Artificial Intelligence"] },
+      { name: "Medicine", specialties: ["General Practice", "Cardiology", "Pediatrics"] },
+      { name: "Nursing", specialties: ["Critical Care Nursing", "Pediatric Nursing", "Geriatric Nursing"] },
+      { name: "Therapy", specialties: ["Physical Therapy", "Occupational Therapy", "Speech Therapy"] },
+      { name: "Civil Engineering", specialties: ["Structural Engineering", "Transportation Engineering", "Environmental Engineering"] },
+      { name: "Mechanical Engineering", specialties: ["HVAC Engineering", "Robotics Engineering", "Automotive Engineering"] },
+      { name: "Electrical Engineering", specialties: ["Power Engineering", "Control Systems", "Telecommunications"] },
+      { name: "Accounting", specialties: ["Tax Accounting", "Forensic Accounting", "Management Accounting"] },
+      { name: "Investment Banking", specialties: ["Equity Research", "Mergers and Acquisitions", "Sales and Trading"] },
+      { name: "Financial Planning", specialties: ["Estate Planning", "Retirement Planning", "Wealth Management"] },
+      { name: "Teaching", specialties: ["Elementary Education", "Secondary Education", "Special Education"] },
+      { name: "Administration", specialties: ["School Administration", "Academic Counseling", "Curriculum Development"] },
+      { name: "Educational Technology", specialties: ["Instructional Design", "Learning Management Systems", "E-learning Development"] }
+  ]
+};
+
+const greekPrefectures = [
+  "Achaea", "Aetolia-Acarnania", "Arcadia", "Argolis", "Arta", "Attica", "Boeotia", "Cephalonia", 
+  "Chania", "Chios", "Corfu", "Corinthia", "Cyclades", "Dodecanese", "Drama", "Elis", 
+  "Euboea", "Evros", "Evrytania", "Florina", "Grevena", "Heraklion", "Imathia", "Ioannina", 
+  "Karditsa", "Kastoria", "Kavala", "Kefalonia", "Kilkis", "Kozani", "Laconia", "Larissa", 
+  "Lassithi", "Lesbos", "Magnesia", "Messenia", "Pella", "Phocis", "Phthiotis", "Pieria", 
+  "Preveza", "Rethymno", "Rhodope", "Samos", "Serres", "Thesprotia", "Thessaloniki", "Trikala", 
+  "Xanthi", "Zakynthos"
+];
 
 
 app.set('view engine', 'hbs');
@@ -90,7 +125,7 @@ app.get('/jobs', (req, res) => {
   axios.get(`http://localhost:${port}/v1/jobs`)
     .then(response => {
       console.log(response.data)
-      res.render('jobs', { jobs: response.data }); // , { jobs: response.data }
+      res.render('jobs', { jobs: response.data, jobCategories: jobCategories, regions: greekPrefectures }); // , { jobs: response.data }
     })
     .catch(error => {
       console.error('Error fetching jobs:', error);

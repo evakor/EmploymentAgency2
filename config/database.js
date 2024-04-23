@@ -1,14 +1,15 @@
+require('dotenv').config();
 const { Pool } = require('pg');
 const fs = require('fs');
 
 //TODO Get credentials from .env file
 const database = new Pool({
-    user: 'postgres',
-    host: 'localhost',
-    database: 'postgres',
-    password: 'admin2002',
-    port: 5432,
-   })
+    user: process.env.DB_USER,
+    host: process.env.DB_HOST,
+    database: process.env.DB_NAME,
+    password: process.env.DB_PASSWORD,
+    port: process.env.DB_PORT,
+});
 
 async function readSQLFile(filePath) {
     try {

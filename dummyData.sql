@@ -27,23 +27,23 @@ VALUES
 -- Insert data into the JOB table
 INSERT INTO "JOB" ("id", "imagePath", "description", "title", "extendedDescr", "duration", "companyName", "occupation", "specialty")
 VALUES 
-(106, '/images/dev.jpg', 'Developer needed for a full-stack position.', 'DUMMY Full Stack Developer', 'Responsible for developing both client and server software.', 10, 'Tech Innovations', 'Developer', 'Full Stack Development');
+(106, 'static/job_profile.jpg', 'Developer needed for a full-stack position.', 'DUMMY Full Stack Developer', 'Responsible for developing both client and server software.', 10, 'Tech Innovations', 'Developer', 'Full Stack Development');
 
 INSERT INTO "JOB" ("id", "imagePath", "description", "title", "extendedDescr", "duration", "companyName", "occupation", "specialty")
 VALUES 
-(107, '/images/data_sci.jpg', 'Seeking a seasoned Data Scientist.', 'DUMMY Data Scientist', 'Work on complex datasets to bring insights.', 10, 'Data Wizards', 'Data Analysis', 'Data Science');
+(107, 'static/job_profile.jpg', 'Seeking a seasoned Data Scientist.', 'DUMMY Data Scientist', 'Work on complex datasets to bring insights.', 10, 'Data Wizards', 'Data Analysis', 'Data Science');
 
 INSERT INTO "JOB" ("id", "imagePath", "description", "title", "extendedDescr", "duration", "companyName", "occupation", "specialty")
 VALUES 
-(108, '/images/marketing.jpg', 'Marketing professional needed to lead our campaigns.', 'DUMMY Marketing Director', 'Lead and enhance marketing strategies for our company.', 10, 'Creative Solutions', 'Marketing', 'Strategic Marketing');
+(108, 'static/job_profile.jpg', 'Marketing professional needed to lead our campaigns.', 'DUMMY Marketing Director', 'Lead and enhance marketing strategies for our company.', 10, 'Creative Solutions', 'Marketing', 'Strategic Marketing');
 
 INSERT INTO "JOB" ("id", "imagePath", "description", "title", "extendedDescr", "duration", "companyName", "occupation", "specialty")
 VALUES 
-(109, '/images/product_mgr.jpg', 'Product Manager to oversee product lifecycles.', 'DUMMY Product Manager', 'Manage the development and strategy for our products.', 10, 'Product Pros', 'Management', 'Product Management');
+(109, 'static/job_profile.jpg', 'Product Manager to oversee product lifecycles.', 'DUMMY Product Manager', 'Manage the development and strategy for our products.', 10, 'Product Pros', 'Management', 'Product Management');
 
 INSERT INTO "JOB" ("id", "imagePath", "description", "title", "extendedDescr", "duration", "companyName", "occupation", "specialty")
 VALUES 
-(110, '/images/hr_consult.jpg', 'HR Consultant for workplace development.', 'DUMMY HR Consultant', 'Improve HR practices and employee relations.', 10, 'HR Core', 'Human Resources', 'HR Consultancy');
+(110, 'static/job_profile.jpg', 'HR Consultant for workplace development.', 'DUMMY HR Consultant', 'Improve HR practices and employee relations.', 10, 'HR Core', 'Human Resources', 'HR Consultancy');
 
 -- Insert data into the Submits table
 INSERT INTO "Submits" ("employerId", "jobId", "creationDate")

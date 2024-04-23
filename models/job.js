@@ -11,7 +11,7 @@ const Job = sequelize.define('Job', {
     description: DataTypes.TEXT,
     title: DataTypes.TEXT,
     extendedDescr: DataTypes.TEXT,
-    creationDate: DataTypes.DATE,
+    duration: DataTypes.DATE,
     companyName: DataTypes.TEXT,
     occupation: DataTypes.TEXT,
     specialty: DataTypes.TEXT,

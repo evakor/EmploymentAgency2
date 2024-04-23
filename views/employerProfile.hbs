@@ -60,26 +60,29 @@
     <h2 style="text-align: center;">My jobs</h2>
 
     <div class="cards">
-        {{#each jobs as |job|}}
-        <div class="card mb-3" style="max-width: 540px;">
-            <div class="row g-0">
-                <div class="col-md-4">
-                    <img src="{{job.image}}" class="card-img" alt="...">
+      {{#each jobs as |job|}}
+      <div class="card mb-3" style="max-width: 600px; height: 300px;">
+        <div class="row g-0">
+          <div class="col-md-4">
+            <img src="{{job.image}}" class="card-img" alt="...">
+          </div>
+          <div class="col-md-8">
+            <div class="card-body">
+              <div class="buttons ">
+                <div class="button-container">
+                  <button class="button messages" style="font-size: 20px;">&#128231;</button>
+                  <button id="editButton" class="button edit"
+                    style="font-size: 24px; transform: rotate(90deg);">&#x270e;</button>
+                  <button class="button delete" style="font-size: 20px;">&#x1F5D1;</button>
                 </div>
-                <div class="col-md-8">
-                    <div class="card-body">
-                        <div class="buttons">
-                          <button class="button delete"></button>
-                          <button class="button edit"></button>
-                          <button class="button messages"></button> 
-                        </div>
-                        <h5 class="card-title">{{job.title}}</h5>
-                        <p class="card-text">{{job.description}}</p>
-                        <p class="card-text"><small class="text-muted">Last updated {{job.updated}}</small></p>
-                        <button class="btn cards-button position-absolute bottom-0 end-0 mb-2">Apply</button>
-                    </div>
-                </div>
+              </div>
+              <h5 class="card-title">{{job.title}}</h5>
+              <p class="card-text">{{job.description}}</p>
+              <p class="card-text"><small class="text-muted">Last updated {{job.updated}}</small></p>
+              <button class="btn cards-button position-absolute bottom-0 end-0 mb-2">Apply</button>
             </div>
+          </div>
         </div>
-        {{/each}}
+      </div>
+      {{/each}}
     </div>

@@ -2,7 +2,6 @@ const database = require('../config/database.js');
 
 const tableName = "APPLIES";
 
-// Get all applications
 const getAll = async (req, res) => {
     try {
         const result = await database.query(`SELECT * FROM "${tableName}"`);
@@ -13,7 +12,6 @@ const getAll = async (req, res) => {
     }
 };
 
-// Get a specific application by employeeId and jobId
 const getById = async (req, res) => {
     const { employeeId, jobId } = req.params; // Assumes route parameters are named accordingly
     try {
@@ -25,7 +23,6 @@ const getById = async (req, res) => {
     }
 };
 
-// Create a new application
 const create = async (req, res) => {
     const { employeeId, jobId, applicationDate } = req.body;
     try {
@@ -40,7 +37,6 @@ const create = async (req, res) => {
     }
 };
 
-// Update an application
 const updateById = async (req, res) => {
     const { employeeId, jobId } = req.params;
     const { applicationDate } = req.body;
@@ -56,7 +52,6 @@ const updateById = async (req, res) => {
     }
 };
 
-// Delete an application
 const deleteById = async (req, res) => {
     const { employeeId, jobId } = req.params;
     try {

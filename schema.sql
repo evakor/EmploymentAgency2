@@ -8,7 +8,6 @@ CREATE TABLE IF NOT EXISTS "EMPLOYEE" (
     "phone2" TEXT, -- Assuming phone numbers can contain non-numeric characters
     "email" TEXT,
     "password" TEXT,
-    "jobCategory" TEXT,
     "profilePicturePath" TEXT,
     "cvPath" TEXT,
     "occupation" TEXT,
@@ -22,7 +21,7 @@ CREATE TABLE IF NOT EXISTS "JOB" (
     "title" TEXT,
     "extendedDescr" TEXT,
     "companyName" TEXT,
-    "duration" DATE,
+    "duration" INTEGER,
     "occupation" TEXT,
     "specialty" TEXT
 );
@@ -37,7 +36,6 @@ CREATE TABLE IF NOT EXISTS "EMPLOYER" (
     "phone2" TEXT, -- Assuming phone numbers can contain non-numeric characters
     "email" TEXT,
     "password" TEXT,
-    "jobCategory" TEXT,
     "profilePicturePath" TEXT,
     "companyName" TEXT,
     "companyDesc" TEXT
@@ -55,6 +53,7 @@ CREATE TABLE IF NOT EXISTS "Submits" (
 CREATE TABLE IF NOT EXISTS "Applies" (
     "employeeId" INTEGER,
     "jobId" INTEGER,
+    "applicationDate" DATE,
     PRIMARY KEY ("employeeId", "jobId"),
     FOREIGN KEY ("employeeId") REFERENCES "EMPLOYEE" ("id") ON UPDATE RESTRICT ON DELETE RESTRICT,
     FOREIGN KEY ("jobId") REFERENCES "JOB" ("id") ON UPDATE RESTRICT ON DELETE RESTRICT

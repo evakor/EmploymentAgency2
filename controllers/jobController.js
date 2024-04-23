@@ -15,13 +15,26 @@ const getAll = async (req, res) => {
 const getById = async (req, res) => {
     const { id } = req.params;
     try {
-        const result = await database.query(`SELECT * FROM "${tableName}" WHERE id = $1`, [id]);
+        const result = await database.query(`SELECT * FROM "${tableName}" WHERE id = $1`, [parseInt(id)]);
         res.status(200).json(result.rows[0]);
     } catch (error) {
         console.error('Error getting job by ID:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 };
+
+const getLatest = async (req, res) => {
+    // const { amount } = req.params;
+    let amount = 5;
+    try {
+        const result = await database.query(`SELECT * FROM "JOB" WHERE "id" IN (SELECT "jobId" FROM "Submits" ORDER BY "creationDate" ASC LIMIT ${amount})`);
+        res.status(200).json(result.rows);
+    } catch (error) {
+        console.error('Error getting latest jobs:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
 
 const create = async (req, res) => {
     const { imagePath, description, title, extendedDescr, companyName, duration, occupation, specialty } = req.body;
@@ -60,6 +73,7 @@ const deleteById = async (req, res) => {
 module.exports = {
     getAll,
     getById,
+    getLatest,
     create,
     updateById,
     deleteById,

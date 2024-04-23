@@ -8,6 +8,7 @@ const Submits = sequelize.define('Submits', {
     jobId: { 
         type: DataTypes.INTEGER, 
         primaryKey: true },
+    creationDate: DataTypes.DATE,
 }, { 
     tableName: 'Submits',
     timestamps: false 

@@ -29,7 +29,7 @@ app.use(require('./routes/submitionRoutes.js'));
 
 // View Routes
 app.get('/', (req, res) => {
-  axios.get(`http://localhost:${port}/v1/jobs`)
+  axios.get(`http://localhost:${port}/v1/jobs/latest`)
   .then(response => {
     console.log(response.data)
     res.render('home', { jobs: response.data });

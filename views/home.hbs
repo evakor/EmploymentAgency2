@@ -1,50 +1,49 @@
-{{!< layout}} 
-<div class="home-bg-container">
+{{!< layout}} <div class="home-bg-container">
     <div class="home-bg">
         <img src="static/home_background.png" alt="Placeholder Image" class="home-bg">
         <div class="home-bg-text">Find your dream job!</div>
     </div>
-</div>
+    </div>
 
-<div class="text-center">
-    <a href="/jobs" class="btn cards-button " style="margin-top: 20px;" value="view_more">View More</a>
-</div>
-<div class="cards">
-    {{#each jobs as |job|}}
-    <div class="card mb-3" style="max-width: 540px;">
-        <div class="row g-0">
-            <div class="col-md-4">
-                <img src="{{job.imagePath}}" class="card-img" alt="...">
-            </div>
-            <div class="col-md-8">
-                <div class="card-body">
-                    <h5 class="card-title">{{job.title}}</h5>
-                    <p class="card-text">{{job.extendedDescr}}</p>
-                    <p class="card-text"><small class="text-muted">{{job.companyName}}</small></p>
-                    <button class="btn cards-button position-absolute bottom-0 end-0 mb-2">Apply</button>
+    <div class="text-center">
+        <a href="/jobs" class="btn cards-button " style="margin-top: 20px;" value="view_more">View More</a>
+    </div>
+    <div class="cards">
+        {{#each jobs as |job|}}
+        <div class="card mb-3" style="max-width: 540px;">
+            <div class="row g-0">
+                <div class="col-md-4">
+                    <img src="{{job.imagePath}}" class="card-img" alt="...">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <h5 class="card-title">{{job.title}}</h5>
+                        <p class="card-text">{{job.description}}</p>
+                        <p class="card-text"><small class="text-muted">{{job.companyName}}</small></p>
+                        <button class="btn cards-button position-absolute bottom-0 end-0 mb-2">Apply</button>
+                    </div>
                 </div>
             </div>
         </div>
+        {{/each}}
     </div>
-    {{/each}}
-</div>
-{{!-- <div class="container mt-5">
-    {{#each jobs}}
-    <div class="card mb-3" style="max-width: 540px;">
-        <div class="row no-gutters">
-            <div class="col-md-4">
-                <img src="{{this.image}}" class="card-img" alt="...">
-            </div>
-            <div class="col-md-8">
-                <div class="card-body">
-                    <h5 class="card-title">{{this.title}}</h5>
-                    <p class="card-text">{{this.description}}</p>
-                    <p class="card-text"><small class="text-muted">Last updated {{this.updated}}</small></p>
-                    <button class="btn cards-button position-absolute bottom-0 end-0 mb-2"
-                        style="margin-right: 10px;">Apply</button>
+    {{!-- <div class="container mt-5">
+        {{#each jobs}}
+        <div class="card mb-3" style="max-width: 540px;">
+            <div class="row no-gutters">
+                <div class="col-md-4">
+                    <img src="{{this.image}}" class="card-img" alt="...">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <h5 class="card-title">{{this.title}}</h5>
+                        <p class="card-text">{{this.description}}</p>
+                        <p class="card-text"><small class="text-muted">Last updated {{this.updated}}</small></p>
+                        <button class="btn cards-button position-absolute bottom-0 end-0 mb-2"
+                            style="margin-right: 10px;">Apply</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    {{/each}}
-</div> --}}
+        {{/each}}
+    </div> --}}

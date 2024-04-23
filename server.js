@@ -42,14 +42,14 @@ app.get('/', (req, res) => {
 
 app.get('/employee', async (req, res) => {
   try {
-    const id = 1;
-    const [jobsResponse, employerResponse] = await Promise.all([
+    const id = 100;
+    const [jobsResponse, employeeResponse] = await Promise.all([
       axios.get(`http://localhost:${port}/v1/jobs`),
       axios.get(`http://localhost:${port}/v1/employee/${id}`)
     ]);
 
     const jobs = jobsResponse.data;
-    const employeeData = employerResponse.data;
+    const employeeData = employeeResponse.data;
 
     res.render('employeeProfile', {
       employeeData: employeeData,
@@ -63,7 +63,7 @@ app.get('/employee', async (req, res) => {
 
 app.get('/employer', async (req, res) => {
   try {
-    const id = 1;
+    const id = 104;
     const [jobsResponse, employerResponse] = await Promise.all([
       axios.get(`http://localhost:${port}/v1/jobs`),
       axios.get(`http://localhost:${port}/v1/employer/${id}`),
@@ -71,11 +71,12 @@ app.get('/employer', async (req, res) => {
     ]);
 
     const jobs = jobsResponse.data;
-    const employeeData = employerResponse.data;
+    const employerData = employerResponse.data;
+    console.info(employerData);
     // const applications = applicationsResponse.data;
 
-    res.render('employeeProfile', {
-      employeeData: employeeData,
+    res.render('employerProfile', {
+      employerData: employerData,
       jobs: jobs,
       // applications: applications,
     });

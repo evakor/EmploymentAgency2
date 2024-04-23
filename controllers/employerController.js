@@ -16,7 +16,7 @@ const getAll = async (req, res) => {
 const getById = async (req, res) => {
     const { id } = req.params;
     try {
-        const result = await database.query(`SELECT * FROM "${tableName}" WHERE id = ${id}}`);
+        const result = await database.query(`SELECT * FROM "${tableName}" WHERE id = ${parseInt(id)}`);
         res.status(200).json(result.rows[0]);
     } catch (error) {
         console.error("Error in getById method:", error);

@@ -7,44 +7,44 @@ const port = 3000;
 const { engine } = require('express-handlebars');
 
 app.engine('hbs', engine({
-    extname: '.hbs',
-    helpers: {
-      json: function (context) {
-          return JSON.stringify(context);
-      }
+  extname: '.hbs',
+  helpers: {
+    json: function (context) {
+      return JSON.stringify(context);
+    }
   },
-    defaultLayout: 'main', 
-    layoutsDir: path.join(__dirname, 'views/layouts'),
-    partialsDir: path.join(__dirname, 'views/partials')
+  defaultLayout: 'main',
+  layoutsDir: path.join(__dirname, 'views/layouts'),
+  partialsDir: path.join(__dirname, 'views/partials')
 }));
 
 const jobCategories = {
   occupations: [
-      { name: "Software Development", specialties: ["Application Development", "Backend Development", "Frontend Development"] },
-      { name: "Cybersecurity", specialties: ["Ethical Hacking", "Information Security Analysis", "Network Security"] },
-      { name: "Data Science", specialties: ["Machine Learning", "Big Data Analytics", "Artificial Intelligence"] },
-      { name: "Medicine", specialties: ["General Practice", "Cardiology", "Pediatrics"] },
-      { name: "Nursing", specialties: ["Critical Care Nursing", "Pediatric Nursing", "Geriatric Nursing"] },
-      { name: "Therapy", specialties: ["Physical Therapy", "Occupational Therapy", "Speech Therapy"] },
-      { name: "Civil Engineering", specialties: ["Structural Engineering", "Transportation Engineering", "Environmental Engineering"] },
-      { name: "Mechanical Engineering", specialties: ["HVAC Engineering", "Robotics Engineering", "Automotive Engineering"] },
-      { name: "Electrical Engineering", specialties: ["Power Engineering", "Control Systems", "Telecommunications"] },
-      { name: "Accounting", specialties: ["Tax Accounting", "Forensic Accounting", "Management Accounting"] },
-      { name: "Investment Banking", specialties: ["Equity Research", "Mergers and Acquisitions", "Sales and Trading"] },
-      { name: "Financial Planning", specialties: ["Estate Planning", "Retirement Planning", "Wealth Management"] },
-      { name: "Teaching", specialties: ["Elementary Education", "Secondary Education", "Special Education"] },
-      { name: "Administration", specialties: ["School Administration", "Academic Counseling", "Curriculum Development"] },
-      { name: "Educational Technology", specialties: ["Instructional Design", "Learning Management Systems", "E-learning Development"] }
+    { name: "Software Development", specialties: ["Application Development", "Backend Development", "Frontend Development"] },
+    { name: "Cybersecurity", specialties: ["Ethical Hacking", "Information Security Analysis", "Network Security"] },
+    { name: "Data Science", specialties: ["Machine Learning", "Big Data Analytics", "Artificial Intelligence"] },
+    { name: "Medicine", specialties: ["General Practice", "Cardiology", "Pediatrics"] },
+    { name: "Nursing", specialties: ["Critical Care Nursing", "Pediatric Nursing", "Geriatric Nursing"] },
+    { name: "Therapy", specialties: ["Physical Therapy", "Occupational Therapy", "Speech Therapy"] },
+    { name: "Civil Engineering", specialties: ["Structural Engineering", "Transportation Engineering", "Environmental Engineering"] },
+    { name: "Mechanical Engineering", specialties: ["HVAC Engineering", "Robotics Engineering", "Automotive Engineering"] },
+    { name: "Electrical Engineering", specialties: ["Power Engineering", "Control Systems", "Telecommunications"] },
+    { name: "Accounting", specialties: ["Tax Accounting", "Forensic Accounting", "Management Accounting"] },
+    { name: "Investment Banking", specialties: ["Equity Research", "Mergers and Acquisitions", "Sales and Trading"] },
+    { name: "Financial Planning", specialties: ["Estate Planning", "Retirement Planning", "Wealth Management"] },
+    { name: "Teaching", specialties: ["Elementary Education", "Secondary Education", "Special Education"] },
+    { name: "Administration", specialties: ["School Administration", "Academic Counseling", "Curriculum Development"] },
+    { name: "Educational Technology", specialties: ["Instructional Design", "Learning Management Systems", "E-learning Development"] }
   ]
 };
 
 const greekPrefectures = [
-  "Achaea", "Aetolia-Acarnania", "Arcadia", "Argolis", "Arta", "Attica", "Boeotia", "Cephalonia", 
-  "Chania", "Chios", "Corfu", "Corinthia", "Cyclades", "Dodecanese", "Drama", "Elis", 
-  "Euboea", "Evros", "Evrytania", "Florina", "Grevena", "Heraklion", "Imathia", "Ioannina", 
-  "Karditsa", "Kastoria", "Kavala", "Kefalonia", "Kilkis", "Kozani", "Laconia", "Larissa", 
-  "Lassithi", "Lesbos", "Magnesia", "Messenia", "Pella", "Phocis", "Phthiotis", "Pieria", 
-  "Preveza", "Rethymno", "Rhodope", "Samos", "Serres", "Thesprotia", "Thessaloniki", "Trikala", 
+  "Achaea", "Aetolia-Acarnania", "Arcadia", "Argolis", "Arta", "Attica", "Boeotia", "Cephalonia",
+  "Chania", "Chios", "Corfu", "Corinthia", "Cyclades", "Dodecanese", "Drama", "Elis",
+  "Euboea", "Evros", "Evrytania", "Florina", "Grevena", "Heraklion", "Imathia", "Ioannina",
+  "Karditsa", "Kastoria", "Kavala", "Kefalonia", "Kilkis", "Kozani", "Laconia", "Larissa",
+  "Lassithi", "Lesbos", "Magnesia", "Messenia", "Pella", "Phocis", "Phthiotis", "Pieria",
+  "Preveza", "Rethymno", "Rhodope", "Samos", "Serres", "Thesprotia", "Thessaloniki", "Trikala",
   "Xanthi", "Zakynthos"
 ];
 
@@ -65,14 +65,14 @@ app.use(require('./routes/submitionRoutes.js'));
 // View Routes
 app.get('/', (req, res) => {
   axios.get(`http://localhost:${port}/v1/jobs/latest`)
-  .then(response => {
-    console.log(response.data)
-    res.render('home', { jobs: response.data });
-  })
-  .catch(error => {
-    console.error('Error fetching jobs:', error);
-    res.status(500).send('Error fetching jobs');
-  });
+    .then(response => {
+      console.log(response.data)
+      res.render('home', { jobs: response.data });
+    })
+    .catch(error => {
+      console.error('Error fetching jobs:', error);
+      res.status(500).send('Error fetching jobs');
+    });
 });
 
 app.get('/employee', async (req, res) => {
@@ -122,39 +122,61 @@ app.get('/employer', async (req, res) => {
 });
 
 app.get('/jobs', (req, res) => {
-  axios.get(`http://localhost:${port}/v1/jobs`)
-    .then(response => {
-      console.log(response.data)
-      res.render('jobs', { jobs: response.data, jobCategories: jobCategories, regions: greekPrefectures }); // , { jobs: response.data }
-    })
-    .catch(error => {
-      console.error('Error fetching jobs:', error);
-      res.status(500).send('Error fetching jobs');
-    });
+  // Extract filters from query parameters
+  const { occupation, specialty, region } = req.query;
+
+  // Construct the URL with query parameters for the API request
+
+
+  if (occupation === undefined && specialty === undefined && region === undefined) {
+    axios.get(`http://localhost:${port}/v1/jobs`)
+      .then(response => {
+        console.log(response.data)
+        res.render('jobs', { jobs: response.data, jobCategories: jobCategories, regions: greekPrefectures }); // , { jobs: response.data }
+      })
+      .catch(error => {
+        console.error('Error fetching jobs:', error);
+        res.status(500).send('Error fetching jobs');
+      });
+  }
+  else {
+    axios.get(`http://localhost:${port}/v1/jobs/getbyfilters?occupation=${occupation}&specialty=${specialty}&region=${region}`)
+      .then(response => {
+        console.log(response.data);
+        res.render('jobs', {
+          jobs: response.data,
+          jobCategories: jobCategories,
+          regions: greekPrefectures
+        });
+      })
+      .catch(error => {
+        console.error('Error fetching filtered jobs:', error);
+        res.status(500).send('Error fetching jobs');
+      });
+  }
 });
 
-
-  // {
-  //   description: "The incumbent will be the Senior Engineer responsible for leading the team responsible for providing engineering services in support of COMSUBPAC (N4) in their delivery of technical assistance to the submarine fleet.",
-  //   title: "Senior Engineer",
-  //   extendedDescr: "Thousands of new roles. Fifty states. One mission. The Navy is on a once-in-a-generation journey to completely transform its nuclear-powered submarine fleet and maintain its critical undersea advantage. However, this military mandate will require the addition of more than 100,000 skilled workers with the training and commitment to ensure success. And there's not a moment to spare.",
-  //   companyName: "BuildSubmarines",
-  //   duration: null,
-  //   occupation: "Engineer",
-  //   specialty: "Mechanical Engineer"}
-  // {
-  //   firstname: "Maria",
-  //   lastname: "Rousou",
-  //   email: "marpap@gmail.com",
-  //   phone1: "6981234567",
-  //   phone2: null,
-  //   address: "Ermou 33",
-  //   region: "Athens",
-  //   comp_name: "Kafe Mpampis",
-  //   comp_desc: "To kafe Mpampis einai ena poly omorfo kafe stous propodes ths Akropolis.",
-  //   job_title: ["Barman", "Ydravlikos", "Mhxanikos Autokiniton"],
-  //   job_desc: "Edo einai to description! Edo tha leei pragmata gia thn douleia!"
-  // }
+// {
+//   description: "The incumbent will be the Senior Engineer responsible for leading the team responsible for providing engineering services in support of COMSUBPAC (N4) in their delivery of technical assistance to the submarine fleet.",
+//   title: "Senior Engineer",
+//   extendedDescr: "Thousands of new roles. Fifty states. One mission. The Navy is on a once-in-a-generation journey to completely transform its nuclear-powered submarine fleet and maintain its critical undersea advantage. However, this military mandate will require the addition of more than 100,000 skilled workers with the training and commitment to ensure success. And there's not a moment to spare.",
+//   companyName: "BuildSubmarines",
+//   duration: null,
+//   occupation: "Engineer",
+//   specialty: "Mechanical Engineer"}
+// {
+//   firstname: "Maria",
+//   lastname: "Rousou",
+//   email: "marpap@gmail.com",
+//   phone1: "6981234567",
+//   phone2: null,
+//   address: "Ermou 33",
+//   region: "Athens",
+//   comp_name: "Kafe Mpampis",
+//   comp_desc: "To kafe Mpampis einai ena poly omorfo kafe stous propodes ths Akropolis.",
+//   job_title: ["Barman", "Ydravlikos", "Mhxanikos Autokiniton"],
+//   job_desc: "Edo einai to description! Edo tha leei pragmata gia thn douleia!"
+// }
 
 app.get('/about', (req, res) => {
   res.render('about');

@@ -45,6 +45,10 @@ INSERT INTO "JOB" ("id", "imagePath", "description", "title", "extendedDescr", "
 VALUES 
 (110, 'static/job_profile.jpg', 'HR Consultant for workplace development.', 'DUMMY HR Consultant', 'Improve HR practices and employee relations.', 10, 'HR Core', 'Administration', 'School Administration','Xanthi');
 
+INSERT INTO "JOB" ("id", "imagePath", "description", "title", "extendedDescr", "duration", "companyName", "occupation", "specialty","region")
+VALUES 
+(111, 'static/job_profile.jpg', 'HR Consultant for workplace development.', 'DUMMY HR Consultant', 'Improve HR practices and employee relations.', 10, 'HR Core', 'Administration', 'School Administration','Thessaloniki');
+
 -- Insert data into the Submits table
 INSERT INTO "Submits" ("employerId", "jobId", "creationDate")
 VALUES 

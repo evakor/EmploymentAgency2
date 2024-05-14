@@ -38,10 +38,27 @@ const getLatest = async (req, res) => {
 const getbyFilter = async (req, res) => {
     const { occupation, specialty, region } = req.query;
 
-    console.info(occupation, specialty, region)
+    let queryConditions = [];
+    const occupations = ["Software Development", "Cybersecurity", "Data Science", "Medicine", "Nursing", "Therapy", 
+    "Civil Engineering", "Mechanical Engineering", "Electrical Engineering", "Accounting", "Investment Banking",
+    "Financial Planning", "Teaching", "Administration", "Educational Technology"];
+
+    if (occupation !== "") {
+        queryConditions.push(`j.occupation = '${occupations[occupation]}'`);
+    }
+    if (specialty !== "") {
+        queryConditions.push(`j.specialty = '${specialty}'`);
+    }
+    if (region !== "") {
+        queryConditions.push(`j.region = '${region}'`);
+    }
+
+    let baseQuery = `SELECT * FROM "JOB" as j`;
+    let whereClause = queryConditions.length > 0 ? ` WHERE ${queryConditions.join(' AND ')}` : '';
+    console.log(baseQuery + whereClause);
     
     try {
-        const result = await database.query(`SELECT * FROM "JOB" as j WHERE j.occupation = '${occupation}' AND j.specialty = '${specialty}' AND j.region = '${region}';`);
+        const result = await database.query(baseQuery + whereClause);
         res.status(200).json(result.rows);
     } catch (error) {
         console.error('Error getting latest jobs:', error);

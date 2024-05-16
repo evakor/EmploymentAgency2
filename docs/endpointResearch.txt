@@ -1,6 +1,6 @@
-GET /job/latest?page=0&size=3 -> Returns latest added jobs
-GET /job?page=0&size=N -> Returns all jobs NO FILTERS
-GET /job?occupation=ENUM&specialty=ENUM&page=0&size=N -> Returns all jobs WITH FILTERS
+GET /job/latest?page=0&size=3 -> Returns latest added jobs                                  DONE
+GET /job?page=0&size=N -> Returns all jobs NO FILTERS										DONE
+GET /job?occupation=ENUM&specialty=ENUM&page=0&size=N -> Returns all jobs WITH FILTERS		DONE
 
 For the apply button:
 If user is not logged in then it redirects the user to the login page

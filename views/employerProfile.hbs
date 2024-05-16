@@ -1,4 +1,5 @@
-{{!< layout}} <section class="vh-50" style="background-color: #e7e9ee;">
+{{!< layout}} 
+<section class="vh-50" style="background-color: #e7e9ee;">
   <!--https://mdbootstrap.com/docs/standard/extended/profiles/-->
   <div class="container py-5 h-50">
     <div class="row d-flex justify-content-center align-items-center h-50">
@@ -47,7 +48,7 @@
                 <div class="d-flex justify-content-end mt-3">
                   <button type="submit" class="btn cards-button me-2" value="upload_image">Upload Image</button>
                   <button type="submit" class="btn cards-button me-2" value="new_entry">New Job</button>
-                  <button type="submit" class="btn cards-button" value="edit">Edit</button>
+                  <button type="submit" class="btn cards-button" value="edit" onclick="openEditEmployerModal()">Edit</button>
                 </div>
               </div>
             </div>
@@ -107,7 +108,7 @@
                     <span class="tooltiptext">Edit</span>
                   </div>
                   <div class="tooltip">
-                    <div class="button messages"></div>
+                    <div class="button messages"><button> </button></div>
                     <span class="tooltiptext">Messages</span>
                   </div>
                 </div>
@@ -115,10 +116,96 @@
               <h5 class="card-title">{{job.title}}</h5>
               <p class="card-text">{{job.description}}</p>
               <p class="card-text"><small class="text-muted">{{job.companyName}}</small></p>
-              <button class="btn cards-button position-absolute bottom-0 end-0 mb-2 " style="margin-right: 5px;">Apply</button>
+              <button class="btn cards-button position-absolute bottom-0 end-0 mb-2 " style="margin-right: 5px;" id="apply-button" onclick="confirmApply('{{job.title}}')">Apply</button>
             </div>
           </div>
         </div>
       </div>
       {{/each}}
     </div>
+
+
+{{!-- Modal part for the pop-up --}}
+  <div class="modal fade" id="editEmployerModal" tabindex="-1" aria-labelledby="editEmployerModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editEmployerModalLabel">Edit Employer Profile</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Form for editing employer profile -->
+          <form id="editEmployerForm">
+            <div class="mb-3">
+              <label for="editEmail" class="form-label">Email</label>
+              <input type="email" class="form-control" id="editEmail" value="{{employerData.email}}">
+            </div>
+            <div class="mb-3">
+              <label for="editPhone1" class="form-label">Phone 1</label>
+              <input type="text" class="form-control" id="editPhone1" value="{{employerData.phone1}}">
+            </div>
+            <!-- Add more form fields for other data such as address, phone 2, company description, etc. -->
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" onclick="saveEmployerProfile()">Save Changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <script>
+    // Function to open the edit employer profile modal
+    function openEditEmployerModal() {
+        var modal = document.getElementById('editEmployerModal');
+        var modalBackdrop = document.querySelector('.modal-backdrop');
+
+        // Check if modal and modal backdrop elements exist
+        if (modal && modalBackdrop) {
+          modal.style.display = 'block';
+          modalBackdrop.style.display = 'block';
+          modal.classList.add('show');
+          modalBackdrop.classList.add('show');
+        } else {
+          console.error('Modal or modal backdrop element not found.');
+        }
+      }
+
+    // Function to save changes to employer profile
+      function saveEmployerProfile() {
+        // Extract data from the modal form
+        const email = document.getElementById('editEmail').value;
+        const phone1 = document.getElementById('editPhone1').value;
+        // Extract more data as needed from additional form fields
+
+        axios.post('/update-employer-profile', {
+          email: email,
+          phone1: phone1,
+          // Include more data as needed
+        })
+          .then(function (response) {
+            // Handle success response
+            console.log('Employer profile updated successfully');
+            $('#editEmployerModal').modal('hide'); // Close the modal after saving changes
+          })
+          .catch(function (error) {
+            // Handle error response
+            console.error('Error updating employer profile:', error);
+            // Optionally display an error message to the user
+          });
+      }
+
+    function confirmApply(jobTitle) {
+        if (confirm("Are you sure you want to apply for the position of '" + jobTitle + "'?")) {
+
+        } else {
+          alert("Job application was cancelled.");
+        }
+      }
+  </script>
+
+

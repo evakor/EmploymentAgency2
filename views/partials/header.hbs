@@ -14,20 +14,30 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/jobs">Jobs</a>
                 </li>
-                <li class="nav-item">
+                {{!-- <li class="nav-item">
                   <a class="nav-link" href="/employee">Employee</a>
                 </li>
                 <li class="nav-item">
                   <a class="nav-link" href="/employer">Employer</a>
-                </li>
+                </li> --}}
                 <li class="nav-item">
                   <a class="nav-link" href="/about">About</a>
                 </li>
             </ul>
-            <ul class="navbar-nav" >
-              <li class="nav-item ">
-                <a class="nav-link" href="/login">Sign In</a>
-              </li>
+            <ul class="navbar-nav">
+                {{#if session.user.id}}
+                    <li class="nav-item">
+                        {{#if session.user.isEmployee}}
+                            <a class="nav-link" href="/employee?id={{session.user.id}}">My Profile</a>
+                        {{else}}
+                            <a class="nav-link" href="/employer?id={{session.user.id}}">My Profile</a>
+                        {{/if}}
+                    </li>
+                {{else}}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login">Sign In</a>
+                    </li>
+                {{/if}}
             </ul>   
         </div>
     </div>

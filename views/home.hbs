@@ -20,13 +20,25 @@
                         <h5 class="card-title">{{job.title}}</h5>
                         <p class="card-text">{{job.description}}</p>
                         <p class="card-text"><small class="text-muted">{{job.companyName}}</small></p>
-                        <button class="btn cards-button position-absolute bottom-0 end-0 mb-2">Apply</button>
+                        <button class="btn simple-button" type="submit" id="submit-button">Apply</button>
                     </div>
                 </div>
             </div>
         </div>
         {{/each}}
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.querySelector('form');
+            form.addEventListener('submit', function (e) {
+                if (!{{ isLoggedIn }}) {
+                e.preventDefault(); // Stop form submission
+                window.location.href = '/login'; // Redirect to the login page
+            }
+            // If logged in, the form submits normally
+        });
+        });
+    </script>
     {{!-- <div class="container mt-5">
         {{#each jobs}}
         <div class="card mb-3" style="max-width: 540px;">

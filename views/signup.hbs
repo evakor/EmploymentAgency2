@@ -13,7 +13,7 @@
                                     <div class="section text-center">
                                         <h4 class="mb-4 pb-3">Sign Up</h4>
                                         <!-- Employee -->
-                                        <form>
+                                        <form method="POST" action="/signup">
                                             <div class="row form-group">
                                                 <div class="col">
                                                     <input type="text" name="employee_firstname"
@@ -64,7 +64,7 @@
                                             </div>
                                             <div class="row form-group">
                                                 <div class="col">
-                                                    <select class="form-control custom-select mb-3" name="profession"
+                                                    <select class="form-control custom-select mb-3" name="employee_profession"
                                                         required>
                                                         <option value="" disabled selected>Profession</option>
                                                         <option value="engineer">Engineer</option>
@@ -73,7 +73,7 @@
                                                 </div>
                                                 <div class="col">
                                                     <select class="form-control custom-select mb-3"
-                                                        name="specialization" required>
+                                                        name="employee_specialization" required>
                                                         <option value="" disabled selected>Specialization</option>
                                                         <option value="el_engineer">Electrical Engineer</option>
                                                         <option value="mech_engineer">Mechanical Engineer</option>
@@ -96,7 +96,7 @@
                                 <div class="center-wrap">
                                     <div class="section text-center">
                                         <h4 class="mb-4 pb-3">Sign Up</h4>
-                                        <form>
+                                        <form method="POST" action="/signup">
                                             <div class="row form-group">
                                                 <div class="col">
                                                     <input type="text" name="employer_firstname"

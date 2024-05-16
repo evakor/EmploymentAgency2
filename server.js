@@ -1,22 +1,12 @@
 const express = require('express');
 const axios = require('axios');
 const bodyParser = require('body-parser');
-const app = express();
 const path = require('path');
+const bcrypt = require("bcryptjs")
+const session = require('express-session');
+const app = express();
 const port = 3000;
 const { engine } = require('express-handlebars');
-
-app.engine('hbs', engine({
-  extname: '.hbs',
-  helpers: {
-    json: function (context) {
-      return JSON.stringify(context);
-    }
-  },
-  defaultLayout: 'main',
-  layoutsDir: path.join(__dirname, 'views/layouts'),
-  partialsDir: path.join(__dirname, 'views/partials')
-}));
 
 const jobCategories = {
   occupations: [
@@ -48,12 +38,37 @@ const greekPrefectures = [
   "Xanthi", "Zakynthos"
 ];
 
+app.engine('hbs', engine({
+  extname: '.hbs',
+  helpers: {
+    json: function (context) {
+      return JSON.stringify(context);
+    }
+  },
+  defaultLayout: 'main',
+  layoutsDir: path.join(__dirname, 'views/layouts'),
+  partialsDir: path.join(__dirname, 'views/partials')
+}));
 
 app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(session({
+  secret: 'secretKey',
+  resave: false,
+  saveUninitialized: false,
+  cookie: { maxAge: 60000*60 }
+}));
+
+function authenticate(req, res, next) {
+  if (req.session && req.session.user) {
+    return next();
+  } else {
+    res.redirect('/login');
+  }
+}
 
 // REST Routes
 app.use(require('./routes/applicationRoutes.js'));
@@ -61,13 +76,17 @@ app.use(require('./routes/employeeRoutes.js'));
 app.use(require('./routes/employerRoutes.js'));
 app.use(require('./routes/jobRoutes.js'));
 app.use(require('./routes/submitionRoutes.js'));
+app.use(require('./routes/authenticationRoutes.js'));
 
 // View Routes
 app.get('/', (req, res) => {
   axios.get(`http://localhost:${port}/v1/jobs/latest`)
     .then(response => {
       console.log(response.data)
-      res.render('home', { jobs: response.data });
+      res.render('home', { 
+        jobs: response.data,
+        session: req.session
+      });
     })
     .catch(error => {
       console.error('Error fetching jobs:', error);
@@ -75,9 +94,9 @@ app.get('/', (req, res) => {
     });
 });
 
-app.get('/employee', async (req, res) => {
+app.get('/employee', authenticate, async (req, res) => {
   try {
-    const id = 100;
+    const { id } = req.query;
     const [jobsResponse, employeeResponse] = await Promise.all([
       axios.get(`http://localhost:${port}/v1/jobs`),
       axios.get(`http://localhost:${port}/v1/employee/${id}`)
@@ -86,9 +105,13 @@ app.get('/employee', async (req, res) => {
     const jobs = jobsResponse.data;
     const employeeData = employeeResponse.data;
 
+    console.log("req.session");
+    console.log(req.session);
+
     res.render('employeeProfile', {
       employeeData: employeeData,
       jobs: jobs,
+      session: req.session
     });
   } catch (error) {
     console.error('Error fetching data:', error);
@@ -96,14 +119,18 @@ app.get('/employee', async (req, res) => {
   }
 });
 
-app.get('/employer', async (req, res) => {
+app.get('/employer', authenticate, async (req, res) => {
   try {
-    const id = 104;
+    const { id } = req.query;
+    console.log(id);
     const [jobsResponse, employerResponse] = await Promise.all([
       axios.get(`http://localhost:${port}/v1/jobs`),
       axios.get(`http://localhost:${port}/v1/employer/${id}`),
       // axios.get(`http://localhost:${port}/v1/applications/byUserId/${id}`)
     ]);
+
+    console.log("req.session");
+    console.log(req.session);
 
     const jobs = jobsResponse.data;
     const employerData = employerResponse.data;
@@ -113,7 +140,7 @@ app.get('/employer', async (req, res) => {
     res.render('employerProfile', {
       employerData: employerData,
       jobs: jobs,
-      // applications: applications,
+      session: req.session
     });
   } catch (error) {
     console.error('Error fetching data:', error);
@@ -132,7 +159,12 @@ app.get('/jobs', (req, res) => {
     axios.get(`http://localhost:${port}/v1/jobs`)
       .then(response => {
         console.log(response.data)
-        res.render('jobs', { jobs: response.data, jobCategories: jobCategories, regions: greekPrefectures }); // , { jobs: response.data }
+        res.render('jobs', { 
+          jobs: response.data, 
+          jobCategories: jobCategories, 
+          regions: greekPrefectures,
+          session: req.session
+        }); // , { jobs: response.data }
       })
       .catch(error => {
         console.error('Error fetching jobs:', error);
@@ -146,7 +178,8 @@ app.get('/jobs', (req, res) => {
         res.render('jobs', {
           jobs: response.data,
           jobCategories: jobCategories,
-          regions: greekPrefectures
+          regions: greekPrefectures,
+          session: req.session
         });
       })
       .catch(error => {
@@ -156,38 +189,75 @@ app.get('/jobs', (req, res) => {
   }
 });
 
-// {
-//   description: "The incumbent will be the Senior Engineer responsible for leading the team responsible for providing engineering services in support of COMSUBPAC (N4) in their delivery of technical assistance to the submarine fleet.",
-//   title: "Senior Engineer",
-//   extendedDescr: "Thousands of new roles. Fifty states. One mission. The Navy is on a once-in-a-generation journey to completely transform its nuclear-powered submarine fleet and maintain its critical undersea advantage. However, this military mandate will require the addition of more than 100,000 skilled workers with the training and commitment to ensure success. And there's not a moment to spare.",
-//   companyName: "BuildSubmarines",
-//   duration: null,
-//   occupation: "Engineer",
-//   specialty: "Mechanical Engineer"}
-// {
-//   firstname: "Maria",
-//   lastname: "Rousou",
-//   email: "marpap@gmail.com",
-//   phone1: "6981234567",
-//   phone2: null,
-//   address: "Ermou 33",
-//   region: "Athens",
-//   comp_name: "Kafe Mpampis",
-//   comp_desc: "To kafe Mpampis einai ena poly omorfo kafe stous propodes ths Akropolis.",
-//   job_title: ["Barman", "Ydravlikos", "Mhxanikos Autokiniton"],
-//   job_desc: "Edo einai to description! Edo tha leei pragmata gia thn douleia!"
-// }
 
 app.get('/about', (req, res) => {
-  res.render('about');
+  res.render('about', {
+    session: req.session
+  });
 });
 
 app.get('/login', (req, res) => {
-  res.render('login');
+  res.render('login', {
+    session: req.session
+  });
+});
+
+app.post('/login', (req, res) => {
+  const { email, password } = req.body;
+
+  axios.get(`http://localhost:${port}/v1/getUserByEmailAndPassword`, {
+    params: { email, password }
+  })
+  .then(response => {
+    const userType = response.data.userType;
+    const user = response.data.user;
+
+    const userId = encodeURIComponent(JSON.stringify(user.id));
+
+    req.session.user = user;
+    req.session.userType = user.userType;
+    req.session.isEmployee = user.userType === "employee";
+
+    if (userType === 'employee') {
+      res.redirect(`/employee?id=${userId}`);
+    } else if (userType === 'employer') {
+      res.redirect(`/employer?id=${userId}`);
+    } else {
+      res.status(401).send('Login failed: Invalid user type');
+    }
+  })
+  .catch(error => {
+    console.error('Login error:', error);
+    res.status(401).send('Login failed: ' + error.message);
+  });
+});
+
+app.get('/logout', (req, res) => {
+  req.session.destroy(err => {
+    if (err) {
+      res.status(500).send('Error logging out');
+    } else {
+      res.redirect('/');
+    }
+  });
 });
 
 app.get('/signup', (req, res) => {
-  res.render('signup');
+  res.render('signup', {
+    session: req.session
+  });
+});
+
+app.post('/signup', (req, res) => {
+  const { employee_firstname, employee_lastname, employee_email, employee_password, 
+    employee_region, employee_address, employee_phone1, employee_phone2, employee_profession,
+    employee_specialization, employer_firstname, employer_lastname, employer_email, 
+    employer_password, employer_region, employer_address, employer_phone1, employer_phone2,
+    employer_company_name, employer_company_desc} = req.body
+    console.log(req.body);
+  res.render('signup', {
+    session: req.session
+  });
 });
 
 app.listen(port, () => {

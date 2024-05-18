@@ -13,10 +13,21 @@ const getAll = async (req, res) => {
 };
 
 const getById = async (req, res) => {
-    const { employeeId, jobId } = req.params; // Assumes route parameters are named accordingly
+    const { employeeId, jobId } = req.params;
     try {
         const result = await database.query(`SELECT * FROM "${tableName}" WHERE "employeeId" = $1 AND "jobId" = $2`, [employeeId, jobId]);
         res.status(200).json(result.rows[0] || null);
+    } catch (error) {
+        console.error('Error getting application by IDs:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+const getByUserId = async (req, res) => {
+    const { employeeId } = req.params;
+    try {
+        const result = await database.query(`SELECT * FROM "${tableName}" WHERE "employeeId" = $1`, [employeeId]);
+        res.status(200).json(result.rows || null);
     } catch (error) {
         console.error('Error getting application by IDs:', error);
         res.status(500).json({ error: 'Internal server error' });
@@ -66,6 +77,7 @@ const deleteById = async (req, res) => {
 module.exports = {
     getAll,
     getById,
+    getByUserId,
     create,
     updateById,
     deleteById,

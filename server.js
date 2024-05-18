@@ -43,6 +43,9 @@ app.engine('hbs', engine({
   helpers: {
     json: function (context) {
       return JSON.stringify(context);
+    },
+    ifEquals: function(arg1, arg2, options) {
+      return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
     }
   },
   defaultLayout: 'main',
@@ -59,7 +62,7 @@ app.use(session({
   secret: 'secretKey',
   resave: false,
   saveUninitialized: false,
-  cookie: { maxAge: 60000*60 }
+  cookie: { maxAge: 60000 * 60 }
 }));
 
 function authenticate(req, res, next) {
@@ -69,6 +72,19 @@ function authenticate(req, res, next) {
     res.redirect('/login');
   }
 }
+
+function setCurrentPage(req, res, next) {
+  if (req.path.startsWith('/employee')) {
+    req.session.currentPage = 'employee';
+  } else if (req.path.startsWith('/employer')) {
+    req.session.currentPage = 'employer';
+  } else {
+    req.session.currentPage = null;
+  }
+  next();
+}
+
+app.use(setCurrentPage);
 
 // REST Routes
 app.use(require('./routes/applicationRoutes.js'));
@@ -83,7 +99,7 @@ app.get('/', (req, res) => {
   axios.get(`http://localhost:${port}/v1/jobs/latest`)
     .then(response => {
       console.log(response.data)
-      res.render('home', { 
+      res.render('home', {
         jobs: response.data,
         session: req.session
       });
@@ -98,7 +114,7 @@ app.get('/employee', authenticate, async (req, res) => {
   try {
     const { id } = req.query;
     const [jobsResponse, employeeResponse] = await Promise.all([
-      axios.get(`http://localhost:${port}/v1/jobs`),
+      axios.get(`http://localhost:${port}/v1/job/byEmployee/${id}`),
       axios.get(`http://localhost:${port}/v1/employee/${id}`)
     ]);
 
@@ -124,7 +140,7 @@ app.get('/employer', authenticate, async (req, res) => {
     const { id } = req.query;
     console.log(id);
     const [jobsResponse, employerResponse] = await Promise.all([
-      axios.get(`http://localhost:${port}/v1/jobs`),
+      axios.get(`http://localhost:${port}/v1/job/byEmployer/${id}`),
       axios.get(`http://localhost:${port}/v1/employer/${id}`),
       // axios.get(`http://localhost:${port}/v1/applications/byUserId/${id}`)
     ]);
@@ -159,9 +175,9 @@ app.get('/jobs', (req, res) => {
     axios.get(`http://localhost:${port}/v1/jobs`)
       .then(response => {
         console.log(response.data)
-        res.render('jobs', { 
-          jobs: response.data, 
-          jobCategories: jobCategories, 
+        res.render('jobs', {
+          jobs: response.data,
+          jobCategories: jobCategories,
           regions: greekPrefectures,
           session: req.session
         }); // , { jobs: response.data }
@@ -208,28 +224,28 @@ app.post('/login', (req, res) => {
   axios.get(`http://localhost:${port}/v1/getUserByEmailAndPassword`, {
     params: { email, password }
   })
-  .then(response => {
-    const userType = response.data.userType;
-    const user = response.data.user;
+    .then(response => {
+      const userType = response.data.userType;
+      const user = response.data.user;
 
-    const userId = encodeURIComponent(JSON.stringify(user.id));
+      const userId = encodeURIComponent(JSON.stringify(user.id));
 
-    req.session.user = user;
-    req.session.userType = user.userType;
-    req.session.isEmployee = user.userType === "employee";
+      req.session.user = user;
+      req.session.userType = user.userType;
+      req.session.isEmployee = user.userType === "employee";
 
-    if (userType === 'employee') {
-      res.redirect(`/employee?id=${userId}`);
-    } else if (userType === 'employer') {
-      res.redirect(`/employer?id=${userId}`);
-    } else {
-      res.status(401).send('Login failed: Invalid user type');
-    }
-  })
-  .catch(error => {
-    console.error('Login error:', error);
-    res.status(401).send('Login failed: ' + error.message);
-  });
+      if (userType === 'employee') {
+        res.redirect(`/employee?id=${userId}`);
+      } else if (userType === 'employer') {
+        res.redirect(`/employer?id=${userId}`);
+      } else {
+        res.status(401).send('Login failed: Invalid user type');
+      }
+    })
+    .catch(error => {
+      console.error('Login error:', error);
+      res.status(401).send('Login failed: ' + error.message);
+    });
 });
 
 app.get('/logout', (req, res) => {
@@ -244,20 +260,92 @@ app.get('/logout', (req, res) => {
 
 app.get('/signup', (req, res) => {
   res.render('signup', {
-    session: req.session
+    session: req.session,
+    jobCategories: jobCategories,
+    regions: greekPrefectures
   });
 });
 
 app.post('/signup', (req, res) => {
-  const { employee_firstname, employee_lastname, employee_email, employee_password, 
-    employee_region, employee_address, employee_phone1, employee_phone2, employee_profession,
-    employee_specialization, employer_firstname, employer_lastname, employer_email, 
+  const { employee_firstname, employee_lastname, employee_email, employee_password,
+    employee_region, employee_address, employee_phone1, employee_phone2, employee_occupation,
+    employee_specialty, employer_firstname, employer_lastname, employer_email,
     employer_password, employer_region, employer_address, employer_phone1, employer_phone2,
-    employer_company_name, employer_company_desc} = req.body
-    console.log(req.body);
-  res.render('signup', {
-    session: req.session
-  });
+    employer_company_name, employer_company_desc } = req.body;
+
+
+  axios.get(`http://localhost:${port}/v1/getUserByEmail`, {
+    params: { email: employee_email !== undefined ? employee_email : employer_email }
+  })
+    .then(response => {
+      if (response.status === 205) {
+        if (employer_firstname === undefined) {
+          axios.post(`http://localhost:${port}/v1/employee`, {
+            firstName: employee_firstname,
+            lastName: employee_lastname,
+            email: employee_email,
+            password: employee_password,
+            region: employee_region,
+            address: employee_address,
+            phone1: employee_phone1,
+            phone2: employee_phone2,
+            occupation: occupations[employee_occupation],
+            specialty: employee_specialty,
+            profilePicturePath: null,
+            cvPath: null
+          })
+        } else {
+          axios.post(`http://localhost:${port}/v1/employer`, {
+            firstName: employer_firstname,
+            lastName: employer_lastname,
+            email: employer_email,
+            password: employer_password,
+            region: employer_region,
+            address: employer_address,
+            phone1: employer_phone1,
+            phone2: employer_phone2,
+            companyName: employer_company_name,
+            companyDesc: employer_company_desc
+          })
+        }
+
+
+        axios.get(`http://localhost:${port}/v1/getUserByEmailAndPassword`, {
+          params: { email: employee_email !== undefined ? employee_email : employer_email, password: employee_password !== undefined ? employee_password : employer_password }
+        })
+          .then(response => {
+            const userType = response.data.userType;
+            const user = response.data.user;
+
+            const userId = encodeURIComponent(JSON.stringify(user.id));
+
+            req.session.user = user;
+            req.session.userType = user.userType;
+            req.session.isEmployee = user.userType === "employee";
+
+            if (userType === 'employee') {
+              res.redirect(`/employee?id=${userId}`);
+            } else if (userType === 'employer') {
+              res.redirect(`/employer?id=${userId}`);
+            } else {
+              res.status(401).send('Login failed: Invalid user type');
+            }
+          })
+          .catch(error => {
+            console.error('Login error:', error);
+            res.status(401).send('Login failed: ' + error.message);
+          });
+      } else {
+        res.status(401).send('Sign Up failed: This email is already in use');
+      }
+    })
+    .catch(error => {
+      console.error('Login error:', error);
+      res.status(401).send('Login failed: ' + error.message);
+    });
+
+
+
 });
 
 app.listen(port, () => {

@@ -23,6 +23,72 @@ const getById = async (req, res) => {
     }
 };
 
+const getByEmployeeId = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const result = await database.query(
+            `SELECT 
+                j.id AS "jobId", 
+                j."imagePath", 
+                j.description, 
+                j.title, 
+                j."extendedDescr", 
+                j."companyName", 
+                j.duration, 
+                j.occupation, 
+                j.specialty, 
+                j.region, 
+                a."applicationDate" 
+             FROM 
+                "JOB" j 
+             JOIN 
+                "Applies" a 
+             ON 
+                j.id = a."jobId" 
+             WHERE 
+                a."employeeId" = $1`,
+            [parseInt(id)]
+        );
+        res.status(200).json(result.rows);
+    } catch (error) {
+        console.error('Error getting job by ID:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+const getByEmployerId = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const result = await database.query(
+            `SELECT 
+                j.id AS "jobId", 
+                j."imagePath", 
+                j.description, 
+                j.title, 
+                j."extendedDescr", 
+                j."companyName", 
+                j.duration, 
+                j.occupation, 
+                j.specialty, 
+                j.region, 
+                s."creationDate" 
+             FROM 
+                "JOB" j 
+             JOIN 
+                "Submits" s 
+             ON 
+                j.id = s."jobId" 
+             WHERE 
+                s."employerId" = $1`,
+            [parseInt(id)]
+        );
+        res.status(200).json(result.rows);
+    } catch (error) {
+        console.error('Error getting job by ID:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
 const getLatest = async (req, res) => {
     // const { amount } = req.params;
     let amount = 5;
@@ -104,6 +170,8 @@ const deleteById = async (req, res) => {
 module.exports = {
     getAll,
     getById,
+    getByEmployeeId,
+    getByEmployerId,
     getLatest,
     getbyFilter,
     create,

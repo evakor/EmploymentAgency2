@@ -40,14 +40,16 @@
                                             </div>
                                             <div class="row form-group">
                                                 <div class="col">
-                                                    <input type="text" name="employee_region" class="form-control mb-3"
-                                                        placeholder="Region" id="employee_region" autocomplete="off"
-                                                        required>
+                                                    <select id="regionDropdown" name="employee_region">
+                                                        <option value="">Select Region</option>
+                                                        {{#each regions as |region|}}
+                                                        <option value="{{region}}">{{region}}</option>
+                                                        {{/each}}
+                                                    </select>
                                                 </div>
                                                 <div class="col">
                                                     <input type="text" name="employee_address" class="form-control mb-3"
-                                                        placeholder="Address" id="employee_address" autocomplete="off"
-                                                        required>
+                                                        placeholder="Address" id="employee_address" autocomplete="off">
                                                 </div>
                                             </div>
                                             <div class="row form-group">
@@ -64,27 +66,23 @@
                                             </div>
                                             <div class="row form-group">
                                                 <div class="col">
-                                                    <select class="form-control custom-select mb-3" name="employee_profession"
-                                                        required>
-                                                        <option value="" disabled selected>Profession</option>
-                                                        <option value="engineer">Engineer</option>
-                                                        <option value="game_developer">Developer</option>
+                                                    <select id="occupationDropdown" name="employee_occupation"
+                                                        onchange="updateSpecialties()" required>
+                                                        <option value="">Select Occupation</option>
+                                                        {{#each jobCategories.occupations}}
+                                                        <option value="{{@index}}">{{this.name}}</option>
+                                                        {{/each}}
                                                     </select>
                                                 </div>
                                                 <div class="col">
-                                                    <select class="form-control custom-select mb-3"
-                                                        name="employee_specialization" required>
-                                                        <option value="" disabled selected>Specialization</option>
-                                                        <option value="el_engineer">Electrical Engineer</option>
-                                                        <option value="mech_engineer">Mechanical Engineer</option>
-                                                        <option value="game_developer">Game Developer</option>
-                                                        <option value="web_developer">Web Developer</option>
+                                                    <select id="specialtyDropdown" name="employee_specialty">
+                                                        <option value="">Select Specialty</option>
                                                     </select>
                                                 </div>
                                             </div>
                                             <div class="form-group">
                                                 <button type="submit" class="btn btn-primary btn-block  mb-3"
-                                                    style="margin-top: 20px;">Submit</button>
+                                                    style="margin-top: 20px;">Sign Up</button>
                                             </div>
                                             <a href="/login" class="text-muted">Registered? Sign In!</a>
                                         </form>
@@ -123,9 +121,12 @@
                                             </div>
                                             <div class="row form-group">
                                                 <div class="col">
-                                                    <input type="text" name="employer_region" class="form-control mb-3"
-                                                        placeholder="Region" id="employer_region" autocomplete="off"
-                                                        required>
+                                                    <select id="regionDropdown" name="employer_region">
+                                                        <option value="">Select Region</option>
+                                                        {{#each regions as |region|}}
+                                                        <option value="{{region}}">{{region}}</option>
+                                                        {{/each}}
+                                                    </select>
                                                 </div>
                                                 <div class="col">
                                                     <input type="text" name="employer_address" class="form-control mb-3"
@@ -159,7 +160,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <button type="submit" class="btn btn-primary btn-block mb-3"
-                                                    style="margin-top: 20px;">Submit</button>
+                                                    style="margin-top: 20px;">Sign Up</button>
                                             </div>
 
                                         </form>
@@ -174,3 +175,23 @@
         </div>
     </div>
     </div>
+    <script>
+        const occupationsData = {{{ json jobCategories }}};
+
+        function updateSpecialties() {
+            const occupationSelect = document.getElementById('occupationDropdown');
+            const specialtySelect = document.getElementById('specialtyDropdown');
+            const selectedOccupationIndex = occupationSelect.value;
+            specialtySelect.innerHTML = '<option value="">Select Specialty</option>';
+
+            if (selectedOccupationIndex !== "") {
+                const specialties = occupationsData.occupations[selectedOccupationIndex].specialties;
+                specialties.forEach(specialty => {
+                    const option = document.createElement('option');
+                    option.value = specialty;
+                    option.textContent = specialty;
+                    specialtySelect.appendChild(option);
+                });
+            }
+        }
+    </script>

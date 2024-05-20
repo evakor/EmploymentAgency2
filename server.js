@@ -169,19 +169,22 @@ app.get('/employer', authenticate, async (req, res) => {
 });
 
 app.post('/employer', authenticate, async (req, res) => {
-  const { editFirstName, editLastName, editEmail, editPhone1, editPhone2, editAddress, editRegion, editCompanyDesc } = req.body;
+
+  console.log(req.body);
 
   try {
     let userId = req.session.user.id;
+    const { firstName, lastName, email, region, address, phone1, phone2, companyDesc } = req.body;
+    console.log(firstName);
     await axios.put(`http://localhost:${port}/v1/employer/${userId}`, {
-      firstName: editFirstName,
-      lastName: editLastName,
-      email: editEmail,
-      region: editRegion,
-      address: editAddress,
-      phone1: editPhone1,
-      phone2: editPhone2,
-      companyDesc: editCompanyDesc
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        region: region,
+        address: address,
+        phone1: phone1,
+        phone2: phone2,
+        companyDesc: companyDesc
     });
     res.redirect(`/employer?id=${userId}`);
   } catch (error) {

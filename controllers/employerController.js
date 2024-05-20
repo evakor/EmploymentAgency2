@@ -91,18 +91,16 @@ const updateById = async (req, res) => {
 
     console.log(updateQuery);
 
-    res.status(200).body("hi");
-
-    // try {
-    //     const result = await database.query(updateQuery, values);
-    //     if (result.rows.length === 0) {
-    //         return res.status(404).send(`Employer with id ${id} not found`);
-    //     }
-    //     res.status(200).json(result.rows[0]);
-    // } catch (error) {
-    //     console.error("Error in updateById method:");
-    //     res.status(500).send(`Failed to update employer with id ${id}`);
-    // }
+    try {
+        const result = await database.query(updateQuery, values);
+        if (result.rows.length === 0) {
+            return res.status(404).send(`Employer with id ${id} not found`);
+        }
+        res.status(200).json(result.rows[0]);
+    } catch (error) {
+        console.error("Error in updateById method:");
+        res.status(500).send(`Failed to update employer with id ${id}`);
+    }
 };
 
 

@@ -43,21 +43,68 @@ const create = async (req, res) => {
 
 const updateById = async (req, res) => {
     const { id } = req.params;
+    console.log("BBBBBBBBB");
     const {
         firstName, lastName, region, address, phone1, phone2,
-        email, password, companyName, companyDesc, profilePicturePath
+        email, companyDesc
     } = req.body;
-    try {
-        const result = await database.query(
-            `UPDATE "${tableName}" SET "firstName" = $1, "lastName" = $2, "region" = $3, "address" = $4, "phone1" = $5, "phone2" = $6, "email" = $7, "password" = $8, "companyName" = $9, "companyDesc" = $10, "profilePicturePath" = $11 WHERE "id" = $13 RETURNING *`,
-            [firstName, lastName, region, address, phone1, phone2, email, password, companyName, companyDesc, profilePicturePath, id]
-        );
-        res.status(200).json(result.rows[0]);
-    } catch (error) {
-        console.error("Error in updateById method:", error);
-        res.status(500).send(`Failed to update employer with id ${id}`);
-    }
+
+    console.log(req.params);
+    console.log(req.body);
+    console.log(req.query);
+
+    // Create an array to hold the updates and another for the values
+    let updates = [];
+    let values = [];
+    let paramCounter = 1;
+
+    // Helper function to add a field to the update query if it exists
+    const addUpdate = (field, value) => {
+        if (value !== undefined && value !== null && value !== '') {
+            updates.push(`"${field}" = $${paramCounter}`);
+            values.push(value);
+            paramCounter++;
+        }
+    };
+
+    // Add the updates for each field
+    addUpdate('firstName', firstName);
+    addUpdate('lastName', lastName);
+    addUpdate('region', region);
+    addUpdate('address', address);
+    addUpdate('phone1', phone1);
+    addUpdate('phone2', phone2);
+    addUpdate('email', email);
+    addUpdate('companyDesc', companyDesc);
+
+    // if (updates.length === 0) {
+    //     return res.status(400).send('No fields to update');
+    // }
+
+    values.push(id); // Add id as the last parameter for the WHERE clause
+
+    const updateQuery = `
+        UPDATE "EMPLOYER"
+        SET ${updates.join(', ')}
+        WHERE "id" = $${paramCounter}
+        RETURNING *`;
+
+    console.log(updateQuery);
+
+    res.status(200).body("hi");
+
+    // try {
+    //     const result = await database.query(updateQuery, values);
+    //     if (result.rows.length === 0) {
+    //         return res.status(404).send(`Employer with id ${id} not found`);
+    //     }
+    //     res.status(200).json(result.rows[0]);
+    // } catch (error) {
+    //     console.error("Error in updateById method:");
+    //     res.status(500).send(`Failed to update employer with id ${id}`);
+    // }
 };
+
 
 
 const deleteById = async (req, res) => {

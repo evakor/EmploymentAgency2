@@ -7,6 +7,7 @@ const session = require('express-session');
 const app = express();
 const port = 3000;
 const { engine } = require('express-handlebars');
+const { handlebars } = require('hbs');
 
 const jobCategories = {
   occupations: [
@@ -38,13 +39,16 @@ const greekPrefectures = [
   "Xanthi", "Zakynthos"
 ];
 
+const saltRounds = 10;
+
+
 app.engine('hbs', engine({
   extname: '.hbs',
   helpers: {
     json: function (context) {
       return JSON.stringify(context);
     },
-    ifEquals: function(arg1, arg2, options) {
+    ifEquals: function (arg1, arg2, options) {
       return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
     }
   },
@@ -163,6 +167,28 @@ app.get('/employer', authenticate, async (req, res) => {
   } catch (error) {
     console.error('Error fetching data:', error);
     res.status(500).send('Error loading employer profile');
+  }
+});
+
+app.post('/employer', authenticate, async (req, res) => {
+  const { editFirstName, editLastName, editEmail, editPhone1, editPhone2, editAddress, editRegion, editCompanyDesc } = req.body;
+
+  try {
+    let userId = req.session.user.id;
+    await axios.put(`http://localhost:${port}/v1/employer/${userId}`, {
+      firstName: editFirstName,
+      lastName: editLastName,
+      email: editEmail,
+      region: editRegion,
+      address: editAddress,
+      phone1: editPhone1,
+      phone2: editPhone2,
+      companyDesc: editCompanyDesc
+    });
+    res.redirect(`/employer?id=${userId}`);
+  } catch (error) {
+    console.error('Error updating employer info', error);
+    res.status(500).send('Error updating employer info');
   }
 });
 
@@ -374,7 +400,7 @@ app.post('/signup', (req, res) => {
 //       employers[employerId] = employerProfile; // Replace with actual DB update logic
 //       res.status(200).send('Profile updated successfully');
 //     } 
-      // res.render('employerProfile');
+// res.render('employerProfile');
 //   } catch (error) {
 //     console.error('Error updating employer profile:', error);
 //     res.status(500);

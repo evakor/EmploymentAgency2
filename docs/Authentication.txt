@@ -1,0 +1,74 @@
+const express = require('express');
+const axios = require('axios');
+const bodyParser = require('body-parser');
+const session = require('express-session'); // Add session middleware
+const path = require('path');
+const port = 3000;
+
+const app = express();
+
+// Session middleware setup
+app.use(session({
+  secret: 'your_secret_key_here',
+  resave: false,
+  saveUninitialized: true
+}));
+
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// Dummy user data (for demo purposes)
+const users = [
+  { id: 1, username: 'user1', password: 'password1' },
+  { id: 2, username: 'user2', password: 'password2' }
+];
+
+// Authentication middleware
+function authenticate(req, res, next) {
+  if (req.session && req.session.user) {
+    return next();
+  } else {
+    res.redirect('/login');
+  }
+}
+
+// Login endpoint
+app.post('/login', (req, res) => {
+  const { username, password } = req.body;
+  const user = users.find(u => u.username === username && u.password === password);
+
+  if (user) {
+    req.session.user = user; // Store user information in session
+    res.redirect('/');
+  } else {
+    res.render('login', { error: 'Invalid username or password' });
+  }
+});
+
+// Logout endpoint
+app.get('/logout', (req, res) => {
+  req.session.destroy(err => {
+    if (err) {
+      res.status(500).send('Error logging out');
+    } else {
+      res.redirect('/');
+    }
+  });
+});
+
+// Routes requiring authentication
+app.get('/employee', authenticate, async (req, res) => {
+  // Handle authenticated user's request
+});
+
+app.get('/employer', authenticate, async (req, res) => {
+  // Handle authenticated user's request
+});
+
+// Other routes...
+
+// Start the server
+app.listen(port, () => {
+  console.log(`Server running at http://localhost:${port}`);
+});

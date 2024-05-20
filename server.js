@@ -58,6 +58,8 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+
 app.use(session({
   secret: 'secretKey',
   resave: false,
@@ -347,6 +349,37 @@ app.post('/signup', (req, res) => {
 
 
 });
+
+//Update Employer profile
+// app.post('/update-employer-profile', async (req, res) => {
+//   const { firstName, lastName, email, phone1, phone2, address, region, description } = req.body;
+
+//   try{
+//     const employerId = req.session.user.id;
+//     const employerProfile = employers[employerId]; 
+
+//     // Update the employer profile with new values
+//     if (employerProfile) {
+//       axios.post(`http://localhost:${port}/v1/employer`, {
+//         employerProfile.email = email,
+//         employerProfile.phone1 = phone1,
+//         employerProfile.phone2 = phone2,
+//         employerProfile.firstName = firstName,
+//         employerProfile.lastName = lastName,
+//         employerProfile.address = address
+//         employerProfile.region = region,
+//         employerProfile.companyDesc = description})
+
+//       // Save the updated profile back to the database
+//       employers[employerId] = employerProfile; // Replace with actual DB update logic
+//       res.status(200).send('Profile updated successfully');
+//     } 
+      // res.render('employerProfile');
+//   } catch (error) {
+//     console.error('Error updating employer profile:', error);
+//     res.status(500);
+//   }
+// });
 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);

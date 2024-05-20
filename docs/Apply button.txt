@@ -1,0 +1,61 @@
+Apply button -- when the ok button gets clicked on the alert window an automated email with the employee's profile and the application will get registered to the database.
+
+1. Create an endpoint on the server to handle the job applications -- it will receive the profile data
+								   -- send an email to the employer 
+								   -- save the application's details to the db
+2. We have to make an email service to the server side in order to send automated emails
+
+!!!! We have to download Nodemailer
+
+
+
+const bodyParser = require('body-parser');
+const nodemailer = require('nodemailer');
+
+
+const app = express();
+app.use(bodyParser.json());
+
+// Define an endpoint to handle job applications
+app.post('/submit-application', (req, res) => {
+    // Extract profile data from the request body
+    const profileData = req.body;
+
+    // Save application details to the database
+    // Assume you have a database connection and a JobApplication model
+    // Save profileData to the database using your preferred ORM or database library
+
+    // Send email to the employer
+    const transporter = nodemailer.createTransport({
+        // Configure your email service (e.g., Gmail SMTP)
+        service: 'gmail',
+        auth: {
+            user: 'your-email@gmail.com',
+            pass: 'your-password'
+        }
+    });
+
+    const mailOptions = {
+        from: 'your-email@gmail.com',
+        to: 'employer@example.com',
+        subject: 'New Job Application',
+        text: `You have received a new job application for the position of ${profileData.jobTitle}. 
+               Applicant Name: ${profileData.name}
+               Applicant Email: ${profileData.email}
+               Applicant Experience: ${profileData.experience}`
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.log('Error sending email:', error);
+            res.status(500).send('Error sending email');
+        } else {
+            console.log('Email sent:', info.response);
+            res.status(200).send('Job application submitted successfully');
+        }
+    });
+});
+
+
+
+

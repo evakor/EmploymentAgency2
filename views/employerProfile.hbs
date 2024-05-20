@@ -47,7 +47,7 @@
                 </div>
                 <div class="d-flex justify-content-end mt-3">
                   <button type="submit" class="btn cards-button me-2" value="upload_image">Upload Image</button>
-                  <button type="submit" class="btn cards-button me-2" value="new_entry">New Job</button>
+                  <button type="submit" class="btn cards-button me-2" value="new_entry" onclick="openCreateJobModal">New Job</button>
                   <button type="submit" class="btn cards-button" value="edit" onclick="openEditEmployerModal()">Edit</button>
                 </div>
               </div>
@@ -60,7 +60,7 @@
 
     <h2 style="text-align: center;">My jobs</h2>
 
-    {{!-- <div class="cards">
+    <div class="cards">
       {{#each jobs as |job|}}
       <div class="card mb-3" style="max-width: 600px; height: 300px;">
         <div class="row g-0">
@@ -71,24 +71,23 @@
             <div class="card-body">
               <div class="buttons ">
                 <div class="button-container">
-                  <button class="button messages" style="font-size: 20px;">&#128231;</button>
-                  <button id="editButton" class="button edit"
-                    style="font-size: 24px; transform: rotate(90deg);">&#x270e;</button>
-                  <button class="button delete" style="font-size: 20px;">&#x1F5D1;</button>
+                  <button class="button messages" style="font-size: 15px;"></button>
+                  <button id="editButton" class="button edit" style="font-size: 15px; transform: rotate(90deg);"></button>
+                  <button class="button delete" style="font-size: 15px;" onclick="confirmDelete('{{job.title}}')"></button>
+                  {{!-- <span class="tooltiptext">Delete</span> --}}
                 </div>
               </div>
               <h5 class="card-title">{{job.title}}</h5>
               <p class="card-text">{{job.description}}</p>
               <p class="card-text"><small class="text-muted">{{job.companyName}}</small></p>
-              <button class="btn cards-button position-absolute bottom-0 end-0 mb-2">Apply</button>
             </div>
           </div>
         </div>
       </div>
       {{/each}}
-    </div> --}}
+    </div>
 
-    <div class="cards">
+    {{!-- <div class="cards">
       {{#each jobs as |job|}}
       <div class="card mb-3" style="max-width: 700px; height: 300px;">
         <div class="row g-0">
@@ -100,15 +99,15 @@
               <div class="buttons ">
                 <div class="button-container">
                   <div class="tooltip">
-                    <div class="button delete"></div>
+                    <button type="button" class="button delete">x</button>
                     <span class="tooltiptext">Delete</span>
                   </div>
                   <div class="tooltip">
-                    <div class="button edit"></div>
+                    <button class="button edit">x</button>
                     <span class="tooltiptext">Edit</span>
                   </div>
                   <div class="tooltip">
-                    <div class="button messages"><button> </button></div>
+                    <button class="button messages">x<button> 
                     <span class="tooltiptext">Messages</span>
                   </div>
                 </div>
@@ -116,96 +115,222 @@
               <h5 class="card-title">{{job.title}}</h5>
               <p class="card-text">{{job.description}}</p>
               <p class="card-text"><small class="text-muted">{{job.companyName}}</small></p>
-              <button class="btn cards-button position-absolute bottom-0 end-0 mb-2 " style="margin-right: 5px;" id="apply-button" onclick="confirmApply('{{job.title}}')">Apply</button>
+              <button class="btn cards-button position-absolute bottom-0 end-0 mb-2 " style="margin-right: 5px;" id="apply-button" onclick="confirmDelete('{{job.title}}')">Delete</button>
             </div>
           </div>
         </div>
       </div>
       {{/each}}
-    </div>
+    </div> --}}
 
 
-{{!-- Modal part for the pop-up --}}
-  <div class="modal fade" id="editEmployerModal" tabindex="-1" aria-labelledby="editEmployerModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="editEmployerModalLabel">Edit Employer Profile</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<div id="myModal" class="modal">
+  <!-- Modal content -->
+  <div class="modal-content">
+    <div class="modal-body">
+      <form id="editEmployerForm" method="post">
+        <div class="mb-3">
+          <label for="editFirstName" class="form-label">First Name</label>
+          <input type="text" class="form-control" id="editFirstName" value="{{employerData.firstName}}">
         </div>
-        <div class="modal-body">
-          <!-- Form for editing employer profile -->
-          <form id="editEmployerForm">
-            <div class="mb-3">
-              <label for="editEmail" class="form-label">Email</label>
-              <input type="email" class="form-control" id="editEmail" value="{{employerData.email}}">
-            </div>
-            <div class="mb-3">
-              <label for="editPhone1" class="form-label">Phone 1</label>
-              <input type="text" class="form-control" id="editPhone1" value="{{employerData.phone1}}">
-            </div>
-            <!-- Add more form fields for other data such as address, phone 2, company description, etc. -->
-          </form>
+        <div class="mb-3">
+          <label for="editFirstName" class="form-label">Last Name</label>
+          <input type="text" class="form-control" id="editLastName" value="{{employerData.lastName}}">
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary" onclick="saveEmployerProfile()">Save Changes</button>
+        <div class="mb-3">
+          <label for="editEmail" class="form-label">Email</label>
+          <input type="email" class="form-control" id="editEmail" value="{{employerData.email}}">
         </div>
-      </div>
+        <div class="mb-3">
+          <label for="editPhone1" class="form-label">Phone 1</label>
+          <input type="tel" class="form-control" id="editPhone1" value="{{employerData.phone1}}">
+        </div>
+        <div class="mb-3">
+          <label for="editPhone2" class="form-label">Phone 2</label>
+          <input type="tel" class="form-control" id="editPhone2" value="{{employerData.phone2}}">
+        </div>
+        <div class="mb-3">
+          <label for="editAddress" class="form-label">Phone 2</label>
+          <input type="text" class="form-control" id="editAddress" value="{{employerData.address}}">
+        </div>
+        <div class="mb-3">
+          <label for="editRegion" class="form-label">Region</label>
+          <input type="text" class="form-control" id="editRegion" value="{{employerData.region}}">
+        </div>
+        <div class="mb-3">
+          <label for="editCompanyDesc" class="form-label">Company Description</label>
+          <input type="text" class="form-control" id="editCompanyDesc" value="{{employerData.companyDesc}}">
+        </div>
+      </form>
+      <button type="button" class="btn btn-close btn-secondary" data-bs-dismiss="modal">Close</button>
+      <button type="button" class="btn btn-primary" onclick="saveEmployerProfile()">Save Changes</button>
     </div>
   </div>
+</div>
+
+<div id="createJobModal" class="modal">
+  <!-- Modal content -->
+  <div class="modal-content">
+    <div class="modal-body">
+      <form id="createJobForm" method="post">
+        <div class="mb-3">
+          <label for="jobTitle" class="form-label">Job Title</label>
+          <input type="text" class="form-control" id="jobTitle" required>
+        </div>
+        <div class="mb-3">
+          <label for="jobDescription" class="form-label">Job Description</label>
+          <textarea class="form-control" id="jobDescription" required></textarea>
+        </div>
+        <div class="mb-3">
+          <label for="extendedDescr" class="form-label">Extended Description</label>
+          <textarea class="form-control" id="extendedDescr" required></textarea>
+        </div>
+        <div class="mb-3">
+          <label for="jobDuration" class="form-label">Duration</label>
+          <input type="date" class="form-control" id="jobDuration" required>
+        </div>
+        <div class="mb-3">
+          <label for="companyName" class="form-label">Company Name</label>
+          <input type="text" class="form-control" id="companyName" required>
+        </div>
+        <div class="mb-3">
+          <label for="occupation" class="form-label">Occupation</label>
+          <input type="text" class="form-control" id="occupation" required>
+        </div>
+        <div class="mb-3">
+          <label for="specialty" class="form-label">Specialty</label>
+          <input type="text" class="form-control" id="specialty" required>
+        </div>
+      </form>
+      <button type="button" class="btn btn-close btn-secondary" data-bs-dismiss="modal">Close</button>
+      <button type="button" class="btn btn-primary" onclick="createJobAd()">Create Job</button>
+    </div>
+  </div>
+</div>
 
 
+<script>
+  //Edit Ad Modal
+    document.addEventListener('DOMContentLoaded', function () {
+        window.openEditEmployerModal = function () {
+          var modal = document.getElementById("myModal");
+          var span = document.getElementsByClassName("btn-close")[0];
 
-  <script>
-    // Function to open the edit employer profile modal
-    function openEditEmployerModal() {
-        var modal = document.getElementById('editEmployerModal');
-        var modalBackdrop = document.querySelector('.modal-backdrop');
+          if (modal) {
+            modal.style.display = "block";
+            span.onclick = function () {
+              modal.style.display = "none";
+            }
+            window.onclick = function (event) {
+              if (event.target == modal) {
+                modal.style.display = "none";}
+                }
+          } else {
+            console.error('Modal element not found.');
+          }
+        }
 
-        // Check if modal and modal backdrop elements exist
-        if (modal && modalBackdrop) {
-          modal.style.display = 'block';
-          modalBackdrop.style.display = 'block';
-          modal.classList.add('show');
-          modalBackdrop.classList.add('show');
+        window.saveEmployerProfile = async function () {
+          const email = document.getElementById('editEmail').value;
+          const phone1 = document.getElementById('editPhone1').value;
+          const phone2 = document.getElementById('editPhone2').value;
+          const firstName = document.getElementById('editFirstName').value;
+          const lastName = document.getElementById('editLastName').value;
+          const address = document.getElementById('editAddress').value;
+          const region = document.getElementById('editRegion').value;
+          const description = document.getElementById('editCompanyDesc').value;
+          
+          try {
+            const response = await axios.post('/update-employer-profile', {
+              firstName,
+              lastName,
+              email,
+              phone1,
+              phone2,
+              address,
+              region,
+              description
+            });
+            document.getElementById('myModal').style.display = 'none';
+          } catch (error) {
+            console.error('Error updating employer profile:', error);
+          }
+        }
+      });
+
+//Create a new Job Modal
+  document.addEventListener('DOMContentLoaded', function () {
+      window.openCreateJobModal = function () {
+        var modal = document.getElementById("createJobModal");
+        var span = document.getElementsByClassName("btn-close")[0];
+
+        if (modal) {
+          modal.style.display = "block";
+          span.onclick = function () {
+            modal.style.display = "none";
+          }
+          window.onclick = function (event) {
+            if (event.target == modal) {
+              modal.style.display = "none";
+            }
+          }
         } else {
-          console.error('Modal or modal backdrop element not found.');
+          console.error('Modal element not found.');
         }
       }
 
-    // Function to save changes to employer profile
-      function saveEmployerProfile() {
-        // Extract data from the modal form
-        const email = document.getElementById('editEmail').value;
-        const phone1 = document.getElementById('editPhone1').value;
-        // Extract more data as needed from additional form fields
+      window.createJobAd = async function () {
+        const jobTitle = document.getElementById('jobTitle').value;
+        const jobDescription = document.getElementById('jobDescription').value;
+        const extendedDescr = document.getElementById('extendedDescr').value;
+        const jobImagePath = document.getElementById('jobImagePath').value;
+        const jobDuration = document.getElementById('jobDuration').value;
+        const companyName = document.getElementById('companyName').value;
+        const occupation = document.getElementById('occupation').value;
+        const specialty = document.getElementById('specialty').value;
 
-        axios.post('/update-employer-profile', {
-          email: email,
-          phone1: phone1,
-          // Include more data as needed
+        axios.post('/createJob', {
+          title: jobTitle,
+          description: jobDescription,
+          extendedDescr: extendedDescr,
+          imagePath: jobImagePath,
+          duration: jobDuration,
+          companyName: companyName,
+          occupation: occupation,
+          specialty: specialty
         })
-          .then(function (response) {
-            // Handle success response
-            console.log('Employer profile updated successfully');
-            $('#editEmployerModal').modal('hide'); // Close the modal after saving changes
+          .then(response => {
+            console.log('Job created successfully', response);
+            document.getElementById('createJobModal').style.display = 'none';
           })
-          .catch(function (error) {
-            // Handle error response
-            console.error('Error updating employer profile:', error);
-            // Optionally display an error message to the user
+          .catch(error => {
+            console.error('Error creating job:', error);
           });
       }
+  });
 
-    function confirmApply(jobTitle) {
-        if (confirm("Are you sure you want to apply for the position of '" + jobTitle + "'?")) {
-
+  //For the delete button
+    function confirmDelete(jobTitle) {
+      if (confirm("Are you sure you want to delete the job posting for '" + jobTitle + "'?")) {
+        deleteAd(jobTitle);
         } else {
-          alert("Job application was cancelled.");
+          alert("Deletion cancelled.");
         }
-      }
-  </script>
+    }
 
+    function deleteAd(jobTitle) {
+      axios.delete('/delete-job', {
+        data: {
+          title: jobTitle
+        }
+        })
+        .then(function (response) {
+          console.log('Job ad deleted successfully');
+          })
+        .catch(function (error) {
+          console.error('Error deleting job ad:', error);
+          alert("Error deleting job ad")
+          });
+        }
+</script>
 

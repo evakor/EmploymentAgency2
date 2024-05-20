@@ -102,7 +102,6 @@ app.use(require('./routes/authenticationRoutes.js'));
 app.get('/', (req, res) => {
   axios.get(`http://localhost:${port}/v1/jobs/latest`)
     .then(response => {
-      console.log(response.data)
       res.render('home', {
         jobs: response.data,
         session: req.session
@@ -125,9 +124,6 @@ app.get('/employee', authenticate, async (req, res) => {
     const jobs = jobsResponse.data;
     const employeeData = employeeResponse.data;
 
-    console.log("req.session");
-    console.log(req.session);
-
     res.render('employeeProfile', {
       employeeData: employeeData,
       jobs: jobs,
@@ -139,18 +135,36 @@ app.get('/employee', authenticate, async (req, res) => {
   }
 });
 
+app.post('/employee', authenticate, async (req, res) => {
+  try {
+    let userId = req.session.user.id;
+    const { firstName, lastName, email, region, address, phone1, phone2, occupation, specialty } = req.body;
+    await axios.put(`http://localhost:${port}/v1/employee/${userId}`, {
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        region: region,
+        address: address,
+        phone1: phone1,
+        phone2: phone2,
+        occupation: occupation,
+        specialty: specialty
+    });
+    res.redirect(`/employee?id=${userId}`);
+  } catch (error) {
+    console.error('Error updating employee info', error);
+    res.status(500).send('Error updating employee info');
+  }
+});
+
 app.get('/employer', authenticate, async (req, res) => {
   try {
     const { id } = req.query;
-    console.log(id);
     const [jobsResponse, employerResponse] = await Promise.all([
       axios.get(`http://localhost:${port}/v1/job/byEmployer/${id}`),
       axios.get(`http://localhost:${port}/v1/employer/${id}`),
       // axios.get(`http://localhost:${port}/v1/applications/byUserId/${id}`)
     ]);
-
-    console.log("req.session");
-    console.log(req.session);
 
     const jobs = jobsResponse.data;
     const employerData = employerResponse.data;
@@ -169,13 +183,9 @@ app.get('/employer', authenticate, async (req, res) => {
 });
 
 app.post('/employer', authenticate, async (req, res) => {
-
-  console.log(req.body);
-
   try {
     let userId = req.session.user.id;
     const { firstName, lastName, email, region, address, phone1, phone2, companyDesc } = req.body;
-    console.log(firstName);
     await axios.put(`http://localhost:${port}/v1/employer/${userId}`, {
         firstName: firstName,
         lastName: lastName,
@@ -203,7 +213,6 @@ app.get('/jobs', (req, res) => {
   if (occupation === undefined && specialty === undefined && region === undefined) {
     axios.get(`http://localhost:${port}/v1/jobs`)
       .then(response => {
-        console.log(response.data)
         res.render('jobs', {
           jobs: response.data,
           jobCategories: jobCategories,
@@ -219,7 +228,6 @@ app.get('/jobs', (req, res) => {
   else {
     axios.get(`http://localhost:${port}/v1/jobs/getbyfilters?occupation=${occupation}&specialty=${specialty}&region=${region}`)
       .then(response => {
-        console.log(response.data);
         res.render('jobs', {
           jobs: response.data,
           jobCategories: jobCategories,
@@ -256,12 +264,7 @@ app.post('/login', (req, res) => {
     .then(async (response) => {
       const user = response.data.user;
       const userType = response.data.userType;
-      
-      console.log(password);
-      console.log(user.password);
-
       const match = await bcrypt.compare(password, user.password);
-      console.log(match);
 
       if (match) {
         const userId = encodeURIComponent(JSON.stringify(user.id));
@@ -324,8 +327,6 @@ app.post('/signup', async (req, res) => {
     if (response.status === 205) {
       const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-      console.log(hashedPassword);
-
       if (employer_firstname === undefined) {
         await axios.post(`http://localhost:${port}/v1/employee`, {
           firstName: employee_firstname,
@@ -384,37 +385,6 @@ app.post('/signup', async (req, res) => {
     res.status(401).send('Sign Up failed: ' + error.message);
   }
 });
-
-//Update Employer profile
-// app.post('/update-employer-profile', async (req, res) => {
-//   const { firstName, lastName, email, phone1, phone2, address, region, description } = req.body;
-
-//   try{
-//     const employerId = req.session.user.id;
-//     const employerProfile = employers[employerId]; 
-
-//     // Update the employer profile with new values
-//     if (employerProfile) {
-//       axios.post(`http://localhost:${port}/v1/employer`, {
-//         employerProfile.email = email,
-//         employerProfile.phone1 = phone1,
-//         employerProfile.phone2 = phone2,
-//         employerProfile.firstName = firstName,
-//         employerProfile.lastName = lastName,
-//         employerProfile.address = address
-//         employerProfile.region = region,
-//         employerProfile.companyDesc = description})
-
-//       // Save the updated profile back to the database
-//       employers[employerId] = employerProfile; // Replace with actual DB update logic
-//       res.status(200).send('Profile updated successfully');
-//     } 
-      // res.render('employerProfile');
-//   } catch (error) {
-//     console.error('Error updating employer profile:', error);
-//     res.status(500);
-//   }
-// });
 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);

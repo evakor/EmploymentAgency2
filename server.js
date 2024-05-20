@@ -7,7 +7,8 @@ const session = require('express-session');
 const app = express();
 const port = 3000;
 const { engine } = require('express-handlebars');
-const { handlebars } = require('hbs');
+
+saltRounds = 10;
 
 const jobCategories = {
   occupations: [
@@ -39,16 +40,13 @@ const greekPrefectures = [
   "Xanthi", "Zakynthos"
 ];
 
-const saltRounds = 10;
-
-
 app.engine('hbs', engine({
   extname: '.hbs',
   helpers: {
     json: function (context) {
       return JSON.stringify(context);
     },
-    ifEquals: function (arg1, arg2, options) {
+    ifEquals: function(arg1, arg2, options) {
       return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
     }
   },
@@ -249,25 +247,35 @@ app.get('/login', (req, res) => {
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
 
-  axios.get(`http://localhost:${port}/v1/getUserByEmailAndPassword`, {
-    params: { email, password }
+  axios.get(`http://localhost:${port}/v1/getUserByEmail`, {
+    params: { email }
   })
-    .then(response => {
-      const userType = response.data.userType;
+    .then(async (response) => {
       const user = response.data.user;
+      const userType = response.data.userType;
+      
+      console.log(password);
+      console.log(user.password);
 
-      const userId = encodeURIComponent(JSON.stringify(user.id));
+      const match = await bcrypt.compare(password, user.password);
+      console.log(match);
 
-      req.session.user = user;
-      req.session.userType = user.userType;
-      req.session.isEmployee = user.userType === "employee";
+      if (match) {
+        const userId = encodeURIComponent(JSON.stringify(user.id));
 
-      if (userType === 'employee') {
-        res.redirect(`/employee?id=${userId}`);
-      } else if (userType === 'employer') {
-        res.redirect(`/employer?id=${userId}`);
+        req.session.user = user;
+        req.session.userType = user.userType;
+        req.session.isEmployee = user.userType === "employee";
+
+        if (userType === 'employee') {
+          res.redirect(`/employee?id=${userId}`);
+        } else if (userType === 'employer') {
+          res.redirect(`/employer?id=${userId}`);
+        } else {
+          res.status(401).send('Login failed: Invalid user type');
+        }
       } else {
-        res.status(401).send('Login failed: Invalid user type');
+        res.status(401).send('Login failed: Incorrect password');
       }
     })
     .catch(error => {
@@ -294,86 +302,84 @@ app.get('/signup', (req, res) => {
   });
 });
 
-app.post('/signup', (req, res) => {
+app.post('/signup', async (req, res) => {
   const { employee_firstname, employee_lastname, employee_email, employee_password,
     employee_region, employee_address, employee_phone1, employee_phone2, employee_occupation,
     employee_specialty, employer_firstname, employer_lastname, employer_email,
     employer_password, employer_region, employer_address, employer_phone1, employer_phone2,
     employer_company_name, employer_company_desc } = req.body;
+  
+  const email = employee_email !== undefined ? employee_email : employer_email;
+  const password = employee_password !== undefined ? employee_password : employer_password;
 
 
-  axios.get(`http://localhost:${port}/v1/getUserByEmail`, {
-    params: { email: employee_email !== undefined ? employee_email : employer_email }
-  })
-    .then(response => {
-      if (response.status === 205) {
-        if (employer_firstname === undefined) {
-          axios.post(`http://localhost:${port}/v1/employee`, {
-            firstName: employee_firstname,
-            lastName: employee_lastname,
-            email: employee_email,
-            password: employee_password,
-            region: employee_region,
-            address: employee_address,
-            phone1: employee_phone1,
-            phone2: employee_phone2,
-            occupation: occupations[employee_occupation],
-            specialty: employee_specialty,
-            profilePicturePath: null,
-            cvPath: null
-          })
-        } else {
-          axios.post(`http://localhost:${port}/v1/employer`, {
-            firstName: employer_firstname,
-            lastName: employer_lastname,
-            email: employer_email,
-            password: employer_password,
-            region: employer_region,
-            address: employer_address,
-            phone1: employer_phone1,
-            phone2: employer_phone2,
-            companyName: employer_company_name,
-            companyDesc: employer_company_desc
-          })
-        }
-
-
-        axios.get(`http://localhost:${port}/v1/getUserByEmailAndPassword`, {
-          params: { email: employee_email !== undefined ? employee_email : employer_email, password: employee_password !== undefined ? employee_password : employer_password }
-        })
-          .then(response => {
-            const userType = response.data.userType;
-            const user = response.data.user;
-
-            const userId = encodeURIComponent(JSON.stringify(user.id));
-
-            req.session.user = user;
-            req.session.userType = user.userType;
-            req.session.isEmployee = user.userType === "employee";
-
-            if (userType === 'employee') {
-              res.redirect(`/employee?id=${userId}`);
-            } else if (userType === 'employer') {
-              res.redirect(`/employer?id=${userId}`);
-            } else {
-              res.status(401).send('Login failed: Invalid user type');
-            }
-          })
-          .catch(error => {
-            console.error('Login error:', error);
-            res.status(401).send('Login failed: ' + error.message);
-          });
-      } else {
-        res.status(401).send('Sign Up failed: This email is already in use');
-      }
-    })
-    .catch(error => {
-      console.error('Login error:', error);
-      res.status(401).send('Login failed: ' + error.message);
+  try {
+    const response = await axios.get(`http://localhost:${port}/v1/getUserByEmail`, {
+      params: { email }
     });
 
+    if (response.status === 205) {
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
 
+      console.log(hashedPassword);
 
+      if (employer_firstname === undefined) {
+        await axios.post(`http://localhost:${port}/v1/employee`, {
+          firstName: employee_firstname,
+          lastName: employee_lastname,
+          email: employee_email,
+          password: hashedPassword,
+          region: employee_region,
+          address: employee_address,
+          phone1: employee_phone1,
+          phone2: employee_phone2,
+          occupation: jobCategories.occupations[employee_occupation].name,
+          specialty: employee_specialty,
+          profilePicturePath: null,
+          cvPath: null
+        });
+      } else {
+        await axios.post(`http://localhost:${port}/v1/employer`, {
+          firstName: employer_firstname,
+          lastName: employer_lastname,
+          email: employer_email,
+          password: hashedPassword,
+          region: employer_region,
+          address: employer_address,
+          phone1: employer_phone1,
+          phone2: employer_phone2,
+          companyName: employer_company_name,
+          companyDesc: employer_company_desc
+        });
+      }
+
+      const loginResponse = await axios.get(`http://localhost:${port}/v1/getUserByEmail`, {
+        params: { email }
+      });
+
+      const userType = loginResponse.data.userType;
+      const user = loginResponse.data.user;
+
+      const userId = encodeURIComponent(JSON.stringify(user.id));
+
+      req.session.user = user;
+      req.session.userType = user.userType;
+      req.session.isEmployee = user.userType === "employee";
+
+      if (userType === 'employee') {
+        res.redirect(`/employee?id=${userId}`);
+      } else if (userType === 'employer') {
+        res.redirect(`/employer?id=${userId}`);
+      } else {
+        res.status(401).send('Login failed: Invalid user type');
+      }
+    } else {
+      res.status(401).send('Sign Up failed: This email is already in use');
+    }
+  } catch (error) {
+    console.error('Sign Up error:', error);
+    res.status(401).send('Sign Up failed: ' + error.message);
+  }
 });
 
 //Update Employer profile
@@ -400,7 +406,7 @@ app.post('/signup', (req, res) => {
 //       employers[employerId] = employerProfile; // Replace with actual DB update logic
 //       res.status(200).send('Profile updated successfully');
 //     } 
-// res.render('employerProfile');
+      // res.render('employerProfile');
 //   } catch (error) {
 //     console.error('Error updating employer profile:', error);
 //     res.status(500);

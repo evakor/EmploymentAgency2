@@ -1,28 +1,28 @@
 -- Insert data into the EMPLOYEE table
 INSERT INTO "EMPLOYEE" ("id", "firstName", "lastName", "region", "address", "phone1", "phone2", "email", "password", "occupation", "specialty", "profilePicturePath", "cvPath")
 VALUES 
-(100, 'DUMMY John', 'Doe', 'North', '1234 North St', 1234567890, 9876543210, 'john.doe@example.com', 'bob', 'Engineer', 'Software', '/images/john.jpg', '/docs/john_cv.pdf');
+(100, 'DUMMY John', 'Doe', 'North', '1234 North St', 1234567890, 9876543210, 'john.doe@example.com', '$2a$10$qtUFFgiJ0XqE2Ml.gq8dCumyNhVtZH9oaEPTgOjAffkvL9I4lgonO', 'Engineer', 'Software', '/images/john.jpg', '/docs/john_cv.pdf');
 
 INSERT INTO "EMPLOYEE" ("id", "firstName", "lastName", "region", "address", "phone1", "phone2", "email", "password", "occupation", "specialty", "profilePicturePath", "cvPath")
 VALUES 
-(101, 'DUMMY Jane', 'Smith', 'East', '5678 East Ave', 2345678901, 8765432190, 'jane.smith@example.com', 'bob', 'Designer', 'Graphic', '/images/jane.jpg', '/docs/jane_cv.pdf');
+(101, 'DUMMY Jane', 'Smith', 'East', '5678 East Ave', 2345678901, 8765432190, 'jane.smith@example.com', '$2a$10$qtUFFgiJ0XqE2Ml.gq8dCumyNhVtZH9oaEPTgOjAffkvL9I4lgonO', 'Designer', 'Graphic', '/images/jane.jpg', '/docs/jane_cv.pdf');
 
 INSERT INTO "EMPLOYEE" ("id", "firstName", "lastName", "region", "address", "phone1", "phone2", "email", "password", "occupation", "specialty", "profilePicturePath", "cvPath")
 VALUES 
-(102, 'DUMMY Alice', 'Johnson', 'South', '9101 South Dr', 3456789012, 7654321980, 'alice.johnson@example.com', 'bob', 'Analyst', 'Data', '/images/alice.jpg', '/docs/alice_cv.pdf');
+(102, 'DUMMY Alice', 'Johnson', 'South', '9101 South Dr', 3456789012, 7654321980, 'alice.johnson@example.com', '$2a$10$qtUFFgiJ0XqE2Ml.gq8dCumyNhVtZH9oaEPTgOjAffkvL9I4lgonO', 'Analyst', 'Data', '/images/alice.jpg', '/docs/alice_cv.pdf');
 
 -- Insert data into the EMPLOYER table
 INSERT INTO "EMPLOYER" ("id", "firstName", "lastName", "region", "address", "phone1", "phone2", "email", "password", "companyName", "companyDesc", "profilePicturePath")
 VALUES 
-(103, 'DUMMY Bob', 'Brown', 'West', '2345 West Blvd', 4567890123, 6543219870, 'bob.brown@example.com', 'bob', 'BobTech', 'Technology solutions provider.', '/images/bob.jpg');
+(103, 'DUMMY Bob', 'Brown', 'West', '2345 West Blvd', 4567890123, 6543219870, 'bob.brown@example.com', '$2a$10$qtUFFgiJ0XqE2Ml.gq8dCumyNhVtZH9oaEPTgOjAffkvL9I4lgonO', 'BobTech', 'Technology solutions provider.', '/images/bob.jpg');
 
 INSERT INTO "EMPLOYER" ("id", "firstName", "lastName", "region", "address", "phone1", "phone2", "email", "password", "companyName", "companyDesc", "profilePicturePath")
 VALUES 
-(104, 'DUMMY Lisa', 'White', 'Central', '6789 Center Cir', 5678901234, 5432198760, 'lisa.white@example.com', 'bob', 'White Designs', 'Interior and graphic design services.', '/images/lisa.jpg');
+(104, 'DUMMY Lisa', 'White', 'Central', '6789 Center Cir', 5678901234, 5432198760, 'lisa.white@example.com', '$2a$10$qtUFFgiJ0XqE2Ml.gq8dCumyNhVtZH9oaEPTgOjAffkvL9I4lgonO', 'White Designs', 'Interior and graphic design services.', '/images/lisa.jpg');
 
 INSERT INTO "EMPLOYER" ("id", "firstName", "lastName", "region", "address", "phone1", "phone2", "email", "password", "companyName", "companyDesc", "profilePicturePath")
 VALUES 
-(105, 'DUMMY Gary', 'Green', 'North-East', '0123 Northeast Path', 6789012345, 4321987650, 'gary.green@example.com', 'bob', 'Green Gardens', 'Landscape and garden design.', '/images/gary.jpg');
+(105, 'DUMMY Gary', 'Green', 'North-East', '0123 Northeast Path', 6789012345, 4321987650, 'gary.green@example.com', '$2a$10$qtUFFgiJ0XqE2Ml.gq8dCumyNhVtZH9oaEPTgOjAffkvL9I4lgonO', 'Green Gardens', 'Landscape and garden design.', '/images/gary.jpg');
 
 -- Insert data into the JOB table
 INSERT INTO "JOB" ("id", "imagePath", "description", "title", "extendedDescr", "duration", "companyName", "occupation", "specialty","region")

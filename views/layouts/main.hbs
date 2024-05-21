@@ -16,14 +16,18 @@
     </header>
 
     <main>
+        {{#if message}}
+            <div class="alert alert-{{message.type}} alert-dismissible fade show" role="alert">
+                {{message.text}}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {{/if}}
         {{{body}}}
     </main>
 
     <footer>
         {{> footer}}
     </footer>
-
-    <script src="/js/main.js"></script>
     {{{_foot}}}
 </body>
 </html>

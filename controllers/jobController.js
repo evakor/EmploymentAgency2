@@ -134,9 +134,25 @@ const getbyFilter = async (req, res) => {
 
 
 const create = async (req, res) => {
-    const { imagePath, description, title, extendedDescr, companyName, duration, occupation, specialty } = req.body;
+    const { description, title, extendedDescr, companyName, duration, occupation, specialty } = req.body;
+    console.log("req.body");
+    console.log(req.body);
     try {
-        const result = await database.query(`INSERT INTO "${tableName}" ("imagePath", "description", "title", "extendedDescr", "companyName", "duration", "occupation", "specialty") VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`, [imagePath, description, title, extendedDescr, companyName, duration, occupation, specialty]);
+        const result = await database.query(
+          `INSERT INTO "${tableName}" ( "description", "title", "extendedDescr", "companyName", "duration", "occupation", "specialty", "imagePath") VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
+          [
+            description,
+            title,
+            extendedDescr,
+            companyName,
+            duration,
+            occupation,
+            specialty,
+            "static/job_profile.jpg",
+          ]
+        );
+        console.log("CONTROLLER")
+        console.log(result)
         res.status(200).json(result.rows[0]);
     } catch (error) {
         console.error('Error creating job:', error);

@@ -50,8 +50,8 @@ const updateById = async (req, res) => {
     } = req.body;
 
     console.log(req.params);
-    console.log(req.body);
-    console.log(req.query);
+    // console.log(req.body);
+    // console.log(req.query);
 
     // Create an array to hold the updates and another for the values
     let updates = [];

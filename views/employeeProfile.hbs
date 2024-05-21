@@ -1,5 +1,4 @@
 {{!< layout}} <section class="vh-50" style="background-color: #e7e9ee;">
-  <!--https://mdbootstrap.com/docs/standard/extended/profiles/-->
   <div class="container py-5 h-50">
     <div class="row d-flex justify-content-center align-items-center h-50">
       <div class="col col-lg-6 mb-4 mb-lg-0">
@@ -40,7 +39,7 @@
                 <div class="d-flex justify-content-end mt-3">
                   <button type="submit" class="btn cards-button me-2" value="upload_image">Upload Image</button>
                   <button type="submit" class="btn cards-button me-2" value="upload_cv">Upload CV</button>
-                  <button type="submit" class="btn cards-button" value="edit">Edit</button>
+                  <button type="submit" class="btn cards-button" value="edit" onclick="openEditEmployeeModal()">Edit</button>
                 </div>
               </div>
             </div>
@@ -65,10 +64,109 @@
             <h5 class="card-title">{{job.title}}</h5>
             <p class="card-text">{{job.description}}</p>
             <p class="card-text"><small class="text-muted">{{job.companyName}}</small></p>
-            {{!-- <button class="btn cards-button position-absolute bottom-0 end-0 mb-2">Apply</button> --}}
           </div>
         </div>
       </div>
     </div>
     {{/each}}
   </div>
+
+  <div id="myModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-body">
+        <form id="editEmployeeForm" method="post" action="/employee">
+          <div class="mb-3">
+            <label for="editFirstName" class="form-label">First Name</label>
+            <input type="text" class="form-control" name="firstName" value="{{employeeData.firstName}}">
+          </div>
+          <div class="mb-3">
+            <label for="editFirstName" class="form-label">Last Name</label>
+            <input type="text" class="form-control" name="lastName" value="{{employeeData.lastName}}">
+          </div>
+          <div class="mb-3">
+            <label for="editEmail" class="form-label">Email</label>
+            <input type="email" class="form-control" name="email" value="{{employeeData.email}}">
+          </div>
+          <div class="mb-3">
+            <label for="editPhone1" class="form-label">Phone 1</label>
+            <input type="tel" class="form-control" name="phone1" value="{{employeeData.phone1}}">
+          </div>
+          <div class="mb-3">
+            <label for="editPhone2" class="form-label">Phone 2</label>
+            <input type="tel" class="form-control" name="phone2" value="{{employeeData.phone2}}">
+          </div>
+          <div class="mb-3">
+            <label for="editAddress" class="form-label">Address</label>
+            <input type="text" class="form-control" name="address" value="{{employeeData.address}}">
+          </div>
+          <div class="mb-3">
+            <label for="editRegion" class="form-label">Region</label>
+            <input type="text" class="form-control" name="region" value="{{employeeData.region}}">
+          </div>
+          <div class="mb-3">
+            <select id="occupationDropdown" name="occupation" onchange="updateSpecialties()" required>
+              <option value="{{employeeData.occupation}}">Select Occupation</option>
+              {{#each jobCategories.occupations}}
+              <option value="{{@index}}">{{this.name}}</option>
+              {{/each}}
+            </select>
+            <select id="specialtyDropdown" name="specialty">
+              <option value="">Select Specialty</option>
+            </select>
+          </div>
+        </form>
+        <button type="button" class="btn btn-close btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="saveChangesButton">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const occupationsData = {{{ json jobCategories }}};
+
+    function updateSpecialties() {
+      console.log('stage1');
+      const occupationSelect = document.getElementById('occupationDropdown');
+      const specialtySelect = document.getElementById('specialtyDropdown');
+      const selectedOccupationIndex = occupationSelect.value;
+      specialtySelect.innerHTML = '<option value="">Select Specialty</option>';
+      console.log('stage2');
+      if (selectedOccupationIndex !== "") {
+        const specialties = occupationsData.occupations[selectedOccupationIndex].specialties;
+        specialties.forEach(specialty => {
+          const option = document.createElement('option');
+          option.value = specialty;
+          option.textContent = specialty;
+          specialtySelect.appendChild(option);
+        });
+      }
+    } 
+
+      document.addEventListener('DOMContentLoaded', function () {
+
+          window.openEditEmployeeModal = function () {
+            console.log('stage3');
+            var modal = document.getElementById("myModal");
+            var span = document.getElementsByClassName("btn-close")[0];
+            console.log('stage4');
+            if (modal) {
+              modal.style.display = "block";
+              span.onclick = function () {
+                modal.style.display = "none";
+              }
+              window.onclick = function (event) {
+                if (event.target == modal) {
+                  modal.style.display = "none";
+                }
+              }
+            } else {
+              console.error('Modal element not found.');
+            }
+          }
+        });
+
+        document.getElementById('saveChangesButton').addEventListener('click', function () {
+          document.getElementById('editEmployeeForm').submit();
+          console.log('stage5');
+        });
+  </script>

@@ -33,7 +33,7 @@
                         <h5 class="card-title">{{job.title}}</h5>
                         <p class="card-text">{{job.description}}</p>
                         <p class="card-text"><small class="text-muted">{{job.companyName}}</small></p>
-                        <button class="btn cards-button position-absolute bottom-0 end-0 mb-2" onclick="confirmApply('{{job.title}}')">Apply</button>
+                        <button class="btn cards-button position-absolute bottom-0 end-0 mb-2" onclick="confirmApply('{{job.title}}', '{{job.jobID}}')">Apply</button>
                     </div>
                 </div>
             </div>
@@ -61,9 +61,25 @@
             }
         }
 
-        function confirmApply(jobTitle) {
+        function confirmApply(jobTitle, jobId) {
                 if (confirm("Are you sure you want to apply for the position of '" + jobTitle + "'?")) {
-                    
+                    fetch(`http://localhost:3000/v1/job/${jobId}`, {
+                        method: 'DELETE',
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok ' + response.statusText);
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            console.log('Success:', data);
+                            alert("Job application was successful.");
+                        })
+                        .catch(error => {
+                            console.error('There was a problem with the fetch operation:', error);
+                            alert("Job application failed.");
+                        });
                 } else {
                     alert("Job application was cancelled.");
                 }

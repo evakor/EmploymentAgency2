@@ -61,11 +61,27 @@ const deleteById = async (req, res) => {
     }
 };
 
+const deleteByJobId = async (req, res) => {
+  const { jobId } = req.params;
+  console.log("delete", jobId);
+  try {
+    await database.query(
+      `DELETE FROM "${tableName}" WHERE "jobId" = $1`,
+      [jobId]
+    );
+    res.status(204).send();
+  } catch (error) {
+    console.error("Error deleting submit by IDs:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 module.exports = {
-    getAll,
-    getById,
-    getByUserId,
-    create,
-    updateById,
-    deleteById,
+  getAll,
+  getById,
+  getByUserId,
+  create,
+  updateById,
+  deleteById,
+  deleteByJobId,
 };

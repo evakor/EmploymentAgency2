@@ -111,7 +111,7 @@
               {{/each}}
             </select>
             <select id="specialtyDropdown" name="specialty">
-              <option value="">Select Specialty</option>
+              <option value="{{employeeData.specialty}}">Select Specialty</option>
             </select>
           </div>
         </form>
@@ -129,7 +129,7 @@
       const occupationSelect = document.getElementById('occupationDropdown');
       const specialtySelect = document.getElementById('specialtyDropdown');
       const selectedOccupationIndex = occupationSelect.value;
-      specialtySelect.innerHTML = '<option value="">Select Specialty</option>';
+      specialtySelect.innerHTML = '<option value="{{employeeData.specialty}}">Select Specialty</option>';
       console.log('stage2');
       if (selectedOccupationIndex !== "") {
         const specialties = occupationsData.occupations[selectedOccupationIndex].specialties;

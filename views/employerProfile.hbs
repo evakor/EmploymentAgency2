@@ -74,7 +74,7 @@
                   <button id="editButton" class="button edit"
                     style="font-size: 15px; transform: rotate(90deg);"></button>
                   <button class="button delete" style="font-size: 15px;"
-                    onclick="confirmDelete('{{job.jobId}}')"></button>
+                    onclick="confirmDelete('{{job.title}}', {{job.jobId}})"></button>
                   {{!-- <span class="tooltiptext">Delete</span> --}}
                 </div>
               </div>
@@ -87,43 +87,6 @@
       </div>
       {{/each}}
     </div>
-
-    {{!-- <div class="cards">
-      {{#each jobs as |job|}}
-      <div class="card mb-3" style="max-width: 700px; height: 300px;">
-        <div class="row g-0">
-          <div class="col-md-4">
-            <img src="{{job.imagePath}}" class="card-img" alt="...">
-          </div>
-          <div class="col-md-8">
-            <div class="card-body">
-              <div class="buttons ">
-                <div class="button-container">
-                  <div class="tooltip">
-                    <button type="button" class="button delete">x</button>
-                    <span class="tooltiptext">Delete</span>
-                  </div>
-                  <div class="tooltip">
-                    <button class="button edit">x</button>
-                    <span class="tooltiptext">Edit</span>
-                  </div>
-                  <div class="tooltip">
-                    <button class="button messages">x<button>
-                        <span class="tooltiptext">Messages</span>
-                  </div>
-                </div>
-              </div>
-              <h5 class="card-title">{{job.title}}</h5>
-              <p class="card-text">{{job.description}}</p>
-              <p class="card-text"><small class="text-muted">{{job.companyName}}</small></p>
-              <button class="btn cards-button position-absolute bottom-0 end-0 mb-2 " style="margin-right: 5px;"
-                id="apply-button" onclick="confirmDelete('{{job.title}}')">Delete</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      {{/each}}
-    </div> --}}
 
 
 {{!-- Edit employer's profile info --}}
@@ -268,26 +231,50 @@
 //-----------------------------------------------------------------------------------------------
 
   //For the delete button
-  function confirmDelete(jobTitle) {
+  function confirmDelete(jobTitle, jobId) {
     if (confirm("Are you sure you want to delete the job posting for '" + jobTitle + "'?")) {
-      deleteAd(jobTitle);
+      console.log(jobTitle, jobId);
+      deleteAd(jobTitle, jobId);
     } else {
       alert("Deletion cancelled.");
     }
   }
 
-  function deleteAd(jobTitle) {
-    axios.delete('/delete-job', {
-      data: {
-        title: jobTitle
-      }
+  function deleteAd(jobTitle, jobId) {
+    console.log(jobId);
+    fetch(`http://localhost:3000/v1/submition/job/${jobId}`, {
+      method: 'DELETE',
     })
-      .then(function (response) {
-        console.log('Job ad deleted successfully');
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok ' + response.statusText);
+        }
+        return response.json();
       })
-      .catch(function (error) {
-        console.error('Error deleting job ad:', error);
-        alert("Error deleting job ad")
+      .then(data => {
+        console.log('Success:', data);
+        alert("Job application was successful.");
+      })
+      .catch(error => {
+        console.error('DEN LEITOURGEI', error);
+        alert("Job application failed.");
+      });
+    fetch(`http://localhost:3000/v1/job/${jobId}`, {
+      method: 'DELETE',
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok ' + response.statusText);
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log('Success:', data);
+        alert("Job application was successful.");
+      })
+      .catch(error => {
+        console.error('There was a problem with the fetch operation:', error);
+        alert("Job application failed.");
       });
   }
 </script>

@@ -17,16 +17,18 @@
                 </div>
                 <div class="col-md-8">
                     <div class="card-body">
-                        <h5 class="card-title">{{job.title}}</h5>
+                        <h5 class="card-title"><a href="#" id="jobTitleLink" class="job-link" data-job-id="{{job.id}}">{{job.title}}</a></h5>
                         <p class="card-text">{{job.description}}</p>
                         <p class="card-text"><small class="text-muted">{{job.companyName}}</small></p>
-                    <button class="btn cards-button position-absolute bottom-0 end-0 mb-2" onclick="confirmApply('{{job.title}}')">Apply</button>
+                    <button class="btn cards-button position-absolute bottom-0 end-0 mb-2" onclick="confirmApply('{{job.title}}', '{{job.id}}')">Apply</button>
                     </div>
                 </div>
             </div>
         </div>
         {{/each}}
     </div>
+
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const form = document.querySelector('form');
@@ -39,34 +41,70 @@
         });
         });
     </script>
-    {{!-- <div class="container mt-5">
-        {{#each jobs}}
-        <div class="card mb-3" style="max-width: 540px;">
-            <div class="row no-gutters">
-                <div class="col-md-4">
-                    <img src="{{this.image}}" class="card-img" alt="...">
-                </div>
-                <div class="col-md-8">
-                    <div class="card-body">
-                        <h5 class="card-title">{{this.title}}</h5>
-                        <p class="card-text">{{this.description}}</p>
-                        <p class="card-text"><small class="text-muted">Last updated {{this.updated}}</small></p>
-                        <button class="btn cards-button position-absolute bottom-0 end-0 mb-2"
-                            style="margin-right: 10px;">Apply</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {{/each}}
-    </div> --}}
+    
 
+<div id="jobModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2 id="modalJobTitle"></h2>
+        <p id="modalCompanyName"></p>
+        <p id="modalJobDescription"></p>
+        <p id="modalExtendedJobDescription"></p>
+    </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
-    function confirmApply(jobTitle) {
+    function confirmApply(jobTitle, jobId) {
         if (confirm("Are you sure you want to apply for the position of '" + jobTitle + "'?")) {
-            // Send automated email to the employer with the employee's profile
-            // Register the application to the database
+    
+            console.log(jobId);
+            axios.post(`http://localhost:3000/v1/application`){}
         } else {
             alert("Job application was cancelled.");
         }
     }
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const modal = document.getElementById('jobModal');
+            const span = document.getElementsByClassName('close')[0];
+            const jobTitle = document.getElementById('modalJobTitle');
+            const jobDescription = document.getElementById('modalJobDescription');
+            const companyName = document.getElementById('modalCompanyName');
+            const jobExtendedDescription = document.getElementById('modalExtendedJobDescription');
+
+            console.log('aa');
+
+            document.querySelectorAll('.job-link').forEach(link => {
+                link.onclick = function () {
+                    const jobId = this.getAttribute('data-job-id');
+                    console.log(jobId);
+                    axios.get(`http://localhost:3000/v1/job/${jobId}`)
+                        .then(response => {
+                            const job = response.data;
+                            jobTitle.innerText = job.title;
+                            companyName.innerText = job.companyName;
+                            jobDescription.innerText = job.description;
+                            jobExtendedDescription.innerText = job.extendedDescr;
+                            modal.style.display = 'block';
+                        })
+                        .catch(error => {
+                            console.error('Error fetching job details:', error);
+                        });
+
+                    return false;
+                };
+            });
+
+            span.onclick = function () {
+                modal.style.display = 'none';
+            };
+
+            window.onclick = function (event) {
+                if (event.target == modal) {
+                    modal.style.display = 'none';
+                }
+            };
+        });
 </script>

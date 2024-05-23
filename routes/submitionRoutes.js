@@ -16,6 +16,4 @@ router.put(`/${version}/submition/:id`, submitionController.updateById);
 
 router.delete(`/${version}/submition/:id`, submitionController.deleteById);
 
-router.delete(`/${version}/submition/job/:id`, submitionController.deleteByJobId);
-
 module.exports = router;

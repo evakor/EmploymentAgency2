@@ -369,11 +369,11 @@ app.post("/employer", authenticate, async (req, res) => {
       extendedDescr,
       jobDuration,
       companyName,
-      occupation,
-      specialty
+      jobOccupation,
+      jobSpecialty,
+      jobId
     } = req.body;
-
-    if (editFirstName === undefined) {
+    if (jobTitle !== undefined) {
       console.log("aaa");
       try {
         let newJobResponse = await axios({
@@ -385,8 +385,8 @@ app.post("/employer", authenticate, async (req, res) => {
             extendedDescr: extendedDescr,
             duration: jobDuration,
             companyName: companyName,
-            occupation: occupation,
-            specialty: specialty,
+            occupation: jobCategories.occupations[jobOccupation].name,
+            specialty: jobSpecialty,
           },
         });
 
@@ -404,7 +404,7 @@ app.post("/employer", authenticate, async (req, res) => {
         console.error("Error creating job", error);
         res.status(500).send("Error creating job");
       }
-    } else {
+    } else if (editFirstName !== undefined) {
       console.log("bbb");
       try {
         console.log("allagi xaraktiristikon profil");
@@ -424,6 +424,24 @@ app.post("/employer", authenticate, async (req, res) => {
         console.error("Error updating employer info", error);
         res.status(500).send("Error updating employer info");
       }
+    }
+    else{
+      console.log("MPHKE GIA DELETE")
+      const [submitResponse, jobResponse] = await Promise.all([
+        // axios({
+        //   method: "delete",
+        //   url: `http://localhost:${port}/v1/submition/job`,
+        //   data: {
+        //     jobId: jobId,
+        //   },
+        // }),
+        axios.delete(`http://localhost:3000/v1/job/${jobId}`),
+      ]);
+
+      // const newSubmits = submitResponse.data;
+      // const newJobData = jobResponse.data;
+
+      res.redirect(`/employer?id=${userId}`);
     }
     console.log("papala");
   } catch (error) {
@@ -475,29 +493,6 @@ app.get("/jobs", (req, res) => {
       });
   }
 });
-
-//Delete job by pressing †he button
-// app.delete("/employer", authenticate, async (req, res) => {
-//   try {
-//     console.log('xekinise to route');
-//     const userId = req.session.user.id;
-//     const { jobId } = req.query.jobId;
-    
-//     const [submitResponse, jobResponse] = await Promise.all([
-//       axios.delete(`http://localhost:3000/v1/submition/job/${jobId}`),
-//       axios.delete(`http://localhost:3000/v1/job/${jobId}`),
-//     ]);
-
-//     const newSubmits = submitResponse.data;
-//     const newJobData = jobResponse.data;
-
-//     res.redirect(`/employer?id=${userId}`);
-//   } catch (error) {
-//     console.error("Error fetching data:", error);
-//     res.status(500).send("Error loading employer profile");
-//   }
-  
-// });
 
 app.get("/about", (req, res) => {
   res.render("about", {

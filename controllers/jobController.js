@@ -175,7 +175,13 @@ const updateById = async (req, res) => {
 const deleteById = async (req, res) => {
     const { id } = req.params;
     try {
-        await database.query(`DELETE FROM "${tableName}" WHERE id = $1`, [id]);
+        await database.query(`DELETE FROM "Submits" WHERE jobId = $1`, [
+          parseInt(id),
+        ]);
+        await database.query(
+          `DELETE FROM "${tableName}" WHERE id = $1`,
+          [parseInt(id)]
+        );
         res.status(204).send();
     } catch (error) {
         console.error('Error deleting job by ID:', error);

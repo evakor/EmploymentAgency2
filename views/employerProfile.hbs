@@ -1,4 +1,5 @@
-{{!< layout}} <section class="vh-50" style="background-color: #e7e9ee;">
+{{!< layout}} 
+<section class="vh-50" style="background-color: #e7e9ee;">
   <!--https://mdbootstrap.com/docs/standard/extended/profiles/-->
   <div class="container py-5 h-50">
     <div class="row d-flex justify-content-center align-items-center h-50">
@@ -73,12 +74,13 @@
                   <button class="button messages" style="font-size: 15px;"></button>
                   <button id="editButton" class="button edit"
                     style="font-size: 15px; transform: rotate(90deg);"></button>
-                  <button class="button delete" style="font-size: 15px;"
-                    onclick="confirmDelete('{{job.title}}', {{job.jobId}})"></button>
+                  <button type="submit" class="button delete" style="font-size: 15px;"
+                    onclick="confirmDelete('{{job.title}}', '{{job.jobId}}')"></button>
                   {{!-- <span class="tooltiptext">Delete</span> --}}
                 </div>
               </div>
-              <h5 class="card-title">{{job.title}}</h5>
+              {{!-- Make the job's title hyperlink to open a view more modal --}}
+              <h5 class="card-title"><a href="#" id="jobTitleLink" class="job-link" data-job-id="{{job.jobId}}">{{job.title}}</a></h5>
               <p class="card-text">{{job.description}}</p>
               <p class="card-text"><small class="text-muted">{{job.companyName}}</small></p>
             </div>
@@ -89,7 +91,7 @@
     </div>
 
 
-{{!-- Edit employer's profile info --}}
+{{!-- Edit employer's profile info modal--}}
 <div id="myModal" class="modal">
   <div class="modal-content">
     <div class="modal-body">
@@ -134,7 +136,7 @@
 </div>
 
 
-{{!-- Create a new job entry --}}
+{{!-- Create a new job entry Modal--}}
 <div id="createJobModal" class="modal">
   <div class="modal-content">
     <div class="modal-body">
@@ -174,7 +176,19 @@
   </div>
 </div>
 
+  <!-- Job's ad More Information Modal -->
+  <div id="jobModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2 id="modalJobTitle"></h2>
+      <p id="modalJobDescription"></p>
+      <div class="mb-3">
+        <label>Company Name:</label>
+        <p id="modalCompanyName"></p>
+    </div>
+  </div>
 
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
   //Edit Ad Modal
   document.addEventListener('DOMContentLoaded', function () {
@@ -232,20 +246,23 @@
 
   //For the delete button
   function confirmDelete(jobTitle, jobId) {
+    console.log(jobId);
     if (confirm("Are you sure you want to delete the job posting for '" + jobTitle + "'?")) {
       console.log(jobTitle, jobId);
-      deleteAd(jobTitle, jobId);
+       deleteAd(jobId);
     } else {
       alert("Deletion cancelled.");
     }
   }
 
-  function deleteAd(jobTitle, jobId) {
+  function deleteAd(jobId) {
     console.log(jobId);
+
     fetch(`http://localhost:3000/v1/submition/job/${jobId}`, {
       method: 'DELETE',
     })
       .then(response => {
+        console.log('first fetch');
         if (!response.ok) {
           throw new Error('Network response was not ok ' + response.statusText);
         }
@@ -253,12 +270,13 @@
       })
       .then(data => {
         console.log('Success:', data);
-        alert("Job application was successful.");
+        alert("Job delition was successful.");
       })
       .catch(error => {
         console.error('DEN LEITOURGEI', error);
-        alert("Job application failed.");
+        alert("Job delition failed.");
       });
+    
     fetch(`http://localhost:3000/v1/job/${jobId}`, {
       method: 'DELETE',
     })
@@ -270,11 +288,52 @@
       })
       .then(data => {
         console.log('Success:', data);
-        alert("Job application was successful.");
+        alert("Job delition was successful.");
       })
       .catch(error => {
         console.error('There was a problem with the fetch operation:', error);
-        alert("Job application failed.");
+        {{!-- alert("Job delition failed."); --}}
       });
   }
+
+  //--------------------------------------------------------------------------------------------
+  //Job's titles hyperlink-modal
+  document.addEventListener('DOMContentLoaded', (event) => {
+    const modal = document.getElementById('jobModal');
+    const span = document.getElementsByClassName('close')[0];
+    const jobTitle = document.getElementById('modalJobTitle');
+    const jobDescription = document.getElementById('modalJobDescription');
+    const companyName = document.getElementById('modalCompanyName');
+
+    document.querySelectorAll('.job-link').forEach(link => {
+      link.onclick = function() {
+        const jobId = this.getAttribute('data-job-id');
+
+        axios.get(`http://localhost:3000/v1/job/${jobId}`)
+          .then(response => {
+            const job = response.data;
+            jobTitle.innerText = job.title;
+            jobDescription.innerText = job.extendedDescr; 
+            companyName.innerText = job.companyName;
+            modal.style.display = 'block';
+          })
+          .catch(error => {
+            console.error('Error fetching job details:', error);
+          });
+
+        return false;
+      };
+    });
+
+    span.onclick = function() {
+      modal.style.display = 'none';
+    };
+
+    window.onclick = function(event) {
+      if (event.target == modal) {
+        modal.style.display = 'none';
+      }
+    };
+});
+
 </script>

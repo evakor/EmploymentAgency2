@@ -206,8 +206,6 @@ select {
 
 
 /* Sign Up Swap */
-
-
 a {
   cursor: pointer;
   transition: all 200ms linear;
@@ -391,6 +389,27 @@ h6 span{
 
 .modal-body {
   padding: 2px 16px;
+}
+
+
+/* Title's hyperlink colors */
+.jobTitleLink {
+  color: black; /* Replace with your desired color */
+}
+
+/* Change the color when the link is hovered over */
+.jobTitleLink:hover {
+  color: #0056b3; /* Replace with your desired hover color */
+}
+
+/* Change the color when the link is visited */
+.jobTitleLink:visited {
+  color: #6c757d; /* Replace with your desired visited color */
+}
+
+/* Change the color when the link is active (being clicked) */
+.jobTitleLink:active {
+  color: #004085; /* Replace with your desired active color */
 }
 
 

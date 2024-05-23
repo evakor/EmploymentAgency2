@@ -11,6 +11,8 @@ const { engine } = require("express-handlebars");
 
 saltRounds = 10;
 
+const jobsPerPage = 3;
+
 const jobCategories = {
   occupations: [
     {
@@ -330,9 +332,9 @@ app.get("/employer", authenticate, async (req, res) => {
 
     const jobs = jobsResponse.data;
 
-    console.log(jobs);
+    // console.log(jobs);
     const employerData = employerResponse.data;
-    console.info(employerData);
+    // console.info(employerData);
     // const applications = applicationsResponse.data;
 
     res.render("employerProfile", {
@@ -350,27 +352,28 @@ app.get("/employer", authenticate, async (req, res) => {
 
 //Update employer's profile with the pop up
 app.post("/employer", authenticate, async (req, res) => {
+  console.log('mpainei sto route');
   let userId = req.session.user.id;
   try {
     const {
-      firstName,
-      lastName,
-      email,
-      region,
-      address,
-      phone1,
-      phone2,
-      companyDesc,
+      editFirstName,
+      editLastName,
+      editEmail,
+      editRegion,
+      editAddress,
+      editPhone1,
+      editPhone2,
+      editCompanyDesc,
       jobTitle,
       jobDescription,
       extendedDescr,
       jobDuration,
       companyName,
       occupation,
-      specialty,
+      specialty
     } = req.body;
 
-    if (firstName === undefined) {
+    if (editFirstName === undefined) {
       console.log("aaa");
       try {
         let newJobResponse = await axios({
@@ -404,16 +407,18 @@ app.post("/employer", authenticate, async (req, res) => {
     } else {
       console.log("bbb");
       try {
+        console.log("allagi xaraktiristikon profil");
         await axios.put(`http://localhost:${port}/v1/employer/${userId}`, {
-          firstName: firstName,
-          lastName: lastName,
-          email: email,
-          region: region,
-          address: address,
-          phone1: phone1,
-          phone2: phone2,
-          companyDesc: companyDesc,
+          firstName: editFirstName,
+          lastName: editLastName,
+          email: editEmail,
+          region: editRegion,
+          address: editAddress,
+          phone1: editPhone1,
+          phone2: editPhone2,
+          companyDesc: editCompanyDesc,
         });
+        console.log("epitixis allagi xaraktiristikon profil");
         res.redirect(`/employer?id=${userId}`);
       } catch (error) {
         console.error("Error updating employer info", error);
@@ -430,7 +435,7 @@ app.post("/employer", authenticate, async (req, res) => {
 app.get("/jobs", (req, res) => {
   // Extract filters from query parameters
   const { occupation, specialty, region } = req.query;
-
+  
   // Construct the URL with query parameters for the API request
   if (
     occupation === undefined &&
@@ -472,15 +477,27 @@ app.get("/jobs", (req, res) => {
 });
 
 //Delete job by pressing †he button
-app.delete("/employer", authenticate, (req, res) => {
-  try {
-    const userId = req.session.user.id;
-    res.redirect(`/employer?id=${userId}`);
-  } catch (error) {
-    console.error("Error creating new ad", error);
-    res.status(500).send("Error creating new ad");
-  }
-});
+// app.delete("/employer", authenticate, async (req, res) => {
+//   try {
+//     console.log('xekinise to route');
+//     const userId = req.session.user.id;
+//     const { jobId } = req.query.jobId;
+    
+//     const [submitResponse, jobResponse] = await Promise.all([
+//       axios.delete(`http://localhost:3000/v1/submition/job/${jobId}`),
+//       axios.delete(`http://localhost:3000/v1/job/${jobId}`),
+//     ]);
+
+//     const newSubmits = submitResponse.data;
+//     const newJobData = jobResponse.data;
+
+//     res.redirect(`/employer?id=${userId}`);
+//   } catch (error) {
+//     console.error("Error fetching data:", error);
+//     res.status(500).send("Error loading employer profile");
+//   }
+  
+// });
 
 app.get("/about", (req, res) => {
   res.render("about", {

@@ -1,6 +1,6 @@
 const database = require('../config/database.js');
 
-const tableName = "APPLIES";
+const tableName = "Applies";
 
 const getAll = async (req, res) => {
     try {
@@ -36,10 +36,14 @@ const getByUserId = async (req, res) => {
 
 const create = async (req, res) => {
     const { employeeId, jobId, applicationDate } = req.body;
+    console.log("jobIdAAAAAAAA");
+    console.log(jobId);
+    const parsedJobId = parseInt(jobId.jobId, 10);
+    console.log(parsedJobId);
     try {
         const result = await database.query(
-            `INSERT INTO "${tableName}" ("employeeId", "jobId", "applicationDate") VALUES ($1, $2, $3) RETURNING *`,
-            [employeeId, jobId, applicationDate]
+          `INSERT INTO "${tableName}" ("employeeId", "jobId", "applicationDate") VALUES ($1, $2, $3) RETURNING *`,
+          [employeeId, parsedJobId, applicationDate]
         );
         res.status(200).json(result.rows[0]);
     } catch (error) {

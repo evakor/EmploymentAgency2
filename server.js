@@ -229,31 +229,44 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(session({
-  secret: "secretKey",
-  resave: false,
-  saveUninitialized: false,
-  cookie: { maxAge: 60000 * 60 },
-}));
+app.use(
+  session({
+    secret: "secretKey",
+    resave: false,
+    saveUninitialized: false,
+    cookie: { maxAge: 60000 * 60 },
+  })
+);
 
 app.use((req, res, next) => {
-  if (req.url.includes('/employee')) {
-    res.locals.currentPage = 'employee';
-  } else if (req.url.includes('/employer')) {
-    res.locals.currentPage = 'employer';
+  if (req.url.includes("/employee")) {
+    res.locals.currentPage = "employee";
+  } else if (req.url.includes("/employer")) {
+    res.locals.currentPage = "employer";
   } else {
-    res.locals.currentPage = '';
+    res.locals.currentPage = "";
   }
 
-  if (req.session.user && 'occupation' in req.session.user) {
-      res.locals.isEmployee = 1;
+  if (req.session.user && "occupation" in req.session.user) {
+    res.locals.isEmployee = 1;
   } else {
-      res.locals.isEmployee = 0;
+    res.locals.isEmployee = 0;
   }
 
   res.locals.session = req.session;
   next();
 });
+
+// Middleware to set the current user ID globally
+function setGlobalUserId(req, res, next) {
+  if (req.session && req.session.user && req.session.user.id) {
+    res.locals.userId = req.session.user.id;
+    console.log(res.locals.userId);
+  } else {
+    res.locals.userId = null;
+  }
+  next();
+}
 
 function authenticate(req, res, next) {
   if (req.session && req.session.user) {
@@ -263,6 +276,21 @@ function authenticate(req, res, next) {
   }
 }
 
+function setCurrentPage(req, res, next) {
+  if (req.path.startsWith("/employee")) {
+    req.session.currentPage = "employee";
+  } else if (req.path.startsWith("/employer")) {
+    req.session.currentPage = "employer";
+  } else {
+    req.session.currentPage = null;
+  }
+  next();
+}
+
+app.use(setCurrentPage);
+app.use(setGlobalUserId);
+
+// REST Routes
 app.use(require("./routes/applicationRoutes.js"));
 app.use(require("./routes/employeeRoutes.js"));
 app.use(require("./routes/employerRoutes.js"));
@@ -311,7 +339,7 @@ app.get("/employee", authenticate, async (req, res) => {
 
 app.post("/employee", authenticate, async (req, res) => {
   try {
-    let userId = req.session.user.id;
+    let userId = res.locals.userId;
     const {
       firstName,
       lastName,
@@ -323,6 +351,7 @@ app.post("/employee", authenticate, async (req, res) => {
       occupation,
       specialty,
     } = req.body;
+    console.error(req.body);
     await axios.put(`http://localhost:${port}/v1/employee/${userId}`, {
       firstName: firstName,
       lastName: lastName,
@@ -331,7 +360,7 @@ app.post("/employee", authenticate, async (req, res) => {
       address: address,
       phone1: phone1,
       phone2: phone2,
-      occupation: jobCategories.occupations[occupation].name,
+      occupation: typeof occupation === 'string' ? occupation : jobCategories.occupations[parseInt(occupation)].name,
       specialty: specialty,
     });
     res.redirect(`/employee?id=${userId}`);
@@ -395,6 +424,7 @@ app.get("/employer", authenticate, async (req, res) => {
 
 // Update employer's profile with the pop-up
 app.post("/employer", authenticate, async (req, res) => {
+  
   let userId = req.session.user.id;
   try {
     const {
@@ -427,7 +457,7 @@ app.post("/employer", authenticate, async (req, res) => {
             extendedDescr: extendedDescr,
             duration: jobDuration,
             companyName: companyName,
-            occupation: jobCategories.occupations[jobOccupation].name,
+            occupation: typeof jobOccupation === 'string' ? jobOccupation : jobCategories.occupations[parseInt(jobOccupation)].name,
             specialty: jobSpecialty,
           },
         });
@@ -463,13 +493,42 @@ app.post("/employer", authenticate, async (req, res) => {
         console.error("Error updating employer info", error);
         res.status(500).send("Error updating employer info");
       }
-    } else {
-      await axios.delete(`http://localhost:${port}/v1/job/${jobId}`);
+    }
+    else{
+      const [submitResponse, jobResponse] = await Promise.all([
+        axios.delete(`http://localhost:3000/v1/job/${jobId}`),
+      ]);
       res.redirect(`/employer?id=${userId}`);
     }
   } catch (error) {
     console.error("Sign Up error:", error);
     res.status(401).send("Sign Up failed: " + error.message);
+  }
+});
+
+app.post("/employer/updateJob", authenticate, async (req, res) => {
+  
+  try {
+    const {
+      editJobId,
+      editJobTitle,
+      editJobDescription,
+      editJobExtendedDescr,
+      editJobDuration,
+      editJobCompanyName,
+      editJobOccupation,
+      editJobSpecialty,
+    } = req.body;
+
+    console.log("MEGALO PEOS");
+    console.log(req.body);
+
+    const jobId = req.body.jobId; 
+
+    res.redirect("/employer/jobs");
+  } catch (error) {
+    console.error("Error updating job:", error);
+    res.status(500).send("Internal Server Error");
   }
 });
 
@@ -484,7 +543,8 @@ app.get("/jobs", (req, res) => {
           jobCategories: jobCategories,
           regions: greekPrefectures,
           session: req.session,
-        });
+          userId: res.locals.userId,
+        }); // , { jobs: response.data }
       })
       .catch((error) => {
         console.error("Error fetching jobs:", error);
@@ -498,6 +558,7 @@ app.get("/jobs", (req, res) => {
           jobCategories: jobCategories,
           regions: greekPrefectures,
           session: req.session,
+          userId: res.locals.userId,
         });
       })
       .catch((error) => {
@@ -505,6 +566,38 @@ app.get("/jobs", (req, res) => {
         res.status(500).send("Error fetching jobs");
       });
   }
+});
+
+app.post("/jobs", async (req, res) => {
+  const jobId = req.body;
+  console.log(jobId);
+  let userId = res.locals.userId;
+  const applicationDate = new Date();
+  const formattedDate = moment(applicationDate).format("YYYY-MM-DD");
+  if(userId){
+    try {
+      await axios({
+        method: "post",
+        url: `http://localhost:${port}/v1/application`,
+        data: {
+          employeeId: userId,
+          jobId: jobId,
+          applicationDate: formattedDate,
+        }
+      });
+      res.redirect("/jobs");
+    } catch (error) {
+      console.error("Your application to the job failed ", error);
+      res
+        .status(500)
+        .send("Sign Your application to the job failed " + error.message);
+    }
+     
+  }else{
+    console.error("No sign up");
+    res.render("login"); 
+  }
+  res.render("jobs");
 });
 
 app.get("/about", (req, res) => {
@@ -613,7 +706,7 @@ app.post("/signup", async (req, res) => {
           address: employee_address,
           phone1: employee_phone1,
           phone2: employee_phone2,
-          occupation: jobCategories.occupations[employee_occupation].name,
+          occupation: typeof employee_occupation === "string" ? employee_occupation : jobCategories.occupations[parseInt(employee_occupation)].name,
           specialty: employee_specialty,
           profilePicturePath: null,
           cvPath: null,

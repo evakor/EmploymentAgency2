@@ -197,14 +197,15 @@
 <div id="editJobModal" class="modal">
   <div class="modal-content">
     <div class="modal-body">
-      <form id="editJobForm" method="post" action="/employer">
+      <form id="editJobForm" method="post" action="/employer/updateJob">
+        <input type="hidden" name="editJobId">
         <div class="mb-3">
           <label for="jobTitle" class="form-label">Title</label>
-          <input type="text" class="form-control" id="editJobTitle" name="editJobTitle" >
+          <input type="text" class="form-control" id="editJobTitle" name="editJobTitle">
         </div>
         <div class="mb-3">
           <label for="jobDescription" class="form-label">Description</label>
-          <textarea class="form-control" id="editJobDescription" name="editJobDescription" ></textarea>
+          <textarea class="form-control" id="editJobDescription" name="editJobDescription"></textarea>
         </div>
         <div class="mb-3">
           <label for="extendedDescr" class="form-label">Extended Description</label>
@@ -216,22 +217,22 @@
         </div>
         <div class="mb-3">
           <label for="companyName" class="form-label">Company Name</label>
-          <input type="text" class="form-control" id="editJobCompanyName" name="editJobCompanyName" >
+          <input type="text" class="form-control" id="editJobCompanyName" name="editJobCompanyName">
         </div>
-        <div class="mb-3">
+        {{!-- <div class="mb-3">
           <select id="occupationDropdown" name="editJobOccupation" onchange="updateSpecialties()" >
-            <option >Occupation</option>
+            <option id="editJobOccupation">Occupation</option>
             {{#each jobCategories.occupations}}
             <option value="{{@index}}">{{this.name}}</option>
             {{/each}}
           </select>
           <select id="specialtyDropdown" name="editJobSpecialty">
-            <option >Specialty</option>
+            <option id="editJobSpecialty">Specialty</option>
           </select>
-        </div>
+        </div> --}}
       </form>
       <button type="button" class="btn btn-close btn-secondary" data-bs-dismiss="modal">Close</button>
-      <button type="button" class="btn btn-primary" id="saveChanges">Save Changes</button>
+      <button type="button" class="btn btn-primary" id="saveChangesEditJob">Save Changes</button>
     </div>
   </div>
 </div>
@@ -282,9 +283,9 @@
       }
     });
 
-    document.getElementById('saveChangesButton').addEventListener('click', function () {
-      document.getElementById('editEmployerForm').submit();
-    });
+  document.getElementById('saveChangesButton').addEventListener('click', function () {
+    document.getElementById('editEmployerForm').submit();
+  });
 //-----------------------------------------------------------------------------------------------
   
   //Create a new Job Modal
@@ -309,9 +310,9 @@
       }
     });
 
-    document.getElementById('createJobAd').addEventListener('click', function () {
-      document.getElementById('createJobForm').submit();
-    });
+  document.getElementById('createJobAd').addEventListener('click', function () {
+    document.getElementById('createJobForm').submit();
+  });
 
 //-----------------------------------------------------------------------------------------------
   //For the delete button
@@ -383,30 +384,18 @@
 
       try {
         const job = await getJobById(jobId);
-        console.log(job);
+        console.log(job); 
 
-        if (modal && job) {
-          console.log(job.title);
-          const editJobTitle = document.getElementById('editJobTitle');
-          const editJobDescription = document.getElementById('editJobDescription');
-          const editJobExtendedDescr = document.getElementById('editJobExtendedDescr');
-          const editJobDuration = document.getElementById('editJobDuration');
-          const editJobCompanyName = document.getElementById('editJobCompanyName');
-          const editJobOccupation = document.getElementById('editJobOccupation');
-          const editJobSpecialty = document.getElementById('editJobSpecialty');
+        document.getElementById('editJobId').value = job.id;
+        document.getElementById('editJobTitle').value = job.title;
+        document.getElementById('editJobDescription').value = job.description;
+        document.getElementById('editJobExtendedDescr').value = job.extendedDescr;
+        document.getElementById('editJobDuration').value = job.duration;
+        document.getElementById('editJobCompanyName').value = job.companyName;
+        //document.getElementById('editJobOccupation').value = job.occupation;
+        //document.getElementById('editJobSpecialty').value = job.specialty;
 
-          {{!-- console.log( editJobTitle, editJobDescription, editJobExtendedDescr, editJobDuration, editJobCompanyName, editJobOccupation, editJobSpecialty ); --}}
-
-          editJobTitle.value = job.title;
-          console.log(editJobTitle.value);
-          editJobDescription.value = job.description;
-          editJobExtendedDescr.value = job.extendedDescr;
-          editJobDuration.value = job.duration;
-          editJobCompanyName.value = job.companyName;
-          editJobOccupation.value = job.occupation;
-          updateSpecialties();
-          editJobSpecialty.value = job.specialty;
-
+        if (modal) {
           modal.style.display = "block";
           span.onclick = function () {
             modal.style.display = "none";
@@ -434,7 +423,8 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-      document.getElementById('saveChanges').addEventListener('click', function () {
+      document.getElementById('saveChangesEditJob').addEventListener('click', function () {
+        console.log("PEOS")
         document.getElementById('editJobForm').submit();
       });
     });

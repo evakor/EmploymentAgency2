@@ -1,13 +1,16 @@
 const express = require("express");
 const axios = require("axios");
 const bodyParser = require("body-parser");
-const path = require("path");
+const path = require('path');
+const fs = require('fs');
+const multer = require('multer');
 const bcrypt = require("bcryptjs");
 const session = require("express-session");
 const moment = require("moment");
 const app = express();
 const port = 3000;
-const { engine } = require("express-handlebars");
+const exphbs = require("express-handlebars");
+const { v4: uuidv4 } = require('uuid');
 
 saltRounds = 10;
 
@@ -187,38 +190,70 @@ const greekPrefectures = [
   "Zakynthos",
 ];
 
-app.engine(
-  "hbs",
-  engine({
-    extname: ".hbs",
-    helpers: {
-      json: function (context) {
-        return JSON.stringify(context);
-      },
-      ifEquals: function (arg1, arg2, options) {
-        return arg1 == arg2 ? options.fn(this) : options.inverse(this);
-      },
-    },
-    defaultLayout: "main",
-    layoutsDir: path.join(__dirname, "views/layouts"),
-    partialsDir: path.join(__dirname, "views/partials"),
-  })
-);
+const assetsDir = path.join(__dirname, 'assets');
+if (!fs.existsSync(assetsDir)) {
+  fs.mkdirSync(assetsDir);
+}
 
-app.set("view engine", "hbs");
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'public/static');
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = uuidv4() + '-' + file.originalname;
+    cb(null, uniqueSuffix);
+  },
+});
+
+const upload = multer({ storage: storage });
+
+const hbs = exphbs.create({
+  extname: '.hbs',
+  defaultLayout: 'main',
+  layoutsDir: path.join(__dirname, 'views/layouts'),
+  partialsDir: path.join(__dirname, 'views/partials'),
+  helpers: {
+    json: function (context) {
+      return JSON.stringify(context);
+    },
+    ifEquals: function (arg1, arg2, options) {
+      return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
+    }
+  }
+});
+
+app.engine('hbs', hbs.engine);
+app.set('view engine', 'hbs');
 app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(
-  session({
-    secret: "secretKey",
-    resave: false,
-    saveUninitialized: false,
-    cookie: { maxAge: 60000 * 60 },
-  })
-);
+app.use(session({
+  secret: "secretKey",
+  resave: false,
+  saveUninitialized: false,
+  cookie: { maxAge: 60000 * 60 },
+}));
+
+app.use((req, res, next) => {
+  if (req.url.includes('/employee')) {
+    res.locals.currentPage = 'employee';
+  } else if (req.url.includes('/employer')) {
+    res.locals.currentPage = 'employer';
+  } else {
+    res.locals.currentPage = '';
+  }
+
+  if (req.session.user && 'occupation' in req.session.user) {
+      res.locals.isEmployee = 1;
+  } else {
+      res.locals.isEmployee = 0;
+  }
+
+  res.locals.session = req.session;
+  next();
+});
 
 function authenticate(req, res, next) {
   if (req.session && req.session.user) {
@@ -228,20 +263,6 @@ function authenticate(req, res, next) {
   }
 }
 
-function setCurrentPage(req, res, next) {
-  if (req.path.startsWith("/employee")) {
-    req.session.currentPage = "employee";
-  } else if (req.path.startsWith("/employer")) {
-    req.session.currentPage = "employer";
-  } else {
-    req.session.currentPage = null;
-  }
-  next();
-}
-
-app.use(setCurrentPage);
-
-// REST Routes
 app.use(require("./routes/applicationRoutes.js"));
 app.use(require("./routes/employeeRoutes.js"));
 app.use(require("./routes/employerRoutes.js"));
@@ -249,7 +270,6 @@ app.use(require("./routes/jobRoutes.js"));
 app.use(require("./routes/submitionRoutes.js"));
 app.use(require("./routes/authenticationRoutes.js"));
 
-// View Routes
 app.get("/", (req, res) => {
   axios
     .get(`http://localhost:${port}/v1/jobs/latest`)
@@ -279,9 +299,9 @@ app.get("/employee", authenticate, async (req, res) => {
     res.render("employeeProfile", {
       employeeData: employeeData,
       jobs: jobs,
-      session: req.session,
       jobCategories: jobCategories,
       regions: greekPrefectures,
+      session: req.session,
     });
   } catch (error) {
     console.error("Error fetching data:", error);
@@ -321,21 +341,44 @@ app.post("/employee", authenticate, async (req, res) => {
   }
 });
 
+app.post('/employee/uploadProfilePicture', upload.single('profilePicture'), authenticate, async (req, res) => {
+  try {
+    let userId = req.session.user.id;
+    const filePath = req.file.path;
+    await axios.put(`http://localhost:${port}/v1/employee/${userId}`, {
+      profilePicturePath: filePath.slice(7)
+    });
+    res.redirect(`/employee?id=${userId}`);
+  } catch (error) {
+    console.error('Error uploading image', error);
+    res.status(500).send('Error uploading image');
+  }
+});
+
+app.post('/employee/uploadCV', upload.single('cv'), authenticate, async (req, res) => {
+  try {
+    let userId = req.session.user.id;
+    const filePath = req.file.path;
+    await axios.put(`http://localhost:${port}/v1/employee/${userId}`, {
+      cvPath: filePath.slice(7)
+    });
+    res.redirect(`/employee?id=${userId}`);
+  } catch (error) {
+    console.error('Error uploading CV', error);
+    res.status(500).send('Error uploading CV');
+  }
+});
+
 app.get("/employer", authenticate, async (req, res) => {
   try {
     const { id } = req.query;
     const [jobsResponse, employerResponse] = await Promise.all([
       axios.get(`http://localhost:${port}/v1/job/byEmployer/${id}`),
       axios.get(`http://localhost:${port}/v1/employer/${id}`),
-      // axios.get(`http://localhost:${port}/v1/applications/byUserId/${id}`)
     ]);
 
     const jobs = jobsResponse.data;
-
-    // console.log(jobs);
     const employerData = employerResponse.data;
-    // console.info(employerData);
-    // const applications = applicationsResponse.data;
 
     res.render("employerProfile", {
       employerData: employerData,
@@ -350,9 +393,8 @@ app.get("/employer", authenticate, async (req, res) => {
   }
 });
 
-//Update employer's profile with the pop up
+// Update employer's profile with the pop-up
 app.post("/employer", authenticate, async (req, res) => {
-  console.log('mpainei sto route');
   let userId = req.session.user.id;
   try {
     const {
@@ -373,8 +415,8 @@ app.post("/employer", authenticate, async (req, res) => {
       jobSpecialty,
       jobId
     } = req.body;
+
     if (jobTitle !== undefined) {
-      console.log("aaa");
       try {
         let newJobResponse = await axios({
           method: "post",
@@ -405,9 +447,7 @@ app.post("/employer", authenticate, async (req, res) => {
         res.status(500).send("Error creating job");
       }
     } else if (editFirstName !== undefined) {
-      console.log("bbb");
       try {
-        console.log("allagi xaraktiristikon profil");
         await axios.put(`http://localhost:${port}/v1/employer/${userId}`, {
           firstName: editFirstName,
           lastName: editLastName,
@@ -418,32 +458,15 @@ app.post("/employer", authenticate, async (req, res) => {
           phone2: editPhone2,
           companyDesc: editCompanyDesc,
         });
-        console.log("epitixis allagi xaraktiristikon profil");
         res.redirect(`/employer?id=${userId}`);
       } catch (error) {
         console.error("Error updating employer info", error);
         res.status(500).send("Error updating employer info");
       }
-    }
-    else{
-      console.log("MPHKE GIA DELETE")
-      const [submitResponse, jobResponse] = await Promise.all([
-        // axios({
-        //   method: "delete",
-        //   url: `http://localhost:${port}/v1/submition/job`,
-        //   data: {
-        //     jobId: jobId,
-        //   },
-        // }),
-        axios.delete(`http://localhost:3000/v1/job/${jobId}`),
-      ]);
-
-      // const newSubmits = submitResponse.data;
-      // const newJobData = jobResponse.data;
-
+    } else {
+      await axios.delete(`http://localhost:${port}/v1/job/${jobId}`);
       res.redirect(`/employer?id=${userId}`);
     }
-    console.log("papala");
   } catch (error) {
     console.error("Sign Up error:", error);
     res.status(401).send("Sign Up failed: " + error.message);
@@ -451,34 +474,24 @@ app.post("/employer", authenticate, async (req, res) => {
 });
 
 app.get("/jobs", (req, res) => {
-  // Extract filters from query parameters
   const { occupation, specialty, region } = req.query;
-  
-  // Construct the URL with query parameters for the API request
-  if (
-    occupation === undefined &&
-    specialty === undefined &&
-    region === undefined
-  ) {
-    axios
-      .get(`http://localhost:${port}/v1/jobs`)
+
+  if (occupation === undefined && specialty === undefined && region === undefined) {
+    axios.get(`http://localhost:${port}/v1/jobs`)
       .then((response) => {
         res.render("jobs", {
           jobs: response.data,
           jobCategories: jobCategories,
           regions: greekPrefectures,
           session: req.session,
-        }); // , { jobs: response.data }
+        });
       })
       .catch((error) => {
         console.error("Error fetching jobs:", error);
         res.status(500).send("Error fetching jobs");
       });
   } else {
-    axios
-      .get(
-        `http://localhost:${port}/v1/jobs/getbyfilters?occupation=${occupation}&specialty=${specialty}&region=${region}`
-      )
+    axios.get(`http://localhost:${port}/v1/jobs/getbyfilters`, { params: { occupation, specialty, region } })
       .then((response) => {
         res.render("jobs", {
           jobs: response.data,
@@ -509,10 +522,7 @@ app.get("/login", (req, res) => {
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
 
-  axios
-    .get(`http://localhost:${port}/v1/getUserByEmail`, {
-      params: { email },
-    })
+  axios.get(`http://localhost:${port}/v1/getUserByEmail`, { params: { email } })
     .then(async (response) => {
       const user = response.data.user;
       const userType = response.data.userType;
@@ -523,9 +533,9 @@ app.post("/login", (req, res) => {
 
         req.session.user = user;
         req.session.userType = user.userType;
-        req.session.isEmployee = user.userType === "employee";
 
         if (userType === "employee") {
+          req.session.userType = "employee";
           res.redirect(`/employee?id=${userId}`);
         } else if (userType === "employer") {
           res.redirect(`/employer?id=${userId}`);
@@ -554,9 +564,9 @@ app.get("/logout", (req, res) => {
 
 app.get("/signup", (req, res) => {
   res.render("signup", {
-    session: req.session,
     jobCategories: jobCategories,
     regions: greekPrefectures,
+    session: req.session,
   });
 });
 
@@ -585,16 +595,10 @@ app.post("/signup", async (req, res) => {
   } = req.body;
 
   const email = employee_email !== undefined ? employee_email : employer_email;
-  const password =
-    employee_password !== undefined ? employee_password : employer_password;
+  const password = employee_password !== undefined ? employee_password : employer_password;
 
   try {
-    const response = await axios.get(
-      `http://localhost:${port}/v1/getUserByEmail`,
-      {
-        params: { email },
-      }
-    );
+    const response = await axios.get(`http://localhost:${port}/v1/getUserByEmail`, { params: { email } });
 
     if (response.status === 205) {
       const hashedPassword = await bcrypt.hash(password, saltRounds);
@@ -629,12 +633,7 @@ app.post("/signup", async (req, res) => {
         });
       }
 
-      const loginResponse = await axios.get(
-        `http://localhost:${port}/v1/getUserByEmail`,
-        {
-          params: { email },
-        }
-      );
+      const loginResponse = await axios.get(`http://localhost:${port}/v1/getUserByEmail`, { params: { email } });
 
       const userType = loginResponse.data.userType;
       const user = loginResponse.data.user;
@@ -643,7 +642,7 @@ app.post("/signup", async (req, res) => {
 
       req.session.user = user;
       req.session.userType = user.userType;
-      req.session.isEmployee = user.userType === "employee";
+      res.locals.isEmployee = user.userType === "employee";
 
       if (userType === "employee") {
         res.redirect(`/employee?id=${userId}`);
@@ -659,6 +658,12 @@ app.post("/signup", async (req, res) => {
     console.error("Sign Up error:", error);
     res.status(401).send("Sign Up failed: " + error.message);
   }
+});
+
+app.get('/pdf/:filename', (req, res) => {
+  const filename = req.params.filename;
+  const filePath = path.join(__dirname, 'public', 'pdfs', filename);
+  res.sendFile(filePath);
 });
 
 app.listen(port, () => {

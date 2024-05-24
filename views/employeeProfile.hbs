@@ -1,5 +1,4 @@
-{{!< layout}} 
-<section class="vh-50" style="background-color: #e7e9ee;">
+{{!< layout}} <section class="vh-50" style="background-color: #e7e9ee;">
   <div class="container py-5 h-50">
     <div class="row d-flex justify-content-center align-items-center h-50">
       <div class="col col-lg-6 mb-4 mb-lg-0">
@@ -7,10 +6,10 @@
           <div class="row g-0">
             <div class="col-md-4 profile-bg-color text-center text-white"
               style="border-top-left-radius: .5rem; border-bottom-left-radius: .5rem;">
-              <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp" alt="Avatar"
-                class="img-fluid my-5" style="width: 80px;" />
+              <img src="{{employeeData.profilePicturePath}}" alt="Avatar" class="img-fluid my-5" style="width: 80px;" />
               <h5>{{employeeData.firstName}} {{employeeData.lastName}}</h5>
               <p>{{employeeData.occupation}}/{{employeeData.specialty}}</p>
+              <button id="viewPdfButton" class="btn cards-button me-2" name="{{employeeData.cvPath}}">View CV</button>
               <i class="far fa-edit mb-5"></i>
             </div>
             <div class="col-md-8">
@@ -38,9 +37,22 @@
                   </div>
                 </div>
                 <div class="d-flex justify-content-end mt-3">
-                  <button type="submit" class="btn cards-button me-2" value="upload_image">Upload Image</button>
-                  <button type="submit" class="btn cards-button me-2" value="upload_cv">Upload CV</button>
-                  <button type="submit" class="btn cards-button" value="edit" onclick="openEditEmployeeModal()">Edit</button>
+                  <form id="uploadProfilePictureForm" enctype="multipart/form-data">
+                    <label class="btn cards-button me-2">
+                      <input type="file" id="profilePictureInput"
+                        style="display: none" name="profilePicture" accept="image/*">
+                        Upload Image
+                    </label>
+                  </form>
+                  <form id="uploadCVForm" enctype="multipart/form-data">
+                    <label class="btn cards-button me-2">
+                      <input type="file" id="cvInput" style="display: none" style="" name="cv"
+                        accept=".pdf,.doc,.docx">
+                        Upload CV
+                    </label>
+                  </form>
+                  <button type="submit" class="btn cards-button" value="edit"
+                    onclick="openEditEmployeeModal()">Edit</button>
                 </div>
               </div>
             </div>
@@ -49,7 +61,7 @@
       </div>
     </div>
   </div>
-</section>
+  </section>
 
   <h2 style="text-align: center;">My applications</h2>
 
@@ -141,33 +153,70 @@
           specialtySelect.appendChild(option);
         });
       }
-    } 
+    }
 
-      document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function () {
 
-          window.openEditEmployeeModal = function () {
-            console.log('stage3');
-            var modal = document.getElementById("myModal");
-            var span = document.getElementsByClassName("btn-close")[0];
-            console.log('stage4');
-            if (modal) {
-              modal.style.display = "block";
-              span.onclick = function () {
-                modal.style.display = "none";
-              }
-              window.onclick = function (event) {
-                if (event.target == modal) {
-                  modal.style.display = "none";
-                }
-              }
-            } else {
-              console.error('Modal element not found.');
+      window.openEditEmployeeModal = function () {
+        console.log('stage3');
+        var modal = document.getElementById("myModal");
+        var span = document.getElementsByClassName("btn-close")[0];
+        console.log('stage4');
+        if (modal) {
+          modal.style.display = "block";
+          span.onclick = function () {
+            modal.style.display = "none";
+          }
+          window.onclick = function (event) {
+            if (event.target == modal) {
+              modal.style.display = "none";
             }
           }
-        });
+        } else {
+          console.error('Modal element not found.');
+        }
+      }
+    });
 
-        document.getElementById('saveChangesButton').addEventListener('click', function () {
-          document.getElementById('editEmployeeForm').submit();
-          console.log('stage5');
-        });
+    document.getElementById('saveChangesButton').addEventListener('click', function () {
+      document.getElementById('editEmployeeForm').submit();
+      console.log('stage5');
+    });
+
+    document.getElementById('profilePictureInput').addEventListener('change', async (event) => {
+      const form = document.getElementById('uploadProfilePictureForm');
+      const formData = new FormData(form);
+
+      const response = await fetch('/employee/uploadProfilePicture', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (response.ok) {
+        alert('Profile picture uploaded successfully: ' + result.fileName);
+      } else {
+        alert('Profile picture upload failed');
+      }
+    });
+
+    document.getElementById('cvInput').addEventListener('change', async (event) => {
+      const form = document.getElementById('uploadCVForm');
+      const formData = new FormData(form);
+
+      const response = await fetch('/employee/uploadCV', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (response.ok) {
+        alert('CV uploaded successfully: ' + result.fileName);
+      } else {
+        alert('CV upload failed');
+      }
+    });
+
+    document.getElementById('viewPdfButton').addEventListener('click', () => {
+      const pdfUrl = event.target.name;
+      window.open(pdfUrl, '_blank');
+    });
   </script>

@@ -20,19 +20,19 @@
           <ul class="navbar-nav">
               {{#if session.user.id}}
                   <li class="nav-item">
-                      {{#if session.user.isEmployee}}
-                          {{#ifEquals session.currentPage "employee"}}
+                      {{#ifEquals session.userType "employee"}}
+                          {{#ifEquals currentPage "employee"}}
                               <a class="nav-link" href="/logout">Log Out</a>
                           {{else}}
                               <a class="nav-link" href="/employee?id={{session.user.id}}">My Profile</a>
                           {{/ifEquals}}
                       {{else}}
-                          {{#ifEquals session.currentPage "employer"}}
+                          {{#ifEquals currentPage "employer"}}
                               <a class="nav-link" href="/logout">Log Out</a>
                           {{else}}
                               <a class="nav-link" href="/employer?id={{session.user.id}}">My Profile</a>
                           {{/ifEquals}}
-                      {{/if}}
+                      {{/ifEquals}}
                   </li>
               {{else}}
                   <li class="nav-item">

@@ -43,15 +43,10 @@ const create = async (req, res) => {
 
 const updateById = async (req, res) => {
     const { id } = req.params;
-    console.log("BBBBBBBBB");
     const {
         firstName, lastName, region, address, phone1, phone2,
         email, companyDesc
     } = req.body;
-
-    console.log(req.params);
-    // console.log(req.body);
-    // console.log(req.query);
 
     // Create an array to hold the updates and another for the values
     let updates = [];
@@ -88,8 +83,6 @@ const updateById = async (req, res) => {
         SET ${updates.join(', ')}
         WHERE "id" = $${paramCounter}
         RETURNING *`;
-
-    console.log(updateQuery);
 
     try {
         const result = await database.query(updateQuery, values);

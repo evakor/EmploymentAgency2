@@ -46,7 +46,7 @@ const updateById = async (req, res) => {
     const { id } = req.params;
     const {
         firstName, lastName, region, address, phone1, phone2,
-        email, occupation, specialty
+        email, occupation, specialty, profilePicturePath, cvPath
     } = req.body;
 
     // Create an array to hold the updates and another for the values
@@ -73,6 +73,8 @@ const updateById = async (req, res) => {
     addUpdate('email', email);
     addUpdate('occupation', occupation);
     addUpdate('specialty', specialty);
+    addUpdate('profilePicturePath', profilePicturePath);
+    addUpdate('cvPath', cvPath);
 
     // if (updates.length === 0) {
     //     return res.status(400).send('No fields to update');
@@ -85,8 +87,6 @@ const updateById = async (req, res) => {
         SET ${updates.join(', ')}
         WHERE "id" = $${paramCounter}
         RETURNING *`;
-
-    console.log(updateQuery);
 
     try {
         const result = await database.query(updateQuery, values);

@@ -58,8 +58,6 @@
 <script>
     function confirmApply(jobTitle, jobId) {
         if (confirm("Are you sure you want to apply for the position of '" + jobTitle + "'?")) {
-    
-            console.log(jobId);
             axios.post(`http://localhost:3000/v1/application`){}
         } else {
             alert("Job application was cancelled.");
@@ -74,12 +72,9 @@
             const companyName = document.getElementById('modalCompanyName');
             const jobExtendedDescription = document.getElementById('modalExtendedJobDescription');
 
-            console.log('aa');
-
             document.querySelectorAll('.job-link').forEach(link => {
                 link.onclick = function () {
                     const jobId = this.getAttribute('data-job-id');
-                    console.log(jobId);
                     axios.get(`http://localhost:3000/v1/job/${jobId}`)
                         .then(response => {
                             const job = response.data;

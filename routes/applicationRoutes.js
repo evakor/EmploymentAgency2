@@ -14,7 +14,6 @@ router.get(`/${version}/application/byUserId/:id`, applicationController.getByUs
 
 router.get(`/${version}/applications`, applicationController.getAll);
 
-
 router.put(`/${version}/application/:id`, applicationController.updateById);
 
 router.delete(`/${version}/application/:id`, applicationController.deleteById);

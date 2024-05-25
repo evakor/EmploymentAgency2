@@ -272,12 +272,10 @@
       const occupationsData = {{{ json jobCategories }}};
 
       function updateSpecialties() {
-        console.log('stage1');
         const occupationSelect = document.getElementById('occupationDropdown');
         const specialtySelect = document.getElementById('specialtyDropdown');
         const selectedOccupationIndex = occupationSelect.value;
         specialtySelect.innerHTML = '<option value="{{employeeData.specialty}}">Select Specialty</option>';
-        console.log('stage2');
         if (selectedOccupationIndex !== "") {
           const specialties = occupationsData.occupations[selectedOccupationIndex].specialties;
           specialties.forEach(specialty => {
@@ -348,19 +346,15 @@
       //-----------------------------------------------------------------------------------------------
       //For the delete button
       function confirmDelete(jobTitle, jobId) {
-        console.log(jobId);
         if (confirm("Are you sure you want to delete the job posting for '" + jobTitle + "'?")) {
-          console.log("SVHNO DOULEIA", jobTitle, jobId);
           //deleteAd(jobId);
           document.getElementById('deleteJobAd').submit();
         } else {
-          console.log("DEN SVHNO DOULEIA")
           // alert("Deletion cancelled.");
         }
       }
 
       //function deleteAd(jobId) {
-      //  console.log(jobId);
       //  document.getElementById('deleteAd').addEventListener('click', function () {
       //    document.getElementById('deleteJobAd').submit();})
       //}
@@ -417,7 +411,6 @@
 
       try {
         const job = await getJobById(jobId);
-        console.log(job);
 
 
         document.getElementById('editJobId').value = job.id;
@@ -448,7 +441,6 @@
       async function getJobById(jobId) {
         try {
           const response = await axios.get(`http://localhost:3000/v1/job/${jobId}`);
-          console.log("HRTHA NA PARO THN DOULEIA", jobId);
           return response.data;
         } catch (error) {
           console.error('Error fetching job details:', error);
@@ -480,7 +472,6 @@ function openApplicantProfilesModal(jobTitle, jobId) {
       .then(response => {
         const applicants = response.data;
         profilesContainer.innerHTML = '';
-        console.log(applicants);
         if(Array.isArray(applicants)){
           applicants.forEach(applicant => {
             const profileCard = `

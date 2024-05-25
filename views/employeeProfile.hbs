@@ -176,12 +176,10 @@
   const occupationsData = {{{ json jobCategories }}};
 
   function updateSpecialties() {
-    console.log('stage1');
     const occupationSelect = document.getElementById('occupationDropdown');
     const specialtySelect = document.getElementById('specialtyDropdown');
     const selectedOccupationIndex = occupationSelect.value;
     specialtySelect.innerHTML = '<option value="{{employeeData.specialty}}">Select Specialty</option>';
-    console.log('stage2');
     if (selectedOccupationIndex !== "") {
       const specialties = occupationsData.occupations[selectedOccupationIndex].specialties;
       specialties.forEach(specialty => {
@@ -196,10 +194,8 @@
   document.addEventListener('DOMContentLoaded', function () {
 
     window.openEditEmployeeModal = function () {
-      console.log('stage3');
       var modal = document.getElementById("myModal");
       var span = document.getElementsByClassName("btn-close")[0];
-      console.log('stage4');
       if (modal) {
         modal.style.display = "block";
         span.onclick = function () {
@@ -218,7 +214,6 @@
 
   document.getElementById('saveChangesButton').addEventListener('click', function () {
     document.getElementById('editEmployeeForm').submit();
-    console.log('stage5');
   });
 
   document.getElementById('profilePictureInput').addEventListener('change', async (event) => {

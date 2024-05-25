@@ -39,9 +39,9 @@ async function runSQLCommands(sqlCommands) {
 }
 
 async function deleteDummyEntries() {
-    let deleteQuery = `DELETE FROM "Applies" WHERE EXTRACT(YEAR FROM "applicationDate") = 2023`;
+    let deleteQuery = `DELETE FROM "Applies" a WHERE a."employeeId" IN (SELECT e.id FROM "EMPLOYEE" e WHERE "firstName" LIKE '%DUMMY%')`;
     await database.query(deleteQuery);
-    deleteQuery = `DELETE FROM "Submits" WHERE EXTRACT(YEAR FROM "creationDate") = 2023`;
+    deleteQuery = `DELETE FROM "Submits" s WHERE s."employerId" IN (SELECT e.id FROM "EMPLOYER" e WHERE "firstName" LIKE '%DUMMY%')`;
     await database.query(deleteQuery);
     deleteQuery = `DELETE FROM "JOB" WHERE "title" LIKE '%DUMMY%'`;
     await database.query(deleteQuery);

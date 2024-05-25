@@ -1,5 +1,4 @@
-{{!< layout}}
- <form method="GET" action="/jobs">
+{{!< layout}} <form method="GET" action="/jobs">
     <div class="filters">
         <select id="occupationDropdown" name="occupation" onchange="updateSpecialties()">
             <option value="">Select Occupation</option>
@@ -18,135 +17,135 @@
         </select>
         <button class="btn simple-button" type="submit" id="submit-button">Apply Filters</button>
     </div>
-</form>
+    </form>
 
-    
-<div class="cards">
-    
-    {{#each jobs as |job|}}
-    <div class="card mb-3" style="max-width: 540px;">
-        <div class="row g-0">
-            <div class="col-md-4">
-                <img src="{{job.imagePath}}" class="card-img" alt="...">
-            </div>
-            <div class="col-md-8">
-                <div class="card-body">
-                    
-                    <h5 class="card-title"><a href="#" id="jobTitleLink" class="job-link"
-                            data-job-id="{{job.id}}">{{job.title}}</a></h5>
-                    <p class="card-text">{{job.description}}</p>
-                    <p class="card-text"><small class="text-muted">{{job.companyName}}</small></p>
-                    {{!-- <p>{{userId}}</p> --}}
-                    {{!-- {{#if userId}} --}}
-                    <form id="applyForJobAd" method="post" action="/jobs">
-                        <input type="hidden" id="jobId" name="jobId" value="{{job.id}}">
-                        <button id="jobIdbutton" class="btn cards-button position-absolute bottom-0 end-0 mb-2"
-                            onclick="confirmApply('{{job.title}}', '{{job.id}}', '{{userId}}')">Apply</button>
-                    </form>
-                    {{!-- {{else}}
-                    <button class="btn cards-button position-absolute bottom-0 end-0 mb-2"
-                        onclick="redirectToLogin()">Apply</button>
-                    {{/if}} --}}
+
+    <div class="cards">
+        {{#each jobs as |job|}}
+        <div class="card mb-3" style="max-width: 540px;">
+            <div class="row g-0">
+                <div class="col-md-4">
+                    <img src="{{job.imagePath}}" class="card-img" alt="...">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+
+                        <h5 class="card-title"><a href="#" id="jobTitleLink" class="job-link"
+                                data-job-id="{{job.id}}">{{job.title}}</a></h5>
+                        <p class="card-text">{{job.description}}</p>
+                        <p class="card-text"><small class="text-muted">{{job.companyName}}</small></p>
+                        {{!-- <p>{{userId}}</p> --}}
+                        {{!-- {{#if userId}} --}}
+                        <form id="applyForJobAd" method="post" action="/jobs">
+                            <input type="hidden" id="jobId" name="jobId" value="{{job.id}}">
+                            <button id="jobIdbutton_{{job.id}}"
+                                class="btn cards-button position-absolute bottom-0 end-0 mb-2"
+                                onclick="confirmApply('{{job.title}}', '{{job.id}}', '{{userId}}')">Apply</button>
+                        </form>
+                        {{!-- {{else}}
+                        <button class="btn cards-button position-absolute bottom-0 end-0 mb-2"
+                            onclick="redirectToLogin()">Apply</button>
+                        {{/if}} --}}
+                    </div>
                 </div>
             </div>
         </div>
+        {{/each}}
     </div>
-    {{/each}}
-</div>
 
-<!-- Job's ad More Information Modal -->
-<div id="jobModal" class="modal">
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <h2 id="modalJobTitle"></h2>
-        <p id="modalCompanyName"></p>
-        <p id="modalJobDescription"></p>
-        <p id="modalExtendedJobDescription"></p>
+    <!-- Job's ad More Information Modal -->
+    <div id="jobModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalJobTitle"></h2>
+            <p id="modalCompanyName"></p>
+            <p id="modalJobDescription"></p>
+            <p id="modalExtendedJobDescription"></p>
+        </div>
     </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script>
-    const occupationsData = {{{ json jobCategories }}};
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        const occupationsData = {{{ json jobCategories }}};
 
-    function updateSpecialties() {
-        const occupationSelect = document.getElementById('occupationDropdown');
-        const specialtySelect = document.getElementById('specialtyDropdown');
-        const selectedOccupationIndex = occupationSelect.value;
-        specialtySelect.innerHTML = '<option value="">Select Specialty</option>';
+        function updateSpecialties() {
+            const occupationSelect = document.getElementById('occupationDropdown');
+            const specialtySelect = document.getElementById('specialtyDropdown');
+            const selectedOccupationIndex = occupationSelect.value;
+            specialtySelect.innerHTML = '<option value="">Select Specialty</option>';
 
-        if (selectedOccupationIndex !== "") {
-            const specialties = occupationsData.occupations[selectedOccupationIndex].specialties;
-            specialties.forEach(specialty => {
-                const option = document.createElement('option');
-                option.value = specialty;
-                option.textContent = specialty;
-                specialtySelect.appendChild(option);
+            if (selectedOccupationIndex !== "") {
+                const specialties = occupationsData.occupations[selectedOccupationIndex].specialties;
+                specialties.forEach(specialty => {
+                    const option = document.createElement('option');
+                    option.value = specialty;
+                    option.textContent = specialty;
+                    specialtySelect.appendChild(option);
+                });
+            }
+        }
+
+        function confirmApply(jobTitle, jobId, userId) {
+            if (!userId) {
+                // User is not logged in, redirect to login page
+                window.location.href = '/login';
+            } else {
+                applyForJobAd(parseInt(jobId));
+                alert(`You have successfully applied for the job: ${jobTitle}`);
+                // Optionally, you can submit the form here if needed
+                // document.getElementById('applyForJobAd').submit();
+            }
+        }
+
+        function applyForJobAd(jobId) {
+            document.getElementById('jobIdbutton_' + jobId).addEventListener('click', function () {
+                document.getElementById('applyForJobAd').submit();
+            })
+        }
+
+        function redirectToLogin() {
+            alert('You must be logged in to apply for this job.');
+            window.location.href = '/login'; // Redirect to the login page
+        }
+
+        //Job's titles hyperlink-modal
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const modal = document.getElementById('jobModal');
+            const span = document.getElementsByClassName('close')[0];
+            const jobTitle = document.getElementById('modalJobTitle');
+            const jobDescription = document.getElementById('modalJobDescription');
+            const companyName = document.getElementById('modalCompanyName');
+            const jobExtendedDescription = document.getElementById('modalExtendedJobDescription');
+
+            document.querySelectorAll('.job-link').forEach(link => {
+                link.onclick = function () {
+                    const jobId = this.getAttribute('data-job-id');
+
+                    axios.get(`http://localhost:3000/v1/job/${jobId}`)
+                        .then(response => {
+                            const job = response.data;
+                            jobTitle.innerText = job.title;
+                            companyName.innerText = job.companyName;
+                            jobDescription.innerText = job.description;
+                            jobExtendedDescription.innerText = job.extendedDescr;
+                            modal.style.display = 'block';
+                        })
+                        .catch(error => {
+                            console.error('Error fetching job details:', error);
+                        });
+
+                    return false;
+                };
             });
-        }
-    }
 
-    function confirmApply(jobTitle, jobId, userId) {
-        if (!userId) {
-            // User is not logged in, redirect to login page
-            window.location.href = '/login';
-        } else {
-            applyForJobAd(parseInt(jobId));
-            alert(`You have successfully applied for the job: ${jobTitle}`);
-            // Optionally, you can submit the form here if needed
-            // document.getElementById('applyForJobAd').submit();
-        }
-    }
+            span.onclick = function () {
+                modal.style.display = 'none';
+            };
 
-    function applyForJobAd(jobId) {
-        document.getElementById('jobIdbutton').addEventListener('click', function () {
-            document.getElementById('applyForJobAd').submit();
-        })
-    }
-
-    function redirectToLogin() {
-        alert('You must be logged in to apply for this job.');
-        window.location.href = '/login'; // Redirect to the login page
-    }
-
-    //Job's titles hyperlink-modal
-    document.addEventListener('DOMContentLoaded', (event) => {
-        const modal = document.getElementById('jobModal');
-        const span = document.getElementsByClassName('close')[0];
-        const jobTitle = document.getElementById('modalJobTitle');
-        const jobDescription = document.getElementById('modalJobDescription');
-        const companyName = document.getElementById('modalCompanyName');
-        const jobExtendedDescription = document.getElementById('modalExtendedJobDescription');
-
-        document.querySelectorAll('.job-link').forEach(link => {
-            link.onclick = function () {
-                const jobId = this.getAttribute('data-job-id');
-
-                axios.get(`http://localhost:3000/v1/job/${jobId}`)
-                    .then(response => {
-                        const job = response.data;
-                        jobTitle.innerText = job.title;
-                        companyName.innerText = job.companyName;
-                        jobDescription.innerText = job.description;
-                        jobExtendedDescription.innerText = job.extendedDescr;
-                        modal.style.display = 'block';
-                    })
-                    .catch(error => {
-                        console.error('Error fetching job details:', error);
-                    });
-
-                return false;
+            window.onclick = function (event) {
+                if (event.target == modal) {
+                    modal.style.display = 'none';
+                }
             };
         });
-
-        span.onclick = function () {
-            modal.style.display = 'none';
-        };
-
-        window.onclick = function (event) {
-            if (event.target == modal) {
-                modal.style.display = 'none';
-            }
-        };
-    });
-</script>
+    </script>

@@ -25,7 +25,6 @@ const getById = async (req, res) => {
 
 const getApplicantsByJobId = async (req, res) => {
   const {id } = req.params;
-  console.log(req.params);
   try {
     const result = await database.query(
       `SELECT e."id", e."firstName", e."lastName",e."address", e."email", e."phone1", e."phone2", e."region", e."occupation", e."specialty", e."profilePicturePath" 
@@ -35,7 +34,6 @@ const getApplicantsByJobId = async (req, res) => {
       //   [parseInt(jobId)]
       [parseInt(id)]
     );
-    console.log(result);
     res.status(200).json(result.rows);
   } catch (error) {
     console.error("Error getting applicants by IDs:", error);
@@ -56,10 +54,7 @@ const getByUserId = async (req, res) => {
 
 const create = async (req, res) => {
     const { employeeId, jobId, applicationDate } = req.body;
-    console.log("jobIdAAAAAAAA");
-    console.log(jobId);
     const parsedJobId = parseInt(jobId.jobId, 10);
-    console.log(parsedJobId);
     try {
         const result = await database.query(
           `INSERT INTO "${tableName}" ("employeeId", "jobId", "applicationDate") VALUES ($1, $2, $3) RETURNING *`,
@@ -67,8 +62,11 @@ const create = async (req, res) => {
         );
         res.status(200).json(result.rows[0]);
     } catch (error) {
-        console.error('Error creating application:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        if (error.code === '23505') { // 23505 is the error code for unique violation in PostgreSQL
+            res.status(409).json({ error: 'Application already exists for this job and employee.' });
+        } else {
+            res.status(500).json({ error: 'Internal server error' });
+        }
     }
 };
 

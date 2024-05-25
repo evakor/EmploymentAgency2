@@ -89,7 +89,7 @@
               {{!-- Delete button --}}
               <form id="deleteJobAd" method="post" action="/employer">
                 <input type="hidden" id="jobId" name="jobId" value="{{job.jobId}}">
-                <button type="submit" id = "deleteAd" class="button delete" style="font-size: 15px;" onclick="confirmDelete('{{job.title}}', '{{job.jobId}}')"></button>
+                <button type="button" id = "deleteAd" class="button delete" style="font-size: 15px;" onclick="confirmDelete('{{job.title}}', '{{job.jobId}}')"></button>
               </form>
             </div>
           </div>
@@ -108,7 +108,7 @@
 {{!-- Edit employer's profile info modal--}}
 <div id="myModal" class="modal">
   <div class="modal-content">
-    <span class="close" >&times;</span>
+    <span class="close_edit_profile" >&times;</span>
     <div class="modal-body">
       <form id="editEmployerForm" method="post">
         <div class="mb-3">
@@ -157,6 +157,7 @@
     {{!-- Create a new job entry Modal--}}
     <div id="createJobModal" class="modal">
       <div class="modal-content">
+        <span class="close_new_job" >&times;</span>
         <div class="modal-body">
           <form id="createJobForm" method="post" action="/employer">
             <div class="mb-3">
@@ -200,7 +201,7 @@
     <!-- Job's ad More Information Modal -->
     <div id="jobModal" class="modal">
       <div class="modal-content">
-        <span class="close">&times;</span>
+        <span class="close_hyperlink">&times;</span>
         <h2 id="modalJobTitle"></h2>
         <p id="modalCompanyName"></p>
         <p id="modalJobDescription"></p>
@@ -212,9 +213,10 @@
 <!-- Job's ad Edit Information Modal -->
 <div id="editJobModal" class="modal">
   <div class="modal-content">
-    <span class="close" >&times;</span>
+    <span class="close_edit_job">&times;</span>
     <div class="modal-body">
       <form id="editJobForm" method="post" action="/employer/updateJob">
+        <input type="hidden" class="form-control" id="editJobId" name="editJobId" >
         <div class="mb-3">
           <label for="jobTitle" class="form-label">Title</label>
           <input type="text" class="form-control" id="editJobTitle" name="editJobTitle" >
@@ -257,7 +259,7 @@
 <!-- Applicant Profiles Modal -->
 <div id="applicantProfilesModal" class="modal">
   <div class="modal-content">
-    <span class="close">&times;</span>
+    <span class="close_applicants">&times;</span>
     <h2 id="h2Text"></h2>
     <div id="applicantProfilesContainer">
     </div>
@@ -292,7 +294,7 @@
   document.addEventListener('DOMContentLoaded', function () {
       window.openEditEmployerModal = function () {
         var modal = document.getElementById("myModal");
-        var span = document.getElementsByClassName("close")[0];
+        var span = document.getElementsByClassName("close_edit_profile");
 
           if (modal) {
             modal.style.display = "block";
@@ -320,7 +322,7 @@
   document.addEventListener('DOMContentLoaded', function () {
       window.openCreateJobModal = function () {
         var modal = document.getElementById("createJobModal");
-        var span = document.getElementsByClassName("btn-close")[0];
+        var span = document.getElementsByClassName("close_new_job");
 
           if (modal) {
             modal.style.display = "block";
@@ -348,25 +350,27 @@
       function confirmDelete(jobTitle, jobId) {
         console.log(jobId);
         if (confirm("Are you sure you want to delete the job posting for '" + jobTitle + "'?")) {
-          console.log(jobTitle, jobId);
-          deleteAd(jobId);
+          console.log("SVHNO DOULEIA", jobTitle, jobId);
+          //deleteAd(jobId);
+          document.getElementById('deleteJobAd').submit();
         } else {
-          alert("Deletion cancelled.");
+          console.log("DEN SVHNO DOULEIA")
+          // alert("Deletion cancelled.");
         }
       }
 
-      function deleteAd(jobId) {
-        console.log(jobId);
-        document.getElementById('deleteAd').addEventListener('click', function () {
-          document.getElementById('deleteJobAd').submit();})
-      }
+      //function deleteAd(jobId) {
+      //  console.log(jobId);
+      //  document.getElementById('deleteAd').addEventListener('click', function () {
+      //    document.getElementById('deleteJobAd').submit();})
+      //}
 
       //----------------------------------------------------------------------------------------------
 
       //Job's titles hyperlink-modal
       document.addEventListener('DOMContentLoaded', (event) => {
         const modal = document.getElementById('jobModal');
-        const span = document.getElementsByClassName('close')[0];
+        const span = document.getElementsByClassName('close_hyperlink');
         const jobTitle = document.getElementById('modalJobTitle');
         const jobDescription = document.getElementById('modalJobDescription');
         const companyName = document.getElementById('modalCompanyName');
@@ -409,7 +413,7 @@
   //Edit Job ad Modal
   async function openEditJobModal(jobId) {
       const modal = document.getElementById('editJobModal');
-      const span = document.getElementsByClassName('close')[0];
+      const span = document.getElementsByClassName('close_edit_job');
 
       try {
         const job = await getJobById(jobId);
@@ -444,6 +448,7 @@
       async function getJobById(jobId) {
         try {
           const response = await axios.get(`http://localhost:3000/v1/job/${jobId}`);
+          console.log("HRTHA NA PARO THN DOULEIA", jobId);
           return response.data;
         } catch (error) {
           console.error('Error fetching job details:', error);
@@ -465,7 +470,7 @@
   //Messages modal
 function openApplicantProfilesModal(jobTitle, jobId) {
     const modal = document.getElementById('applicantProfilesModal');
-    const span = document.getElementsByClassName('close')[0];
+    const span = document.getElementsByClassName('close_applicants');
     const profilesContainer = document.getElementById('applicantProfilesContainer');
     const h2Text = document.getElementById('h2Text');
     h2Text.innerHTML= 'Applicants for ' +jobTitle;

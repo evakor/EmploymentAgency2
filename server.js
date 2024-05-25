@@ -520,31 +520,6 @@ app.post('/employer/uploadProfilePicture', upload.single('profilePicture'), auth
   }
 });
 
-app.post("/employer/updateJob", authenticate, async (req, res) => {
-
-  try {
-    const {
-      editJobId,
-      editJobTitle,
-      editJobDescription,
-      editJobExtendedDescr,
-      editJobDuration,
-      editJobCompanyName,
-      editJobOccupation,
-      editJobSpecialty,
-    } = req.body;
-
-    const jobId = req.body.jobId;
-
-    res.redirect("/employer/jobs");
-  } catch (error) {
-    console.error("Error updating job:", error.message);
-    res.status(500).send("Internal Server Error");
-  }
-});
-
-
-
 app.get("/jobs", (req, res) => {
   const { occupation, specialty, region } = req.query;
 

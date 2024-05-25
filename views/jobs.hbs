@@ -20,9 +20,9 @@
     </div>
 </form>
 
-<p>{{userId}}</p>
+    
 <div class="cards">
-    <p>{{userId}}</p>
+    
     {{#each jobs as |job|}}
     <div class="card mb-3" style="max-width: 540px;">
         <div class="row g-0">
@@ -31,18 +31,21 @@
             </div>
             <div class="col-md-8">
                 <div class="card-body">
-                    <p>{{userId}}</p>
-                    <h5 class="card-title"><a href="#" id="jobTitleLink" class="job-link" data-job-id="{{job.id}}">{{job.title}}</a></h5>
+                    
+                    <h5 class="card-title"><a href="#" id="jobTitleLink" class="job-link"
+                            data-job-id="{{job.id}}">{{job.title}}</a></h5>
                     <p class="card-text">{{job.description}}</p>
                     <p class="card-text"><small class="text-muted">{{job.companyName}}</small></p>
                     {{!-- <p>{{userId}}</p> --}}
                     {{!-- {{#if userId}} --}}
-                        <form id="applyForJobAd" method="post" action="/jobs">
-                            <input type="hidden" id="jobId" name="jobId" value="{{job.id}}">
-                            <button id ="jobIdbutton" class="btn cards-button position-absolute bottom-0 end-0 mb-2" onclick="confirmApply('{{job.title}}', '{{job.id}}', '{{userId}}')">Apply</button>
-                        </form>
+                    <form id="applyForJobAd" method="post" action="/jobs">
+                        <input type="hidden" id="jobId" name="jobId" value="{{job.id}}">
+                        <button id="jobIdbutton" class="btn cards-button position-absolute bottom-0 end-0 mb-2"
+                            onclick="confirmApply('{{job.title}}', '{{job.id}}', '{{userId}}')">Apply</button>
+                    </form>
                     {{!-- {{else}}
-                        <button class="btn cards-button position-absolute bottom-0 end-0 mb-2" onclick="redirectToLogin()">Apply</button>
+                    <button class="btn cards-button position-absolute bottom-0 end-0 mb-2"
+                        onclick="redirectToLogin()">Apply</button>
                     {{/if}} --}}
                 </div>
             </div>
@@ -102,9 +105,9 @@
     }
 
     function redirectToLogin() {
-            alert('You must be logged in to apply for this job.');
-            window.location.href = '/login'; // Redirect to the login page
-        }
+        alert('You must be logged in to apply for this job.');
+        window.location.href = '/login'; // Redirect to the login page
+    }
 
     //Job's titles hyperlink-modal
     document.addEventListener('DOMContentLoaded', (event) => {

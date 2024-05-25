@@ -8,6 +8,8 @@ router.post(`/${version}/application`, applicationController.create);
 
 router.get(`/${version}/application/:id`, applicationController.getById);
 
+router.get(`/${version}/application/byJobId/:id`, applicationController.getApplicantsByJobId);
+
 router.get(`/${version}/application/byUserId/:id`, applicationController.getByUserId);
 
 router.get(`/${version}/applications`, applicationController.getAll);

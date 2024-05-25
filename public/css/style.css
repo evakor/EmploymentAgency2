@@ -110,7 +110,7 @@ select {
 .wrapper {
   height: 20px;
   background: #5e5e5e;
-  display: flex;
+  display: inline-block;
   justify-content: center;
   align-items: center;
 }
@@ -119,9 +119,8 @@ select {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  margin-right: 20px;
+  margin-right: 5px;
   position: relative;
-  /* overflow: hidden; */
   cursor: pointer;
 }
 
@@ -129,27 +128,6 @@ select {
 .button:last-child {
   margin-right: 0;
 }
-
-
-/* .button:before, .button:after {
-  content: "x";
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  border-radius: 4px;
-  opacity: 0;
-}
-
-.button:after {
-  content: "x";
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  border-radius: 4px;
-  opacity: 1;
-} */
 
 .button.delete {
   background: #FF5D5B;
@@ -359,38 +337,49 @@ h6 span{
         height: auto; 
     }
 
-
-
-
-/* The Modal (background) */
+/* Modal's background */
 .modal {
   display: none; /* Hidden by default */
   position: fixed; /* Stay in place */
   z-index: 1; /* Sit on top */
   padding-top: 100px; /* Location of the box */
-  left: 0;
-  top: 0;
+  left: 10px;
+  top: 10px;
   width: 100%; /* Full width */
   height: 100%; /* Full height */
   overflow: auto; /* Enable scroll if needed */
-  background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  background-color: rgba(0,0,0,0.4);
 }
 
 /* Modal Content */
 .modal-content {
   position: relative;
   background-color: #fefefe;
-  margin: auto;
-  padding: 0;
+  margin: 15% auto; /* 15% from the top and centered */
+  padding: 15px;
   border: 1px solid #888;
   width: 50%;
-  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);}
+  box-shadow: 0 4px 10px 0 rgba(0,0,0,0.2),0 6px 30px 0 rgba(0,0,0,0.19);}
 
 .modal-body {
-  padding: 2px 16px;
+  padding: 5px 10px;
 }
 
+.close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
 
 /* Title's hyperlink colors */
 .jobTitleLink {
@@ -399,17 +388,17 @@ h6 span{
 
 /* Change the color when the link is hovered over */
 .jobTitleLink:hover {
-  color: #0056b3; /* Replace with your desired hover color */
+  color: #0056b3; 
 }
 
 /* Change the color when the link is visited */
 .jobTitleLink:visited {
-  color: #6c757d; /* Replace with your desired visited color */
+  color: #6c757d;
 }
 
 /* Change the color when the link is active (being clicked) */
 .jobTitleLink:active {
-  color: #004085; /* Replace with your desired active color */
+  color: #004085;
 }
 
 

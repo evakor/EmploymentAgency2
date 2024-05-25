@@ -305,6 +305,7 @@ app.get("/", (req, res) => {
       res.render("home", {
         jobs: response.data,
         session: req.session,
+        userId: res.locals.userId
       });
     })
     .catch((error) => {

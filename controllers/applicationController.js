@@ -23,6 +23,26 @@ const getById = async (req, res) => {
     }
 };
 
+const getApplicantsByJobId = async (req, res) => {
+  const {id } = req.params;
+  console.log(req.params);
+  try {
+    const result = await database.query(
+      `SELECT e."id", e."firstName", e."lastName",e."address", e."email", e."phone1", e."phone2", e."region", e."occupation", e."specialty", e."profilePicturePath" 
+        FROM "${tableName}" a
+        JOIN "EMPLOYEE" e ON a."employeeId"=e."id"
+        WHERE a."jobId" = $1`,
+      //   [parseInt(jobId)]
+      [parseInt(id)]
+    );
+    console.log(result);
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error("Error getting applicants by IDs:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 const getByUserId = async (req, res) => {
     const { employeeId } = req.params;
     try {
@@ -79,10 +99,11 @@ const deleteById = async (req, res) => {
 };
 
 module.exports = {
-    getAll,
-    getById,
-    getByUserId,
-    create,
-    updateById,
-    deleteById,
+  getAll,
+  getById,
+  getByUserId,
+  create,
+  updateById,
+  deleteById,
+  getApplicantsByJobId,
 };

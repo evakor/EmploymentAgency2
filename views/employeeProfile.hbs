@@ -1,4 +1,5 @@
-{{!< layout}} <section class="vh-50" style="background-color: #e7e9ee;">
+{{!< layout}}
+ <section class="vh-50" style="background-color: #e7e9ee;">
   <div class="container py-5 h-50">
     <div class="row d-flex justify-content-center align-items-center h-50">
       <div class="col col-lg-6 mb-4 mb-lg-0">
@@ -61,29 +62,30 @@
       </div>
     </div>
   </div>
-  </section>
+</section>
 
-  <h2 style="text-align: center;">My applications</h2>
+<h2 style="text-align: center;">My applications</h2>
 
-  <div class="cards">
-    {{#each jobs as |job|}}
-    <div class="card mb-3" style="max-width: 540px;">
-      <div class="row g-0">
-        <div class="col-md-4">
-          <img src="{{job.imagePath}}" class="card-img" alt="...">
-        </div>
-        <div class="col-md-8">
-          <div class="card-body">
-            <h5 class="card-title">{{job.title}}</h5>
-            <p class="card-text">{{job.description}}</p>
-            <p class="card-text"><small class="text-muted">{{job.companyName}}</small></p>
-          </div>
+<div class="cards">
+  {{#each jobs as |job|}}
+  <div class="card mb-3" style="max-width: 540px;">
+    <div class="row g-0">
+      <div class="col-md-4">
+        <img src="{{job.imagePath}}" class="card-img" alt="...">
+      </div>
+      <div class="col-md-8">
+        <div class="card-body">
+          <h5 class="card-title"><a href="#" id="jobTitleLink" class="job-link" data-job-id="{{job.jobId}}">{{job.title}}</a></h5>
+          <p class="card-text">{{job.description}}</p>
+          <p class="card-text"><small class="text-muted">{{job.companyName}}</small></p>
         </div>
       </div>
     </div>
-    {{/each}}
   </div>
+  {{/each}}
+</div>
 
+{{!-- Employee's updating info modal --}}
   <div id="myModal" class="modal">
     <div class="modal-content">
       <div class="modal-body">
@@ -134,89 +136,173 @@
     </div>
   </div>
 
-  <script>
-    const occupationsData = {{{ json jobCategories }}};
+{{!-- Job's ad hyperlinked info modal --}}
+<div id="jobModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <div class="label-field">
+      <label for="modalJobTitle"><b>Job Title:</b></label>
+      <p id="modalJobTitle"></p>
+    </div>
+    <div class="label-field">
+      <label for="modalCompanyName"><b>Company Name:</b></label>
+      <p id="modalCompanyName"></p>
+    </div>
+    <div class="label-field">
+      <label for="modalJobRegion"><b>Region:</b></label>
+      <p id="modalJobRegion"></p>
+    </div>
+    <div class="label-field">
+      <label for="modalJobOccupation"><b>Occupation:</b></label>
+      <p id="modalJobOccupation"></p>
+    </div>
+    <div class="label-field">
+      <label for="modalJobSpecialty"><b>Specialty:</b></label>
+      <p id="modalJobSpecialty"></p>
+    </div>
+    <div class="label-field">
+      <label for="modalJobDescription"><b>Description:</b></label>
+      <p id="modalJobDescription"></p>
+    </div>
+    <div class="label-field">
+      <label for="modalExtendedJobDescription"><b>Extended Description:</b></label>
+      <p id="modalExtendedJobDescription"></p>
+    </div>
+  </div>
+</div>
 
-    function updateSpecialties() {
-      console.log('stage1');
-      const occupationSelect = document.getElementById('occupationDropdown');
-      const specialtySelect = document.getElementById('specialtyDropdown');
-      const selectedOccupationIndex = occupationSelect.value;
-      specialtySelect.innerHTML = '<option value="{{employeeData.specialty}}">Select Specialty</option>';
-      console.log('stage2');
-      if (selectedOccupationIndex !== "") {
-        const specialties = occupationsData.occupations[selectedOccupationIndex].specialties;
-        specialties.forEach(specialty => {
-          const option = document.createElement('option');
-          option.value = specialty;
-          option.textContent = specialty;
-          specialtySelect.appendChild(option);
-        });
-      }
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+  const occupationsData = {{{ json jobCategories }}};
+
+  function updateSpecialties() {
+    console.log('stage1');
+    const occupationSelect = document.getElementById('occupationDropdown');
+    const specialtySelect = document.getElementById('specialtyDropdown');
+    const selectedOccupationIndex = occupationSelect.value;
+    specialtySelect.innerHTML = '<option value="{{employeeData.specialty}}">Select Specialty</option>';
+    console.log('stage2');
+    if (selectedOccupationIndex !== "") {
+      const specialties = occupationsData.occupations[selectedOccupationIndex].specialties;
+      specialties.forEach(specialty => {
+        const option = document.createElement('option');
+        option.value = specialty;
+        option.textContent = specialty;
+        specialtySelect.appendChild(option);
+      });
     }
+  }
 
-    document.addEventListener('DOMContentLoaded', function () {
+  document.addEventListener('DOMContentLoaded', function () {
 
-      window.openEditEmployeeModal = function () {
-        console.log('stage3');
-        var modal = document.getElementById("myModal");
-        var span = document.getElementsByClassName("btn-close")[0];
-        console.log('stage4');
-        if (modal) {
-          modal.style.display = "block";
-          span.onclick = function () {
+    window.openEditEmployeeModal = function () {
+      console.log('stage3');
+      var modal = document.getElementById("myModal");
+      var span = document.getElementsByClassName("btn-close")[0];
+      console.log('stage4');
+      if (modal) {
+        modal.style.display = "block";
+        span.onclick = function () {
+          modal.style.display = "none";
+        }
+        window.onclick = function (event) {
+          if (event.target == modal) {
             modal.style.display = "none";
           }
-          window.onclick = function (event) {
-            if (event.target == modal) {
-              modal.style.display = "none";
-            }
-          }
-        } else {
-          console.error('Modal element not found.');
         }
-      }
-    });
-
-    document.getElementById('saveChangesButton').addEventListener('click', function () {
-      document.getElementById('editEmployeeForm').submit();
-      console.log('stage5');
-    });
-
-    document.getElementById('profilePictureInput').addEventListener('change', async (event) => {
-      const form = document.getElementById('uploadProfilePictureForm');
-      const formData = new FormData(form);
-
-      const response = await fetch('/employee/uploadProfilePicture', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (response.ok) {
-        alert('Profile picture uploaded successfully: ' + result.fileName);
       } else {
-        alert('Profile picture upload failed');
+        console.error('Modal element not found.');
       }
+    }
+  });
+
+  document.getElementById('saveChangesButton').addEventListener('click', function () {
+    document.getElementById('editEmployeeForm').submit();
+    console.log('stage5');
+  });
+
+  document.getElementById('profilePictureInput').addEventListener('change', async (event) => {
+    const form = document.getElementById('uploadProfilePictureForm');
+    const formData = new FormData(form);
+
+    const response = await fetch('/employee/uploadProfilePicture', {
+      method: 'POST',
+      body: formData,
     });
 
-    document.getElementById('cvInput').addEventListener('change', async (event) => {
-      const form = document.getElementById('uploadCVForm');
-      const formData = new FormData(form);
+    if (response.ok) {
+      alert('Profile picture uploaded successfully: ' + result.fileName);
+    } else {
+      alert('Profile picture upload failed');
+    }
+  });
 
-      const response = await fetch('/employee/uploadCV', {
-        method: 'POST',
-        body: formData,
-      });
+  document.getElementById('cvInput').addEventListener('change', async (event) => {
+    const form = document.getElementById('uploadCVForm');
+    const formData = new FormData(form);
 
-      if (response.ok) {
-        alert('CV uploaded successfully: ' + result.fileName);
-      } else {
-        alert('CV upload failed');
+    const response = await fetch('/employee/uploadCV', {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (response.ok) {
+      alert('CV uploaded successfully: ' + result.fileName);
+    } else {
+      alert('CV upload failed');
+    }
+  });
+
+  document.getElementById('viewPdfButton').addEventListener('click', () => {
+    const pdfUrl = event.target.name;
+    window.open(pdfUrl, '_blank');
+  });
+
+  //All the information for the job ad
+  document.addEventListener('DOMContentLoaded', (event) => {
+    const modal = document.getElementById('jobModal');
+    const span = document.getElementsByClassName('close')[0];
+    const jobTitle = document.getElementById('modalJobTitle');
+    const jobDescription = document.getElementById('modalJobDescription');
+    const companyName = document.getElementById('modalCompanyName');
+    const jobExtendedDescription = document.getElementById('modalExtendedJobDescription');
+    const jobRegion = document.getElementById('modalJobRegion');
+    const jobOccupation = document.getElementById('modalJobOccupation');
+    const jobSpecialty = document.getElementById('modalJobSpecialty');
+
+
+    document.querySelectorAll('.job-link').forEach(link => {
+      link.onclick = function () {
+        const jobId = this.getAttribute('data-job-id');
+
+        axios.get(`http://localhost:3000/v1/job/${jobId}`)
+          .then(response => {
+            const job = response.data;
+            jobTitle.innerText = job.title;
+            companyName.innerText = job.companyName;
+            jobDescription.innerText = job.description;
+            jobExtendedDescription.innerText = job.extendedDescr;
+            jobRegion.innerText = job.region;
+            jobOccupation.innerText = job.occupation;
+            jobSpecialty.innerText = job.specialty;
+            modal.style.display = 'block';
+          })
+          .catch(error => {
+            console.error('Error fetching job details:', error);
+          });
+
+        return false;
+      };
+    });
+
+    span.onclick = function () {
+      modal.style.display = 'none';
+    };
+
+    window.onclick = function (event) {
+      if (event.target == modal) {
+        modal.style.display = 'none';
       }
-    });
-
-    document.getElementById('viewPdfButton').addEventListener('click', () => {
-      const pdfUrl = event.target.name;
-      window.open(pdfUrl, '_blank');
-    });
-  </script>
+    };
+  });
+</script>

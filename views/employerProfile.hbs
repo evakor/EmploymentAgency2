@@ -1,4 +1,5 @@
 {{!< layout}} 
+
 {{!-- Employer's info 'box' --}}
 <section class="vh-50" style="background-color: #e7e9ee;">
   <!--https://mdbootstrap.com/docs/standard/extended/profiles/-->
@@ -57,38 +58,42 @@
         </div>
       </div>
     </div>
-    </section>
+  </div> 
+</section>
 
     <h2 style="text-align: center;">My jobs</h2>
 
 {{!-- Job cards --}}
 <div class="cards">
   {{#each jobs as |job|}}
-  <div class="card mb-3" style="max-width: 600px; height: 300px;">
-    <div class="row g-0">
-      <div class="col-md-4">
-        <img src="{{job.imagePath}}" class="card-img" alt="...">
-      </div>
-      <div class="col-md-8">
-        <div class="card-body">
-          <div class="buttons ">
-            <div class="button-container">
-              <button class="button messages" style="font-size: 15px;"></button>
-              <button type="button" id="editButton" class="button edit" style="font-size: 15px; transform: rotate(90deg);" onclick="openEditJobModal('{{job.jobId}}')"></button>
-              <form id="deleteJobAd" method="post" action="/employer">
-                <input type="hidden" id="jobId" name="jobId" value="{{job.jobId}}">
-                <button type="submit" id = "deleteAd" class="button delete" style="font-size: 15px;" onclick="confirmDelete('{{job.title}}', '{{job.jobId}}')"></button>
-              </form>
+    <div class="card mb-3" style="max-width: 600px; height: 300px;">
+      <div class="row g-0">
+        <div class="col-md-4">
+          <img src="{{job.imagePath}}" class="card-img" alt="...">
+        </div>
+        <div class="col-md-8">
+          <div class="card-body">
+            <div class="buttons ">
+              <div class="button-container">
+                {{!-- Messages button --}}
+                <button class="button messages" style="font-size: 15px;" onclick="openApplicantProfilesModal('{{job.title}}','{{job.jobId}}')"></button>
+                {{!-- Edit job ad button --}}
+                <button type="button" id="editButton" class="button edit" style="font-size: 15px; transform: rotate(90deg);" onclick="openEditJobModal('{{job.jobId}}')"></button>
+                {{!-- Delete button --}}
+                <form id="deleteJobAd" method="post" action="/employer">
+                  <input type="hidden" id="jobId" name="jobId" value="{{job.jobId}}">
+                  <button type="submit" id = "deleteAd" class="button delete" style="font-size: 15px;" onclick="confirmDelete('{{job.title}}', '{{job.jobId}}')"></button>
+                </form>
+              </div>
             </div>
+            {{!-- Make the job's title hyperlink to open a view more modal --}}
+            <h5 class="card-title"><a href="#" id="jobTitleLink" class="job-link" data-job-id="{{job.jobId}}">{{job.title}}</a></h5>
+            <p class="card-text">{{job.description}}</p>
+            <p class="card-text"><small class="text-muted">{{job.companyName}}</small></p>
           </div>
-          {{!-- Make the job's title hyperlink to open a view more modal --}}
-          <h5 class="card-title"><a href="#" id="jobTitleLink" class="job-link" data-job-id="{{job.jobId}}">{{job.title}}</a></h5>
-          <p class="card-text">{{job.description}}</p>
-          <p class="card-text"><small class="text-muted">{{job.companyName}}</small></p>
         </div>
       </div>
     </div>
-  </div>
   {{/each}}
 </div>
 
@@ -96,6 +101,7 @@
 {{!-- Edit employer's profile info modal--}}
 <div id="myModal" class="modal">
   <div class="modal-content">
+    <span class="close" >&times;</span>
     <div class="modal-body">
       <form id="editEmployerForm" method="post">
         <div class="mb-3">
@@ -131,8 +137,11 @@
           <input type="text" class="form-control" name="editCompanyDesc" value="{{employerData.companyDesc}}">
         </div>
       </form>
-      <button type="button" class="btn btn-close btn-secondary" data-bs-dismiss="modal">Close</button>
-      <button type="button" class="btn btn-primary" id="saveChangesButton">Save Changes</button>
+      {{!-- <button type="button" class="btn btn-close btn-primary" data-bs-dismiss="modal">Close</button>
+      <button type="button" class="btn btn-primary" id="saveChangesButton">Save Changes</button> --}}
+      <div class="modal-footer" style="text-align: right;">
+        <button type="button" class="btn btn-primary" id="saveChangesButton">Save Changes</button>
+      </div>
     </div>
   </div>
 </div>
@@ -196,6 +205,7 @@
 <!-- Job's ad Edit Information Modal -->
 <div id="editJobModal" class="modal">
   <div class="modal-content">
+    <span class="close" >&times;</span>
     <div class="modal-body">
       <form id="editJobForm" method="post" action="/employer/updateJob">
         <input type="hidden" name="editJobId">
@@ -219,20 +229,20 @@
           <label for="companyName" class="form-label">Company Name</label>
           <input type="text" class="form-control" id="editJobCompanyName" name="editJobCompanyName">
         </div>
-        {{!-- <div class="mb-3">
-          <select id="occupationDropdown" name="editJobOccupation" onchange="updateSpecialties()" >
-            <option id="editJobOccupation">Occupation</option>
-            {{#each jobCategories.occupations}}
-            <option value="{{@index}}">{{this.name}}</option>
-            {{/each}}
-          </select>
-          <select id="specialtyDropdown" name="editJobSpecialty">
-            <option id="editJobSpecialty">Specialty</option>
-          </select>
-        </div> --}}
       </form>
-      <button type="button" class="btn btn-close btn-secondary" data-bs-dismiss="modal">Close</button>
-      <button type="button" class="btn btn-primary" id="saveChangesEditJob">Save Changes</button>
+      <div class="modal-footer" style="text-align: right;">
+        <button type="button" class="btn btn-primary" id="saveChangesEditJob">Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Applicant Profiles Modal -->
+<div id="applicantProfilesModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h2 id="h2Text"></h2>
+    <div id="applicantProfilesContainer">
     </div>
   </div>
 </div>
@@ -265,7 +275,7 @@
   document.addEventListener('DOMContentLoaded', function () {
       window.openEditEmployerModal = function () {
         var modal = document.getElementById("myModal");
-        var span = document.getElementsByClassName("btn-close")[0];
+        var span = document.getElementsByClassName('close')[0];
 
         if (modal) {
           modal.style.display = "block";
@@ -380,7 +390,7 @@
   //Edit Job ad Modal
   async function openEditJobModal(jobId) {
       const modal = document.getElementById('editJobModal');
-      const span = document.getElementsByClassName("btn-close")[0];
+      const span = document.getElementsByClassName('close')[0];
 
       try {
         const job = await getJobById(jobId);
@@ -398,7 +408,7 @@
         if (modal) {
           modal.style.display = "block";
           span.onclick = function () {
-            modal.style.display = "none";
+            modal.style.display = 'none';
           };
           window.onclick = function (event) {
             if (event.target == modal) {
@@ -429,7 +439,59 @@
       });
     });
 
-    // Ensure openEditJobModal is available globally
     window.openEditJobModal = openEditJobModal;
 
+//-----------------------------------------------------------------------------------------------
+
+  //Messages modal
+function openApplicantProfilesModal(jobTitle, jobId) {
+    const modal = document.getElementById('applicantProfilesModal');
+    const span = document.getElementsByClassName('close')[0];
+    const profilesContainer = document.getElementById('applicantProfilesContainer');
+    const h2Text = document.getElementById('h2Text');
+    h2Text.innerHTML= 'Applicants for ' +jobTitle;
+
+    // Fetch applicant profiles for the job
+    axios.get(`http://localhost:3000/v1/application/byJobId/${jobId}`)
+      .then(response => {
+        const applicants = response.data;
+        profilesContainer.innerHTML = '';
+        console.log(applicants);
+        if(Array.isArray(applicants)){
+          applicants.forEach(applicant => {
+            const profileCard = `
+              <div class="profile-card">
+                
+                <h5>${applicant.firstName} ${applicant.lastName}</h5>
+                <p>Email: ${applicant.email}</p>
+                <p>Phone: ${applicant.phone1} ${applicant.phone2}</p>
+                <p>Region: ${applicant.region}</p>
+                <p>Occupation: ${applicant.occupation}/${applicant.specialty}</p>
+              </div>
+            `;
+          profilesContainer.innerHTML += profileCard;
+        });
+      }else {
+        profilesContainer.innerHTML = '<p>No applicants found.</p>';
+      }
+        modal.style.display = 'block';
+      })
+      .catch(error => {
+        console.error('Error fetching applicant profiles:', error);
+      });
+
+    // Close the modal
+    span.onclick = function() {
+      modal.style.display = 'none';
+    };
+
+    window.onclick = function(event) {
+      if (event.target == modal) {
+        modal.style.display = 'none';
+      }
+    };
+  }
+
+  // Ensure openApplicantProfilesModal is available globally
+  window.openApplicantProfilesModal = openApplicantProfilesModal;
 </script>

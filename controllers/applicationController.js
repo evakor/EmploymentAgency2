@@ -13,7 +13,7 @@ const getAll = async (req, res) => {
 };
 
 const getById = async (req, res) => {
-    const { employeeId, jobId } = req.params;
+    const { employeeId, jobId } = req.body;
     try {
         const result = await database.query(`SELECT * FROM "${tableName}" WHERE "employeeId" = $1 AND "jobId" = $2`, [employeeId, jobId]);
         res.status(200).json(result.rows[0] || null);
@@ -88,7 +88,7 @@ const updateById = async (req, res) => {
 };
 
 const deleteById = async (req, res) => {
-    const { employeeId, jobId } = req.params;
+    const { employeeId, jobId } = req.body;
     try {
         await database.query(`DELETE FROM "${tableName}" WHERE "employeeId" = $1 AND "jobId" = $2`, [employeeId, jobId]);
         res.status(204).send();

@@ -71,6 +71,7 @@ const updateById = async (req, res) => {
     addUpdate('phone2', phone2);
     addUpdate('email', email);
     addUpdate('companyDesc', companyDesc);
+    addUpdate('profilePicturePath', profilePicturePath);
 
     // if (updates.length === 0) {
     //     return res.status(400).send('No fields to update');

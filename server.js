@@ -507,6 +507,20 @@ app.post("/employer", authenticate, async (req, res) => {
   }
 });
 
+app.post('/employer/uploadProfilePicture', upload.single('profilePicture'), authenticate, async (req, res) => {
+  try {
+    let userId = req.session.user.id;
+    const filePath = req.file.path;
+    await axios.put(`http://localhost:${port}/v1/employer/${userId}`, {
+      profilePicturePath: filePath.slice(7)
+    });
+    res.redirect(`/employer?id=${userId}`);
+  } catch (error) {
+    console.error('Error uploading image', error);
+    res.status(500).send('Error uploading image');
+  }
+});
+
 app.post("/employer/updateJob", authenticate, async (req, res) => {
   
   try {
@@ -532,6 +546,8 @@ app.post("/employer/updateJob", authenticate, async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
+
+
 
 app.get("/jobs", (req, res) => {
   const { occupation, specialty, region } = req.query;
@@ -567,6 +583,25 @@ app.get("/jobs", (req, res) => {
         res.status(500).send("Error fetching jobs");
       });
   }
+});
+
+app.get("/jobs/filters", (req, res) => {
+  const { occupation, specialty, region } = req.query;
+
+  axios.get(`http://localhost:${port}/v1/jobs/getbyfilters`, { params: { occupation, specialty, region } })
+    .then((response) => {
+      res.render("jobs", {
+        jobs: response.data,
+        jobCategories: jobCategories,
+        regions: greekPrefectures,
+        session: req.session,
+      });
+    })
+    .catch((error) => {
+      console.error("Error fetching filtered jobs:", error);
+      res.status(500).send("Error fetching jobs");
+    });
+  
 });
 
 app.post("/jobs", async (req, res) => {

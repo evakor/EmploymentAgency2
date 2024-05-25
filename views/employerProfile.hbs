@@ -10,8 +10,7 @@
           <div class="row g-0">
             <div class="col-md-4 profile-bg-color text-center text-white"
               style="border-top-left-radius: .5rem; border-bottom-left-radius: .5rem;">
-              <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp" alt="Avatar"
-                class="img-fluid my-5" style="width: 80px;" />
+              <img src="{{employerData.profilePicturePath}}" alt="Avatar" class="img-fluid my-5" style="width: 80px;" />
               <h5>{{employerData.firstName}} {{employerData.lastName}}</h5>
               <p>{{employerData.companyName}}</p>
               <i class="far fa-edit mb-5"></i>
@@ -48,9 +47,17 @@
                   </div>
                 </div>
                 <div class="d-flex justify-content-end mt-3">
-                  <button type="submit" class="btn cards-button me-2" value="upload_image">Upload Image</button>
-                  <button type="submit" class="btn cards-button me-2" value="new_entry" onclick="openCreateJobModal()">New Job</button>
-                  <button type="submit" class="btn cards-button" value="edit" onclick="openEditEmployerModal()">Edit</button>
+                 <form id="uploadProfilePictureForm" enctype="multipart/form-data">
+                    <label class="btn cards-button me-2">
+                      <input type="file" id="profilePictureInput"
+                        style="display: none" name="profilePicture" accept="image/*">
+                        Upload Image
+                    </label>
+                  </form>
+                  <button type="submit" class="btn cards-button me-2" value="new_entry"
+                    onclick="openCreateJobModal()">New Job</button>
+                  <button type="submit" class="btn cards-button" value="edit"
+                    onclick="openEditEmployerModal()">Edit</button>
                 </div>
               </div>
             </div>
@@ -58,42 +65,42 @@
         </div>
       </div>
     </div>
-  </div> 
-</section>
+    </div>
+    </section>
 
     <h2 style="text-align: center;">My jobs</h2>
 
 {{!-- Job cards --}}
 <div class="cards">
   {{#each jobs as |job|}}
-    <div class="card mb-3" style="max-width: 600px; height: 300px;">
-      <div class="row g-0">
-        <div class="col-md-4">
-          <img src="{{job.imagePath}}" class="card-img" alt="...">
-        </div>
-        <div class="col-md-8">
-          <div class="card-body">
-            <div class="buttons ">
-              <div class="button-container">
-                {{!-- Messages button --}}
-                <button class="button messages" style="font-size: 15px;" onclick="openApplicantProfilesModal('{{job.title}}','{{job.jobId}}')"></button>
-                {{!-- Edit job ad button --}}
-                <button type="button" id="editButton" class="button edit" style="font-size: 15px; transform: rotate(90deg);" onclick="openEditJobModal('{{job.jobId}}')"></button>
-                {{!-- Delete button --}}
-                <form id="deleteJobAd" method="post" action="/employer">
-                  <input type="hidden" id="jobId" name="jobId" value="{{job.jobId}}">
-                  <button type="submit" id = "deleteAd" class="button delete" style="font-size: 15px;" onclick="confirmDelete('{{job.title}}', '{{job.jobId}}')"></button>
-                </form>
-              </div>
+  <div class="card mb-3" style="max-width: 600px; height: 300px;">
+    <div class="row g-0">
+      <div class="col-md-4">
+        <img src="{{job.imagePath}}" class="card-img" alt="...">
+      </div>
+      <div class="col-md-8">
+        <div class="card-body">
+          <div class="buttons ">
+            <div class="button-container">
+              {{!-- Messages button --}}
+              <button class="button messages" style="font-size: 15px;" onclick="openApplicantProfilesModal('{{job.title}}','{{job.jobId}}')"></button>
+              {{!-- Edit job ad button --}}
+              <button type="button" id="editButton" class="button edit" style="font-size: 15px; transform: rotate(90deg);" onclick="openEditJobModal('{{job.jobId}}')"></button>
+              {{!-- Delete button --}}
+              <form id="deleteJobAd" method="post" action="/employer">
+                <input type="hidden" id="jobId" name="jobId" value="{{job.jobId}}">
+                <button type="submit" id = "deleteAd" class="button delete" style="font-size: 15px;" onclick="confirmDelete('{{job.title}}', '{{job.jobId}}')"></button>
+              </form>
             </div>
-            {{!-- Make the job's title hyperlink to open a view more modal --}}
-            <h5 class="card-title"><a href="#" id="jobTitleLink" class="job-link" data-job-id="{{job.jobId}}">{{job.title}}</a></h5>
-            <p class="card-text">{{job.description}}</p>
-            <p class="card-text"><small class="text-muted">{{job.companyName}}</small></p>
           </div>
+          {{!-- Make the job's title hyperlink to open a view more modal --}}
+          <h5 class="card-title"><a href="#" id="jobTitleLink" class="job-link" data-job-id="{{job.jobId}}">{{job.title}}</a></h5>
+          <p class="card-text">{{job.description}}</p>
+          <p class="card-text"><small class="text-muted">{{job.companyName}}</small></p>
         </div>
       </div>
     </div>
+  </div>
   {{/each}}
 </div>
 
@@ -137,7 +144,7 @@
           <input type="text" class="form-control" name="editCompanyDesc" value="{{employerData.companyDesc}}">
         </div>
       </form>
-      {{!-- <button type="button" class="btn btn-close btn-primary" data-bs-dismiss="modal">Close</button>
+       {{!-- <button type="button" class="btn btn-close btn-primary" data-bs-dismiss="modal">Close</button>
       <button type="button" class="btn btn-primary" id="saveChangesButton">Save Changes</button> --}}
       <div class="modal-footer" style="text-align: right;">
         <button type="button" class="btn btn-primary" id="saveChangesButton">Save Changes</button>
@@ -147,59 +154,59 @@
 </div>
 
 
-{{!-- Create a new job entry Modal--}}
-<div id="createJobModal" class="modal">
-  <div class="modal-content">
-    <div class="modal-body">
-      <form id="createJobForm" method="post" action="/employer">
-        <div class="mb-3">
-          <label for="jobTitle" class="form-label">Job Title</label>
-          <input type="text" class="form-control" name="jobTitle" required>
+    {{!-- Create a new job entry Modal--}}
+    <div id="createJobModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-body">
+          <form id="createJobForm" method="post" action="/employer">
+            <div class="mb-3">
+              <label for="jobTitle" class="form-label">Job Title</label>
+              <input type="text" class="form-control" name="jobTitle" required>
+            </div>
+            <div class="mb-3">
+              <label for="jobDescription" class="form-label">Job Description</label>
+              <textarea class="form-control" name="jobDescription" required></textarea>
+            </div>
+            <div class="mb-3">
+              <label for="extendedDescr" class="form-label">Extended Description</label>
+              <textarea class="form-control" name="extendedDescr"></textarea>
+            </div>
+            <div class="mb-3">
+              <label for="jobDuration" class="form-label">Duration</label>
+              <input type="number" class="form-control" name="jobDuration" required>
+            </div>
+            <div class="mb-3">
+              <label for="companyName" class="form-label">Company Name</label>
+              <input type="text" class="form-control" id="companyName" required>
+            </div>
+            <div class="mb-3">
+              <select id="occupationDropdown" name="jobOccupation" onchange="updateSpecialties()" required>
+                <option>Select Occupation</option>
+                {{#each jobCategories.occupations}}
+                <option value="{{@index}}">{{this.name}}</option>
+                {{/each}}
+              </select>
+              <select id="specialtyDropdown" name="jobSpecialty">
+                <option>Select Specialty</option>
+              </select>
+            </div>
+          </form>
+          <button type="button" class="btn btn-close btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="createJobAd">Create Job</button>
         </div>
-        <div class="mb-3">
-          <label for="jobDescription" class="form-label">Job Description</label>
-          <textarea class="form-control" name="jobDescription" required></textarea>
-        </div>
-        <div class="mb-3">
-          <label for="extendedDescr" class="form-label">Extended Description</label>
-          <textarea class="form-control" name="extendedDescr" ></textarea>
-        </div>
-        <div class="mb-3">
-          <label for="jobDuration" class="form-label">Duration</label>
-          <input type="number" class="form-control" name="jobDuration" required>
-        </div>
-        <div class="mb-3">
-          <label for="companyName" class="form-label">Company Name</label>
-          <input type="text" class="form-control" id="companyName" required>
-        </div>
-        <div class="mb-3">
-          <select id="occupationDropdown" name="jobOccupation" onchange="updateSpecialties()" required>
-            <option>Select Occupation</option>
-            {{#each jobCategories.occupations}}
-            <option value="{{@index}}">{{this.name}}</option>
-            {{/each}}
-          </select>
-          <select id="specialtyDropdown" name="jobSpecialty">
-            <option>Select Specialty</option>
-          </select>
-        </div>
-      </form>
-      <button type="button" class="btn btn-close btn-secondary" data-bs-dismiss="modal">Close</button>
-      <button type="button" class="btn btn-primary" id="createJobAd">Create Job</button>
+      </div>
     </div>
-  </div>
-</div>
 
-  <!-- Job's ad More Information Modal -->
-<div id="jobModal" class="modal">
-  <div class="modal-content">
-    <span class="close">&times;</span>
-    <h2 id="modalJobTitle"></h2>
-    <p id="modalCompanyName"></p>
-    <p id="modalJobDescription"></p>
-    <p id="modalExtendedJobDescription"></p>
-  </div>
-</div>
+    <!-- Job's ad More Information Modal -->
+    <div id="jobModal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2 id="modalJobTitle"></h2>
+        <p id="modalCompanyName"></p>
+        <p id="modalJobDescription"></p>
+        <p id="modalExtendedJobDescription"></p>
+      </div>
+    </div>
 
 
 <!-- Job's ad Edit Information Modal -->
@@ -208,10 +215,9 @@
     <span class="close" >&times;</span>
     <div class="modal-body">
       <form id="editJobForm" method="post" action="/employer/updateJob">
-        <input type="hidden" name="editJobId">
         <div class="mb-3">
           <label for="jobTitle" class="form-label">Title</label>
-          <input type="text" class="form-control" id="editJobTitle" name="editJobTitle">
+          <input type="text" class="form-control" id="editJobTitle" name="editJobTitle" >
         </div>
         <div class="mb-3">
           <label for="jobDescription" class="form-label">Description</label>
@@ -227,7 +233,18 @@
         </div>
         <div class="mb-3">
           <label for="companyName" class="form-label">Company Name</label>
-          <input type="text" class="form-control" id="editJobCompanyName" name="editJobCompanyName">
+          <input type="text" class="form-control" id="editJobCompanyName" name="editJobCompanyName" >
+        </div>
+        <div class="mb-3">
+          <select id="occupationDropdown" name="editJobOccupation" onchange="updateSpecialties()" >
+            <option >Occupation</option>
+            {{#each jobCategories.occupations}}
+            <option value="{{@index}}">{{this.name}}</option>
+            {{/each}}
+          </select>
+          <select id="specialtyDropdown" name="editJobSpecialty">
+            <option >Specialty</option>
+          </select>
         </div>
       </form>
       <div class="modal-footer" style="text-align: right;">
@@ -247,145 +264,147 @@
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
 
-  const occupationsData = {{{ json jobCategories }}};
+      const occupationsData = {{{ json jobCategories }}};
 
-  function updateSpecialties() {
-    console.log('stage1');
-    const occupationSelect = document.getElementById('occupationDropdown');
-    const specialtySelect = document.getElementById('specialtyDropdown');
-    const selectedOccupationIndex = occupationSelect.value;
-    specialtySelect.innerHTML = '<option value="{{employeeData.specialty}}">Select Specialty</option>';
-    console.log('stage2');
-    if (selectedOccupationIndex !== "") {
-      const specialties = occupationsData.occupations[selectedOccupationIndex].specialties;
-      specialties.forEach(specialty => {
-        const option = document.createElement('option');
-        option.value = specialty;
-        option.textContent = specialty;
-        specialtySelect.appendChild(option);
-      });
-    }
-  }
-//----------------------------------------------------------------------------------------------
+      function updateSpecialties() {
+        console.log('stage1');
+        const occupationSelect = document.getElementById('occupationDropdown');
+        const specialtySelect = document.getElementById('specialtyDropdown');
+        const selectedOccupationIndex = occupationSelect.value;
+        specialtySelect.innerHTML = '<option value="{{employeeData.specialty}}">Select Specialty</option>';
+        console.log('stage2');
+        if (selectedOccupationIndex !== "") {
+          const specialties = occupationsData.occupations[selectedOccupationIndex].specialties;
+          specialties.forEach(specialty => {
+            const option = document.createElement('option');
+            option.value = specialty;
+            option.textContent = specialty;
+            specialtySelect.appendChild(option);
+          });
+        }
+      }
+      //----------------------------------------------------------------------------------------------
 
   //Edit Employer Modal
   document.addEventListener('DOMContentLoaded', function () {
       window.openEditEmployerModal = function () {
         var modal = document.getElementById("myModal");
-        var span = document.getElementsByClassName('close')[0];
+        var span = document.getElementsByClassName("close")[0];
 
-        if (modal) {
-          modal.style.display = "block";
-          span.onclick = function () {
-            modal.style.display = "none";
-          }
-          window.onclick = function (event) {
-            if (event.target == modal) {
+          if (modal) {
+            modal.style.display = "block";
+            span.onclick = function () {
               modal.style.display = "none";
             }
+            window.onclick = function (event) {
+              if (event.target == modal) {
+                modal.style.display = "none";
+              }
+            }
+          } else {
+            console.error('Modal element not found.');
           }
-        } else {
-          console.error('Modal element not found.');
         }
-      }
-    });
+      });
 
-  document.getElementById('saveChangesButton').addEventListener('click', function () {
-    document.getElementById('editEmployerForm').submit();
-  });
+    document.getElementById('saveChangesButton').addEventListener('click', function () {
+      document.getElementById('editEmployerForm').submit();
+    });
 //-----------------------------------------------------------------------------------------------
   
   //Create a new Job Modal
+
   document.addEventListener('DOMContentLoaded', function () {
       window.openCreateJobModal = function () {
         var modal = document.getElementById("createJobModal");
         var span = document.getElementsByClassName("btn-close")[0];
 
-        if (modal) {
-          modal.style.display = "block";
-          span.onclick = function () {
-            modal.style.display = "none";
-          }
-          window.onclick = function (event) {
-            if (event.target == modal) {
+          if (modal) {
+            modal.style.display = "block";
+            span.onclick = function () {
               modal.style.display = "none";
             }
+            window.onclick = function (event) {
+              if (event.target == modal) {
+                modal.style.display = "none";
+              }
+            }
+          } else {
+            console.error('Modal element not found.');
           }
+        }
+      });
+
+    document.getElementById('createJobAd').addEventListener('click', function () {
+      document.getElementById('createJobForm').submit();
+    });
+
+
+      //-----------------------------------------------------------------------------------------------
+      //For the delete button
+      function confirmDelete(jobTitle, jobId) {
+        console.log(jobId);
+        if (confirm("Are you sure you want to delete the job posting for '" + jobTitle + "'?")) {
+          console.log(jobTitle, jobId);
+          deleteAd(jobId);
         } else {
-          console.error('Modal element not found.');
+          alert("Deletion cancelled.");
         }
       }
-    });
 
-  document.getElementById('createJobAd').addEventListener('click', function () {
-    document.getElementById('createJobForm').submit();
-  });
-
-//-----------------------------------------------------------------------------------------------
-  //For the delete button
-  function confirmDelete(jobTitle, jobId) {
-    console.log(jobId);
-    if (confirm("Are you sure you want to delete the job posting for '" + jobTitle + "'?")) {
-      console.log(jobTitle, jobId);
-       deleteAd(jobId);
-    } else {
-      alert("Deletion cancelled.");
-    }
-  }
-
-  function deleteAd(jobId) {
-    console.log(jobId);
-    document.getElementById('deleteAd').addEventListener('click', function () {
-      document.getElementById('deleteJobAd').submit();})
-  }
-
-//----------------------------------------------------------------------------------------------
-
-  //Job's titles hyperlink-modal
-  document.addEventListener('DOMContentLoaded', (event) => {
-    const modal = document.getElementById('jobModal');
-    const span = document.getElementsByClassName('close')[0];
-    const jobTitle = document.getElementById('modalJobTitle');
-    const jobDescription = document.getElementById('modalJobDescription');
-    const companyName = document.getElementById('modalCompanyName');
-    const jobExtendedDescription = document.getElementById('modalExtendedJobDescription');
-
-    document.querySelectorAll('.job-link').forEach(link => {
-      link.onclick = function() {
-        const jobId = this.getAttribute('data-job-id');
-
-        axios.get(`http://localhost:3000/v1/job/${jobId}`)
-          .then(response => {
-            const job = response.data;
-            jobTitle.innerText = job.title;
-            companyName.innerText = job.companyName;
-            jobDescription.innerText = job.description;
-            jobExtendedDescription.innerText = job.extendedDescr;
-            modal.style.display = 'block';
-          })
-          .catch(error => {
-            console.error('Error fetching job details:', error);
-          });
-
-        return false;
-      };
-    });
-
-    span.onclick = function() {
-      modal.style.display = 'none';
-    };
-
-    window.onclick = function(event) {
-      if (event.target == modal) {
-        modal.style.display = 'none';
+      function deleteAd(jobId) {
+        console.log(jobId);
+        document.getElementById('deleteAd').addEventListener('click', function () {
+          document.getElementById('deleteJobAd').submit();})
       }
-    };
-});
 
-//-----------------------------------------------------------------------------------------------
+      //----------------------------------------------------------------------------------------------
+
+      //Job's titles hyperlink-modal
+      document.addEventListener('DOMContentLoaded', (event) => {
+        const modal = document.getElementById('jobModal');
+        const span = document.getElementsByClassName('close')[0];
+        const jobTitle = document.getElementById('modalJobTitle');
+        const jobDescription = document.getElementById('modalJobDescription');
+        const companyName = document.getElementById('modalCompanyName');
+        const jobExtendedDescription = document.getElementById('modalExtendedJobDescription');
+
+        document.querySelectorAll('.job-link').forEach(link => {
+          link.onclick = function () {
+            const jobId = this.getAttribute('data-job-id');
+
+            axios.get(`http://localhost:3000/v1/job/${jobId}`)
+              .then(response => {
+                const job = response.data;
+                jobTitle.innerText = job.title;
+                companyName.innerText = job.companyName;
+                jobDescription.innerText = job.description;
+                jobExtendedDescription.innerText = job.extendedDescr;
+                modal.style.display = 'block';
+              })
+              .catch(error => {
+                console.error('Error fetching job details:', error);
+              });
+
+            return false;
+          };
+        });
+
+        span.onclick = function () {
+          modal.style.display = 'none';
+        };
+
+        window.onclick = function (event) {
+          if (event.target == modal) {
+            modal.style.display = 'none';
+          }
+        };
+      });
+
+      //-----------------------------------------------------------------------------------------------
 
   //Edit Job ad Modal
   async function openEditJobModal(jobId) {
@@ -394,7 +413,8 @@
 
       try {
         const job = await getJobById(jobId);
-        console.log(job); 
+        console.log(job);
+
 
         document.getElementById('editJobId').value = job.id;
         document.getElementById('editJobTitle').value = job.title;
@@ -402,8 +422,6 @@
         document.getElementById('editJobExtendedDescr').value = job.extendedDescr;
         document.getElementById('editJobDuration').value = job.duration;
         document.getElementById('editJobCompanyName').value = job.companyName;
-        //document.getElementById('editJobOccupation').value = job.occupation;
-        //document.getElementById('editJobSpecialty').value = job.specialty;
 
         if (modal) {
           modal.style.display = "block";
@@ -423,23 +441,24 @@
       }
     }
 
-    async function getJobById(jobId) {
-      try {
-        const response = await axios.get(`http://localhost:3000/v1/job/${jobId}`);
-        return response.data;
-      } catch (error) {
-        console.error('Error fetching job details:', error);
+      async function getJobById(jobId) {
+        try {
+          const response = await axios.get(`http://localhost:3000/v1/job/${jobId}`);
+          return response.data;
+        } catch (error) {
+          console.error('Error fetching job details:', error);
+        }
       }
-    }
 
     document.addEventListener('DOMContentLoaded', function () {
       document.getElementById('saveChangesEditJob').addEventListener('click', function () {
-        console.log("PEOS")
         document.getElementById('editJobForm').submit();
       });
     });
 
+    // Ensure openEditJobModal is available globally
     window.openEditJobModal = openEditJobModal;
+
 
 //-----------------------------------------------------------------------------------------------
 

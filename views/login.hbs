@@ -17,8 +17,13 @@
 
                             <div class="form-outline mb-4">
                                 {{!-- <label class="form-label" for="typePasswordX-2">Password</label> --}}
-                                <input name="password" type="password" id="typePasswordX-2" class="form-control form-control-lg"
-                                    placeholder="Password" />
+                                <input name="password" type="password" id="typePasswordX-2"
+                                    class="form-control form-control-lg" placeholder="Password" />
+                                <div class="form-check mt-2">
+                                    <input class="form-check-input" type="checkbox" id="togglePassword"
+                                        onclick="togglePasswordVisibility()">
+                                    <label class="form-check-label" for="togglePassword">Show Password</label>
+                                </div>
                             </div>
 
                             <div class="form-check d-flex justify-content-start mb-4">
@@ -41,3 +46,15 @@
         </div>
     </div>
     </section>
+
+    <script>
+        function togglePasswordVisibility() {
+            var passwordInput = document.getElementById('typePasswordX-2');
+            var toggle = document.getElementById('togglePassword');
+            if (toggle.checked) {
+                passwordInput.type = 'text';
+            } else {
+                passwordInput.type = 'password';
+            }
+        }
+    </script>

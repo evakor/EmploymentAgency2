@@ -195,14 +195,22 @@ const transporter = nodemailer.createTransport({
   service: "Gmail", // or your email service
   auth: {
     user: "employmenta626@gmail.com",
-    pass: "ergasiaomada7",
+    pass: "mwld aodp liub gcdi",
   },
 });
 
-function sendApplicationEmail(employerEmail, employeeProfile) {
+async function sendApplicationEmail(userId, jobId) {
+  console.log(userId, jobId.jobId);
+  let employeeResponse = await axios.get(`http://localhost:${port}/v1/employee/${userId}`);
+  let employerEmail = await axios.get(`http://localhost:${port}/v1/submition/getEmployerEmail/${parseInt(jobId.jobId)}`);
+
+  const employeeProfile = employeeResponse.data;
+  const email = employerEmail.data[0].email;
+  console.log("Server", email);
+
   const mailOptions = {
     from: "employmenta626@gmail.com",
-    to: employerEmail,
+    to: email,
     subject: "New Job Application",
     text:
       `You have a new job application from ${employeeProfile.firstName} ${employeeProfile.lastName}.\n\n` +
@@ -386,7 +394,6 @@ app.post("/employee", authenticate, async (req, res) => {
       occupation,
       specialty,
     } = req.body;
-    console.error(req.body);
     await axios.put(`http://localhost:${port}/v1/employee/${userId}`, {
       firstName: firstName,
       lastName: lastName,
@@ -615,18 +622,6 @@ app.post("/jobs", async (req, res) => {
   const formattedDate = moment(applicationDate).format("YYYY-MM-DD");
   if (userId) {
     try {
-
-      const [employeeResponse, employerEmail] = await Promise.all([
-        axios.get(`http://localhost:${port}/v1/employee/${userId}`),
-        axios.get(
-          `http://localhost:${port}/v1/submition/getEmployerEmail//${jobId}`
-        ),
-      ]);
-
-      const employeeProfile = employeeResponse.data;
-      const email = employerEmail.data;
-      console.log("Server", email);
-
       await axios({
         method: "post",
         url: `http://localhost:${port}/v1/application`,
@@ -637,9 +632,16 @@ app.post("/jobs", async (req, res) => {
         }
       });
 
-      sendApplicationEmail(email, employeeProfile);
-
-      res.redirect("/jobs");
+      try{
+        await sendApplicationEmail(userId, jobId);
+        res.redirect("/jobs");
+      } catch(error){
+        console.log(error.message)
+        req.session.errorType = "warning";
+        req.session.errorMessage = "Could not send email";
+        res.redirect("/jobs");
+      }
+      //res.redirect("/jobs");      
     } catch (error) {
       if (error.response.status === 409) {
         req.session.errorType = 'warning';

@@ -38,7 +38,12 @@ This application is a web-based job application platform. It allows users to cre
    MAIL_PASSWORD=...
    ```
 
-4. **Start the application:**
+4. **Start postgres and pgAdmin**
+   ```
+   docker-compose up -d
+   ```
+
+5. **Start the application:**
    ```
    npm start
    ```

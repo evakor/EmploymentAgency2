@@ -1,195 +1,158 @@
+# Employement Agency &copy;
 
-# RESTful api guide in Javascript
+## Overview
 
-This is a quick guide to build a RESTful api in Javascript with Postgres DB
+This application is a web-based job application platform. It allows users to create profiles as either employees or employers, post and apply for jobs, and manage their job-related information. The application is built using the Express framework and utilizes a variety of libraries such as Axios for HTTP requests, bcryptjs for hashing passwords, multer for file uploads, and nodemailer for sending emails.
 
+## Features
 
-## Database setup
+- User authentication and session management.
+- Profile management for employees and employers.
+- Job posting and application submission.
+- Email notifications for job applications.
+- Upload and manage profile pictures and resumes.
+- Filtering job listings by various criteria.
 
-Before implementing the rest api, we need to setup Postgres. This is the SQL code we need to run in order to setup our database schema:
+## Installation
 
-```sql
-CREATE TABLE IF NOT EXISTS "USER" (
-	"id" integer,
-	"firstName" string,
-	"lastName" string,
-	"email" string,
-	PRIMARY KEY ("id")
-);
+1. **Clone the repository:**
+   ```
+   git clone https://github.com/evakor/EmploymentAgency2
+   cd EmploymentAgency2
+   ```
 
-CREATE TABLE IF NOT EXISTS "EMPLOYER" (
-	"id" integer,
-	"companyName" string,
-	PRIMARY KEY ("id"),
-	FOREIGN KEY ("id") REFERENCES "USER" ("id")
-            ON UPDATE RESTRICT
-            ON DELETE RESTRICT
-);
+2. **Install dependencies:**
+   ```
+   npm install
+   ```
 
-CREATE TABLE IF NOT EXISTS "EMPLOYEE" (
-	"id" integer,
-	"cvPath" string,
-	PRIMARY KEY ("id"),
-	FOREIGN KEY ("id") REFERENCES "USER" ("id")
-            ON UPDATE RESTRICT
-            ON DELETE RESTRICT
-);
+3. **Environment Variables:**
+   Create a ```.env``` file as follows:
+   ```
+   DB_USER=...
+   DB_HOST=...
+   DB_NAME=...
+   DB_PASSWORD=...
+   DB_PORT=...
+   MAIL_USER=...
+   MAIL_PASSWORD=...
+   ```
 
-CREATE TABLE IF NOT EXISTS "SUBMITS" (
-	"employerId" integer,
-	"jobId" integer,
-	"creationDate" date,
-	PRIMARY KEY ("employerId", "jobId"),
-	FOREIGN KEY ("employerId") REFERENCES "EMPLOYER" ("id")
-            ON UPDATE RESTRICT
-            ON DELETE RESTRICT,
-	FOREIGN KEY ("jobId") REFERENCES "JOB" ("id")
-            ON UPDATE RESTRICT
-            ON DELETE RESTRICT
-);
+4. **Start the application:**
+   ```
+   npm start
+   ```
+   The server will start running on http://localhost:3000 by default.
 
-CREATE TABLE IF NOT EXISTS "APPLIES" (
-	"employeeId" integer,
-	"jobId" integer,
-	PRIMARY KEY ("employeeId", "jobId"),
-	FOREIGN KEY ("employeeId") REFERENCES "EMPLOYEE" ("id")
-            ON UPDATE RESTRICT
-            ON DELETE RESTRICT,
-	FOREIGN KEY ("jobId") REFERENCES "JOB" ("id")
-            ON UPDATE RESTRICT
-            ON DELETE RESTRICT
-);
+## Usage
 
-CREATE TABLE IF NOT EXISTS "JOB" (
-	"id" integer,
-	"title" string,
-	"ddescription" text,
-	PRIMARY KEY ("id")
-);
+- **Starting the Server:**
+  Run `node app.js` to start the server. Access the web interface by navigating to `http://localhost:3000` in your web browser.
 
+- **Navigating the Application:**
+  - **Home Page:** Displays the latest jobs available.
+  - **Login/Signup:** Authentication for users. Different forms for employee and employer signup.
+  - **Employee/Employer Profiles:** Users can view and edit their profiles, upload pictures, and CVs.
+  - **Job Listings:** Users can view all jobs or filter by category, region, etc.
+  - **Apply for Jobs:** Employees can apply for jobs, and employers receive an email notification upon each application.
+- **State Diagram**
 
+  [EIKONA]
+
+## API Endpoints
+
+This application provides API endpoints to communicate with the database:
+
+### Submissions
+- **POST** `/v1/submition`: Create a new submission.
+- **GET** `/v1/submition/:id`: Get a submission by ID.
+- **GET** `/v1/submitions/byUserId/:id`: Get all submissions by user ID.
+- **GET** `/v1/submitions`: Get all submissions.
+- **PUT** `/v1/submition/:id`: Update a submission by ID.
+- **DELETE** `/v1/submition/:id`: Delete a submission by ID.
+- **GET** `/v1/submition/getEmployerEmail/:id`: Get employer email by job ID.
+
+### Jobs
+- **POST** `/v1/job`: Create a new job.
+- **GET** `/v1/jobs`: Get all jobs.
+- **GET** `/v1/jobs/latest`: Get the latest jobs.
+- **GET** `/v1/jobs/getbyfilters`: Get jobs by filters.
+- **GET** `/v1/job/:id`: Get a job by ID.
+- **GET** `/v1/job/byEmployee/:id`: Get jobs by employee ID.
+- **GET** `/v1/job/byEmployer/:id`: Get jobs by employer ID.
+- **PUT** `/v1/job/:id`: Update a job by ID.
+- **DELETE** `/v1/job/:id`: Delete a job by ID.
+
+### Employers
+- **POST** `/v1/employer`: Create a new employer.
+- **GET** `/v1/employer/:id`: Get an employer by ID.
+- **GET** `/v1/employers`: Get all employers.
+- **PUT** `/v1/employer/:id`: Update an employer by ID.
+- **DELETE** `/v1/employer/:id`: Delete an employer by ID.
+
+### Employees
+- **POST** `/v1/employee`: Create a new employee.
+- **GET** `/v1/employee/:id`: Get an employee by ID.
+- **GET** `/v1/employees`: Get all employees.
+- **PUT** `/v1/employee/:id`: Update an employee by ID.
+- **DELETE** `/v1/employee/:id`: Delete an employee by ID.
+
+### Authentication
+- **GET** `/v1/getUserByEmailAndPassword`: Authenticate user by email and password.
+- **GET** `/v1/getUserByEmail`: Get user details by email.
+
+### Applications
+- **POST** `/v1/application`: Create a new application.
+- **GET** `/v1/application/:id`: Get an application by ID.
+- **GET** `/v1/application/byJobId/:id`: Get applicants by job ID.
+- **GET** `/v1/application/byUserId/:id`: Get applications by user ID.
+- **GET** `/v1/applications`: Get all applications.
+- **PUT** `/v1/application/:id`: Update an application by ID.
+- **DELETE** `/v1/application/:id`: Delete an application by ID.
+- **GET** `/v1/application/count/byJobId/:id`: Count applications by job ID.
+
+## Configuration
+
+The app uses several libraries and middleware for various functionalities:
+- **Express.js:** Core framework.
+- **Axios:** For making HTTP requests.
+- **Express-session:** For handling user sessions.
+- **Multer:** For handling file uploads.
+- **bcryptjs:** For hashing and checking passwords.
+- **nodemailer:** For sending out email notifications.
+- **express-handlebars:** Template engine for rendering views.
+
+## Directory Structure
+```
+EmploymentAgency2
+    ├── assets
+    ├── config
+    ├── models
+    ├── controllers
+    ├── views
+    ├── routes
+    ├── public
+    ├── docker-compose.yml
+    ├── dummyData.sql
+    ├── node_modules
+    ├── package-lock.json
+    ├── package.json
+    ├── server.js
+    └── README.md
 ```
 
+## License
 
-## Database connection (Repository)
-
-Create a file named ```db.js```
-
-```javascript
-const { Pool } = require('pg'); // Connect with postgres
-
-const pool = new Pool({
-    user: 'your_username',
-    host: 'localhost',
-    database: 'your_database_name',
-    password: 'your_password',
-    port: 5432,
-});
-
-module.exports = pool;
-
-```
+This project is licensed under the MIT License. You are free to use, share, and modify this software, provided that you include proper attribution to the original authors in any publicized versions of the software or in any software derived from this project.
 
 
-## Service
+## Authors
 
-Create a file named ```controllers/userController.js```. Here we implement CRUD for User entity.
+**John Doe**
+- **Email:** up1083829@upnet.gr
+- **GitHub:** [evakor](https://github.com/evakor)
 
-```javascript
-const pool = require('../db'); // Connect with db
+**Jane Smith**
+- **Email:** up1083812@upnet.gr
+- **GitHub:** [ChristosK17](https://github.com/ChristosK17)
 
-const getAllUsers = async (req, res) => {
-    const result = await pool.query('SELECT * FROM "USER"');
-    res.json(result.rows);
-};
-
-const getUserById = async (req, res) => {
-    const { id } = req.params;
-    const result = await pool.query('SELECT * FROM "USER" WHERE id = $1', [id]);
-    res.json(result.rows[0]);
-};
-
-const createUser = async (req, res) => {
-    const { firstName, lastName, email } = req.body;
-    const result = await pool.query('INSERT INTO "USER" (firstName, lastName, email) VALUES ($1, $2, $3) RETURNING *', [firstName, lastName, email]);
-    res.json(result.rows[0]);
-};
-
-const updateUser = async (req, res) => {
-    const { id } = req.params;
-    const { firstName, lastName, email } = req.body;
-    const result = await pool.query('UPDATE "USER" SET firstName = $1, lastName = $2, email = $3 WHERE id = $4 RETURNING *', [firstName, lastName, email, id]);
-    res.json(result.rows[0]);
-};
-
-const deleteUser = async (req, res) => {
-    const { id } = req.params;
-    await pool.query('DELETE FROM "USER" WHERE id = $1', [id]);
-    res.status(204).send();
-};
-
-module.exports = {
-    getAllUsers,
-    getUserById,
-    createUser,
-    updateUser,
-    deleteUser,
-};
-
-```
-
-## Controller
-
-Create a file named ```routes/userRoutes.js```. Here we import all the methods created in the service script and match them with their corresponding endpoints.
-
-```javascript
-const express = require('express');
-const router = express.Router();
-const userController = require('../controllers/userController');
-
-// Get all users
-router.get('/', userController.getAllUsers);
-
-// Get a single user by ID
-router.get('/:id', userController.getUserById);
-
-// Create a new user
-router.post('/', userController.createUser);
-
-// Update a user
-router.put('/:id', userController.updateUser);
-
-// Delete a user
-router.delete('/:id', userController.deleteUser);
-
-module.exports = router;
-
-```
-
-## Server
-
-Create a file named ```server.js```. This script initializes the server and exposes our endpoints.
-
-```javascript
-const express = require('express');
-const app = express();
-const userRoutes = require('./routes/userRoutes');
-const employerRoutes = require('./routes/employerRoutes');
-const employeeRoutes = require('./routes/employeeRoutes');
-const jobRoutes = require('./routes/jobRoutes');
-const bodyParser = require('body-parser');
-
-app.use(bodyParser.json());
-
-// Routes
-app.use('/api/users', userRoutes);
-app.use('/api/employers', employerRoutes);
-app.use('/api/employees', employeeRoutes);
-app.use('/api/jobs', jobRoutes);
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
-
-```

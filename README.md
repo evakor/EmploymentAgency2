@@ -153,11 +153,11 @@ This project is licensed under the MIT License. You are free to use, share, and 
 
 ## Authors
 
-**John Doe**
+**Evaggelia Korda**
 - **Email:** up1083829@upnet.gr
 - **GitHub:** [evakor](https://github.com/evakor)
 
-**Jane Smith**
+**Christos Kiokakis**
 - **Email:** up1083812@upnet.gr
 - **GitHub:** [ChristosK17](https://github.com/ChristosK17)
 

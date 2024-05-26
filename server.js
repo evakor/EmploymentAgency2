@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require("express");
 const axios = require("axios");
 const bodyParser = require("body-parser");
@@ -194,8 +195,8 @@ const greekPrefectures = [
 const transporter = nodemailer.createTransport({
   service: "Gmail", // or your email service
   auth: {
-    user: "employmenta626@gmail.com",
-    pass: "mwld aodp liub gcdi",
+    user: process.env.MAIL_USER,
+    pass: process.env.MAIL_PASSWORD,
   },
 });
 
@@ -457,7 +458,11 @@ app.get("/employer", authenticate, async (req, res) => {
       jobCategories: jobCategories,
       regions: greekPrefectures,
       session: req.session,
+      message: req.session.errorMessage ? { type: req.session.errorType, text: req.session.errorMessage } : undefined,
+      session: req.session,
     });
+    req.session.errorType = undefined;
+    req.session.errorMessage = undefined;
   } catch (error) {
     console.error("Error fetching data:", error.message);
     res.status(500).send("Error loading employer profile");
@@ -621,41 +626,48 @@ app.post("/jobs", async (req, res) => {
   const applicationDate = new Date();
   const formattedDate = moment(applicationDate).format("YYYY-MM-DD");
   if (userId) {
-    try {
-      await axios({
-        method: "post",
-        url: `http://localhost:${port}/v1/application`,
-        data: {
-          employeeId: userId,
-          jobId: jobId,
-          applicationDate: formattedDate,
-        }
-      });
-
-      try{
-        await sendApplicationEmail(userId, jobId);
-        res.redirect("/jobs");
-      } catch(error){
-        console.log(error.message)
-        req.session.errorType = "warning";
-        req.session.errorMessage = "Could not send email";
-        res.redirect("/jobs");
-      }
-      //res.redirect("/jobs");      
-    } catch (error) {
-      if (error.response.status === 409) {
-        req.session.errorType = 'warning';
-        req.session.errorMessage = 'You have already applied for this job';
-        res.redirect('/jobs');
-      } else {
-        res.render("jobs", {
-          session: req.session,
-          userId: userId,
-          message: { type: 'danger', text: "An error occurred while applying. Please try again." },
+    if (res.locals.isEmployee) {
+      try {
+        await axios({
+          method: "post",
+          url: `http://localhost:${port}/v1/application`,
+          data: {
+            employeeId: userId,
+            jobId: jobId,
+            applicationDate: formattedDate,
+          }
         });
+  
+        try{
+          await sendApplicationEmail(userId, jobId);
+          req.session.errorType = 'success';
+          req.session.errorMessage = 'You have successfully applied for this job';
+          res.redirect("/jobs");
+        } catch(error){
+          console.log(error.message)
+          req.session.errorType = "warning";
+          req.session.errorMessage = "Could not send email";
+          res.redirect("/jobs");
+        }
+        //res.redirect("/jobs");      
+      } catch (error) {
+        if (error.response.status === 409) {
+          req.session.errorType = 'warning';
+          req.session.errorMessage = 'You have already applied for this job';
+          res.redirect('/jobs');
+        } else {
+          res.render("jobs", {
+            session: req.session,
+            userId: userId,
+            message: { type: 'danger', text: "An error occurred while applying. Please try again." },
+          });
+        }
       }
+    } else {
+      req.session.errorType = 'warning';
+      req.session.errorMessage = 'You have to be an employee in order to apply for a job';
+      res.redirect(`/employer?id=${userId}`);
     }
-
   } else {
     req.session.errorType = 'warning';
     req.session.errorMessage = 'You have to sign up in order to apply for a job';

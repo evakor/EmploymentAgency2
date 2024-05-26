@@ -700,15 +700,21 @@ app.post("/login", (req, res) => {
         } else if (userType === "employer") {
           res.redirect(`/employer?id=${userId}`);
         } else {
-          res.status(401).send("Login failed: Invalid user type");
+          req.session.errorType = "danger";
+          req.session.errorMessage = "Log In failed:Invalid user type";
+          res.redirect("/login");
         }
       } else {
-        res.status(401).send("Login failed: Incorrect password");
+        req.session.errorType = "danger";
+        req.session.errorMessage = "Log In failed: Incorrect password";
+        res.redirect("/login");
       }
     })
     .catch((error) => {
       console.error("Login error:", error);
-      res.status(401).send("Login failed: " + error.message);
+      req.session.errorType = "danger";
+      req.session.errorMessage = "Log In failed: " + error.message;
+      res.redirect("/login");
     });
 });
 
@@ -727,7 +733,11 @@ app.get("/signup", (req, res) => {
     jobCategories: jobCategories,
     regions: greekPrefectures,
     session: req.session,
+    message: req.session.errorMessage ? { type: req.session.errorType, text: req.session.errorMessage } : undefined,
+    session: req.session,
   });
+  req.session.errorType = undefined;
+  req.session.errorMessage = undefined;
 });
 
 app.post("/signup", async (req, res) => {
@@ -809,14 +819,20 @@ app.post("/signup", async (req, res) => {
       } else if (userType === "employer") {
         res.redirect(`/employer?id=${userId}`);
       } else {
-        res.status(401).send("Login failed: Invalid user type");
+        req.session.errorType = "danger";
+        req.session.errorMessage = "Sign Up failed: Invalid user type";
+        res.redirect("/signup");
       }
     } else {
-      res.status(401).send("Sign Up failed: This email is already in use");
+      req.session.errorType = "danger";
+      req.session.errorMessage = "Sign Up failed: This email is already in use";
+      res.redirect("/signup");
     }
   } catch (error) {
     console.error("Sign Up error:", error.message);
-    res.status(401).send("Sign Up failed: " + error.message);
+    req.session.errorType = "danger";
+    req.session.errorMessage = error.message;
+    res.redirect("/signup");
   }
 });
 

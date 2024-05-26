@@ -105,14 +105,11 @@ select {
 
 .button-container {
   margin-top: 0px;
-}
-
-.wrapper {
-  height: 20px;
-  background: #5e5e5e;
-  display: inline-block;
-  justify-content: center;
-  align-items: center;
+  position: absolute;
+  right: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start; 
 }
 
 .button {
@@ -120,16 +117,17 @@ select {
   height: 20px;
   border-radius: 50%;
   margin-right: 5px;
-  position: relative;
+  margin-left: 3px; 
+  align-self: flex-start;
   cursor: pointer;
 }
 
-
-.button:last-child {
+/* .button:last-child {
   margin-right: 0;
-}
+} */
 
 .button.delete {
+  margin-top: 0;
   background: #FF5D5B;
   border: 4px solid #CF544D;
 }
@@ -144,44 +142,19 @@ select {
   border: 4px solid #0EA642;
 }
 
-
-/* Hover function */
-.button:hover:before, .button:hover:after {
-  top: 50%;
-  opacity: 1;
+/* For the title on the buttons when you hover over them */
+.addMore{
+  border: none;
+  width: 20px;
+  height: 20px;
+  background-color: #eee;
+  /* transition: all ease-in-out 0.2s; */
+  cursor: pointer;
 }
-
-
-/* Tooltip container */
-.tooltip {
-  position: relative;
-  display: inline-block;
-}
-
-/* Tooltip text */
-.tooltip .tooltiptext {
-  visibility: hidden;
-  width: 70px;
-  background-color: #333;
-  color: #fff;
-  text-align: center;
-  border-radius: 6px;
-  padding: 2px 0;
-  position: absolute;
-  z-index: 1;
-  bottom: 125%;
-  left: 50%;
-  /* margin-left: -60px; */
-  opacity: 0;
-  transition: opacity 0.2s;
-}
-
-/* Tooltip text - show on hover */
-.tooltip:hover .tooltiptext {
-  visibility: visible;
-  opacity: 1;
-}
-
+/* .addMore:hover{
+  border: 1px solid ;
+  background-color: #ddd;
+} */
 
 /* Sign Up Swap */
 a {
@@ -365,7 +338,7 @@ h6 span{
   padding: 5px 10px;
 }
 
-.close {
+.close, .close_edit_profile, .close_new_job, .close_hyperlink, .close_edit_job, .close_applicants{
     position: absolute;
     top: 10px;
     right: 15px;
@@ -400,6 +373,8 @@ h6 span{
 .jobTitleLink:active {
   color: #004085;
 }
+
+
 
 
 

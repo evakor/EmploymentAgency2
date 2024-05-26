@@ -30,7 +30,7 @@
                     <form id="applyForJobAd" method="post" action="/jobs">
                         <input type="hidden" id="jobId" name="jobId" value="{{job.id}}">
                         <button id="jobIdbutton" class="btn cards-button position-absolute bottom-0 end-0 mb-2"
-                            onclick="confirmApply('{{job.title}}', '{{job.id}}', '{{userId}}')">Apply</button>
+                            onclick="confirmApply('{{job.title}}', '{{job.id}}', '{{userId}}')" style="margin-right: 10px;">Apply</button>
                     </form>
                     {{!-- {{else}}
                     <button class="btn cards-button position-absolute bottom-0 end-0 mb-2"

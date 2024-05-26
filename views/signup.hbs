@@ -40,20 +40,6 @@
                                             </div>
                                             <div class="row form-group">
                                                 <div class="col">
-                                                    <select id="regionDropdown" name="employee_region">
-                                                        <option value="">Select Region</option>
-                                                        {{#each regions as |region|}}
-                                                        <option value="{{region}}">{{region}}</option>
-                                                        {{/each}}
-                                                    </select>
-                                                </div>
-                                                <div class="col">
-                                                    <input type="text" name="employee_address" class="form-control mb-3"
-                                                        placeholder="Address" id="employee_address" autocomplete="off">
-                                                </div>
-                                            </div>
-                                            <div class="row form-group">
-                                                <div class="col">
                                                     <input type="number" name="employee_phone1"
                                                         class="form-control mb-3" placeholder="Phone 1"
                                                         id="employee_phone1" autocomplete="off" required>
@@ -62,6 +48,20 @@
                                                     <input type="number" name="employee_phone2"
                                                         class="form-control mb-3" placeholder="Phone2"
                                                         id="employee_phone2" autocomplete="off">
+                                                </div>
+                                            </div>
+                                            <div class="row form-group">
+                                                <div class="col">
+                                                    <input type="text" name="employee_address" class="form-control mb-3"
+                                                        placeholder="Address" id="employee_address" autocomplete="off">
+                                                </div>
+                                                <div class="col">
+                                                    <select id="regionDropdown" name="employee_region" style="margin-bottom: 5px;">
+                                                        <option value="">Select Region</option>
+                                                        {{#each regions as |region|}}
+                                                        <option value="{{region}}">{{region}}</option>
+                                                        {{/each}}
+                                                    </select>
                                                 </div>
                                             </div>
                                             <div class="row form-group">
@@ -121,21 +121,6 @@
                                             </div>
                                             <div class="row form-group">
                                                 <div class="col">
-                                                    <select id="regionDropdown" name="employer_region">
-                                                        <option value="">Select Region</option>
-                                                        {{#each regions as |region|}}
-                                                        <option value="{{region}}">{{region}}</option>
-                                                        {{/each}}
-                                                    </select>
-                                                </div>
-                                                <div class="col">
-                                                    <input type="text" name="employer_address" class="form-control mb-3"
-                                                        placeholder="Address" id="employer_address" autocomplete="off"
-                                                        required>
-                                                </div>
-                                            </div>
-                                            <div class="row form-group">
-                                                <div class="col">
                                                     <input type="number" name="employer_phone1" class="form-control"
                                                         placeholder="Phone 1" id="employer_phone1" autocomplete="off"
                                                         required>
@@ -158,6 +143,23 @@
                                                         id="employer_company_desc" autocomplete="off" required>
                                                 </div>
                                             </div>
+                                            <div class="row form-group">
+                                                <div class="col">
+                                                    <input type="text" name="employer_address" class="form-control mb-3"
+                                                        placeholder="Address" id="employer_address" autocomplete="off"
+                                                        required>
+                                                </div>
+                                                <div class="col">
+                                                    <select id="regionDropdown" name="employer_region" style="margin-bottom: 10px; margin-top:5px;">
+                                                        <option value="">Select Region</option>
+                                                        {{#each regions as |region|}}
+                                                        <option value="{{region}}">{{region}}</option>
+                                                        {{/each}}
+                                                    </select>
+                                                </div>
+                                                
+                                            </div>
+                                            
                                             <div class="form-group">
                                                 <button type="submit" class="btn btn-primary btn-block mb-3"
                                                     style="margin-top: 20px;">Sign Up</button>

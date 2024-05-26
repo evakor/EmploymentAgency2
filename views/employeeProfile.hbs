@@ -91,23 +91,23 @@
       <div class="modal-body">
         <form id="editEmployeeForm" method="post" action="/employee">
           <div class="mb-3">
-            <label for="editFirstName" class="form-label">First Name</label>
+            <label for="editFirstName" class="form-label"><b>First Name</b></label>
             <input type="text" class="form-control" name="firstName" value="{{employeeData.firstName}}">
           </div>
           <div class="mb-3">
-            <label for="editFirstName" class="form-label">Last Name</label>
+            <label for="editFirstName" class="form-label"><b>Last Name</b></label>
             <input type="text" class="form-control" name="lastName" value="{{employeeData.lastName}}">
           </div>
           <div class="mb-3">
-            <label for="editEmail" class="form-label">Email</label>
+            <label for="editEmail" class="form-label"><b>Email</b></label>
             <input type="email" class="form-control" name="email" value="{{employeeData.email}}">
           </div>
           <div class="mb-3">
-            <label for="editPhone1" class="form-label">Phone 1</label>
+            <label for="editPhone1" class="form-label"><b>Phone 1</b></label>
             <input type="tel" class="form-control" name="phone1" value="{{employeeData.phone1}}">
           </div>
           <div class="mb-3">
-            <label for="editPhone2" class="form-label">Phone 2</label>
+            <label for="editPhone2" class="form-label"><b>Phone 2</b></label>
             <input type="tel" class="form-control" name="phone2" value="{{employeeData.phone2}}">
           </div>
           <div class="mb-3">
@@ -115,23 +115,26 @@
             <input type="text" class="form-control" name="address" value="{{employeeData.address}}">
           </div>
           <div class="mb-3">
-            <label for="editRegion" class="form-label">Region</label>
+            <label for="editRegion" class="form-label"><b>Region</b></label>
             <input type="text" class="form-control" name="region" value="{{employeeData.region}}">
           </div>
           <div class="mb-3">
-            <select id="occupationDropdown" name="occupation" onchange="updateSpecialties()" required>
+            <select id="occupationDropdown" name="occupation" onchange="updateSpecialties()" style="border: 1px solid #ced4da; border-radius: 4px;">
               <option value="{{employeeData.occupation}}">Select Occupation</option>
               {{#each jobCategories.occupations}}
               <option value="{{@index}}">{{this.name}}</option>
               {{/each}}
             </select>
-            <select id="specialtyDropdown" name="specialty">
+            <select id="specialtyDropdown" name="specialty" style="border: 1px solid #ced4da; border-radius: 4px;">
               <option value="{{employeeData.specialty}}">Select Specialty</option>
             </select>
           </div>
         </form>
-        <button type="button" class="btn btn-close btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-close btn-secondary close" data-bs-dismiss="modal" style="font-size: 15px;"></button>
+        
+       <div class="modal-footer" style="text-align: right;">
         <button type="button" class="btn btn-primary" id="saveChangesButton">Save Changes</button>
+      </div>
       </div>
     </div>
   </div>
@@ -139,7 +142,7 @@
 {{!-- Job's ad hyperlinked info modal --}}
 <div id="jobModal" class="modal">
   <div class="modal-content">
-    <span class="close">&times;</span>
+    <button type="button" class="btn btn-close btn-secondary close" data-bs-dismiss="modal" style="font-size: 15px;"></button>
     <div class="label-field">
       <label for="modalJobTitle"><b>Job Title:</b></label>
       <p id="modalJobTitle"></p>
@@ -191,6 +194,7 @@
     }
   }
 
+//Edit employee's profile info modal
   document.addEventListener('DOMContentLoaded', function () {
 
     window.openEditEmployeeModal = function () {
@@ -216,6 +220,7 @@
     document.getElementById('editEmployeeForm').submit();
   });
 
+//Upload profile picture
   document.getElementById('profilePictureInput').addEventListener('change', async (event) => {
     const form = document.getElementById('uploadProfilePictureForm');
     const formData = new FormData(form);
@@ -232,6 +237,7 @@
     }
   });
 
+//Upload CV
   document.getElementById('cvInput').addEventListener('change', async (event) => {
     const form = document.getElementById('uploadCVForm');
     const formData = new FormData(form);
@@ -253,10 +259,10 @@
     window.open(pdfUrl, '_blank');
   });
 
-  //All the information for the job ad
+//All the information for the job ad
   document.addEventListener('DOMContentLoaded', (event) => {
     const modal = document.getElementById('jobModal');
-    const span = document.getElementsByClassName('close')[0];
+    const span = document.getElementsByClassName('btn-close')[1];
     const jobTitle = document.getElementById('modalJobTitle');
     const jobDescription = document.getElementById('modalJobDescription');
     const companyName = document.getElementById('modalCompanyName');

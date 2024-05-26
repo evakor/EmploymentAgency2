@@ -261,6 +261,7 @@ app.use((req, res, next) => {
 function setGlobalUserId(req, res, next) {
   if (req.session && req.session.user && req.session.user.id) {
     res.locals.userId = req.session.user.id;
+    console.log(res.locals.userId);
   } else {
     res.locals.userId = null;
   }
@@ -308,7 +309,7 @@ app.get("/", (req, res) => {
       });
     })
     .catch((error) => {
-      console.error("Error fetching jobs:", error.message);
+      console.error("Error fetching jobs:", error);
       res.status(500).send("Error fetching jobs");
     });
 });
@@ -332,7 +333,7 @@ app.get("/employee", authenticate, async (req, res) => {
       session: req.session,
     });
   } catch (error) {
-    console.error("Error fetching data:", error.message);
+    console.error("Error fetching data:", error);
     res.status(500).send("Error loading employer profile");
   }
 });
@@ -365,7 +366,7 @@ app.post("/employee", authenticate, async (req, res) => {
     });
     res.redirect(`/employee?id=${userId}`);
   } catch (error) {
-    console.error("Error updating employee info", error.message);
+    console.error("Error updating employee info", error);
     res.status(500).send("Error updating employee info");
   }
 });
@@ -379,7 +380,7 @@ app.post('/employee/uploadProfilePicture', upload.single('profilePicture'), auth
     });
     res.redirect(`/employee?id=${userId}`);
   } catch (error) {
-    console.error('Error uploading image', error.message);
+    console.error('Error uploading image', error);
     res.status(500).send('Error uploading image');
   }
 });
@@ -393,7 +394,7 @@ app.post('/employee/uploadCV', upload.single('cv'), authenticate, async (req, re
     });
     res.redirect(`/employee?id=${userId}`);
   } catch (error) {
-    console.error('Error uploading CV', error.message);
+    console.error('Error uploading CV', error);
     res.status(500).send('Error uploading CV');
   }
 });
@@ -417,14 +418,14 @@ app.get("/employer", authenticate, async (req, res) => {
       session: req.session,
     });
   } catch (error) {
-    console.error("Error fetching data:", error.message);
+    console.error("Error fetching data:", error);
     res.status(500).send("Error loading employer profile");
   }
 });
 
 // Update employer's profile with the pop-up
 app.post("/employer", authenticate, async (req, res) => {
-
+  
   let userId = req.session.user.id;
   try {
     const {
@@ -473,7 +474,7 @@ app.post("/employer", authenticate, async (req, res) => {
 
         res.redirect(`/employer?id=${userId}`);
       } catch (error) {
-        console.error("Error creating job", error.message);
+        console.error("Error creating job", error);
         res.status(500).send("Error creating job");
       }
     } else if (editFirstName !== undefined) {
@@ -490,18 +491,18 @@ app.post("/employer", authenticate, async (req, res) => {
         });
         res.redirect(`/employer?id=${userId}`);
       } catch (error) {
-        console.error("Error updating employer info", error.message);
+        console.error("Error updating employer info", error);
         res.status(500).send("Error updating employer info");
       }
     }
-    else {
+    else{
       const [submitResponse, jobResponse] = await Promise.all([
         axios.delete(`http://localhost:3000/v1/job/${jobId}`),
       ]);
       res.redirect(`/employer?id=${userId}`);
     }
   } catch (error) {
-    console.error("Sign Up error:", error.message);
+    console.error("Sign Up error:", error);
     res.status(401).send("Sign Up failed: " + error.message);
   }
 });
@@ -515,7 +516,7 @@ app.post('/employer/uploadProfilePicture', upload.single('profilePicture'), auth
     });
     res.redirect(`/employer?id=${userId}`);
   } catch (error) {
-    console.error('Error uploading image', error.message);
+    console.error('Error uploading image', error);
     res.status(500).send('Error uploading image');
   }
 });
@@ -532,20 +533,11 @@ app.get("/jobs", (req, res) => {
           regions: greekPrefectures,
           session: req.session,
           userId: res.locals.userId,
-          message: req.session.errorMessage ? { type: req.session.errorType, text: req.session.errorMessage } : undefined,
-        });
-        req.session.errorType = undefined;
-        req.session.errorMessage = undefined;
+        }); // , { jobs: response.data }
       })
       .catch((error) => {
-        console.error("Error fetching jobs:", error.message);
-        res.render("jobs", {
-          session: req.session,
-          userId: res.locals.userId,
-          message: req.session.errorMessage ? { type: req.session.errorType, text: req.session.errorMessage } : undefined,
-        });
-        req.session.errorType = undefined;
-        req.session.errorMessage = undefined;
+        console.error("Error fetching jobs:", error);
+        res.status(500).send("Error fetching jobs");
       });
   } else {
     axios.get(`http://localhost:${port}/v1/jobs/getbyfilters`, { params: { occupation, specialty, region } })
@@ -556,29 +548,41 @@ app.get("/jobs", (req, res) => {
           regions: greekPrefectures,
           session: req.session,
           userId: res.locals.userId,
-          message: req.session.errorMessage ? { type: req.session.errorType, text: req.session.errorMessage } : undefined,
         });
-        req.session.errorType = undefined;
-        req.session.errorMessage = undefined;
       })
       .catch((error) => {
-        res.render("jobs", {
-          session: req.session,
-          userId: res.locals.userId,
-          message: req.session.errorMessage ? { type: req.session.errorType, text: req.session.errorMessage } : undefined,
-        });
-        req.session.errorType = undefined;
-        req.session.errorMessage = undefined;
+        console.error("Error fetching filtered jobs:", error);
+        res.status(500).send("Error fetching jobs");
       });
   }
 });
 
+app.get("/jobs/filters", (req, res) => {
+  const { occupation, specialty, region } = req.query;
+
+  axios.get(`http://localhost:${port}/v1/jobs/getbyfilters`, { params: { occupation, specialty, region } })
+    .then((response) => {
+      res.render("jobs", {
+        jobs: response.data,
+        jobCategories: jobCategories,
+        regions: greekPrefectures,
+        session: req.session,
+      });
+    })
+    .catch((error) => {
+      console.error("Error fetching filtered jobs:", error);
+      res.status(500).send("Error fetching jobs");
+    });
+  
+});
+
 app.post("/jobs", async (req, res) => {
   const jobId = req.body;
+  console.log(jobId);
   let userId = res.locals.userId;
   const applicationDate = new Date();
   const formattedDate = moment(applicationDate).format("YYYY-MM-DD");
-  if (userId) {
+  if(userId){
     try {
       await axios({
         method: "post",
@@ -591,23 +595,15 @@ app.post("/jobs", async (req, res) => {
       });
       res.redirect("/jobs");
     } catch (error) {
-      if (error.response.status === 409) {
-        req.session.errorType = 'warning';
-        req.session.errorMessage = 'You have already applied for this job';
-        res.redirect('/jobs');
-      } else {
-        res.render("jobs", {
-          session: req.session,
-          userId: userId,
-          message: { type: 'danger', text: "An error occurred while applying. Please try again." },
-        });
-      }
+      console.error("Your application to the job failed ", error);
+      res
+        .status(500)
+        .send("Sign Your application to the job failed " + error.message);
     }
-
-  } else {
-    req.session.errorType = 'warning';
-    req.session.errorMessage = 'You have to sign up in order to apply for a job';
-    res.redirect("login");
+     
+  }else{
+    console.error("No sign up");
+    res.render("login"); 
   }
   res.render("jobs");
 });
@@ -620,11 +616,8 @@ app.get("/about", (req, res) => {
 
 app.get("/login", (req, res) => {
   res.render("login", {
-    message: req.session.errorMessage ? { type: req.session.errorType, text: req.session.errorMessage } : undefined,
     session: req.session,
   });
-  req.session.errorType = undefined;
-  req.session.errorMessage = undefined;
 });
 
 app.post("/login", (req, res) => {
@@ -763,7 +756,7 @@ app.post("/signup", async (req, res) => {
       res.status(401).send("Sign Up failed: This email is already in use");
     }
   } catch (error) {
-    console.error("Sign Up error:", error.message);
+    console.error("Sign Up error:", error);
     res.status(401).send("Sign Up failed: " + error.message);
   }
 });

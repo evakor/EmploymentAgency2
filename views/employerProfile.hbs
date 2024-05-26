@@ -282,16 +282,56 @@
   </div>
 </div>
 
+
 <!-- Applicant Profiles Modal -->
 <div id="applicantProfilesModal" class="modal">
   <div class="modal-content">
-    <button type="button" class="btn btn-close btn-secondary close" data-bs-dismiss="modal" style="font-size: 15px;"></button>
+    <button type="button" class="btn btn-close btn-secondary close" data-bs-dismiss="modal" style="font-size: 12px;"></button>
     <h2 id="h2Text"></h2>
     <div id="applicantProfilesContainer">
     </div>
   </div>
 </div>
 
+
+{{!-- Employee's profile Modal for the hyperlink in messages --}}
+<div id="employeeProfileModal" class="modalProfile">
+    <div class="modal-content2">
+      <button type="button" class="btn btn-close btn-secondary close" data-bs-dismiss="modal" style="font-size: 12px;"></button>
+      <div class="profile-card">
+        <div class="profile-image text-center">
+          <img id="employeeProf" scr="" alt="Avatar" class="img-fluid"/>
+          <h5 id="employeeName"></h5>
+          <p id="employeeOccupation"></p>
+        </div>
+        <div class="profile-info">
+          <h6>Information</h6>
+          <hr class="mt-0 mb-4">
+          <div class="row pt-1">
+            <div class="col-6 mb-3">
+              <h6>Email</h6>
+              <p id="employeeEmail" class="text-muted"></p>
+            </div>
+            <div class="col-6 mb-3">
+              <h6>Phone 1</h6>
+              <p id="employeePhone" class="text-muted"></p>
+            </div>
+          </div>
+          <div class="row pt-1">
+            <div class="col-6 mb-3">
+              <h6>Address/Region</h6>
+              <p id="employeeAddress" class="text-muted"></p>
+            </div>
+            <div class="col-6 mb-3">
+              <h6>Phone 2</h6>
+              <p id="employeePhone2" class="text-muted"></p>
+            </div>
+            <input type="hidden" id="jobId" name="jobId" value="{{job.jobId}}">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
   const occupationsData = {{{ json jobCategories }}};
@@ -368,7 +408,7 @@
     });
 
 
-    //-----------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------
     //For the delete button
   function confirmDelete(jobTitle, jobId) {
     if (confirm("Are you sure you want to delete the job posting for '" + jobTitle + "'?")) {
@@ -386,7 +426,7 @@
   //    document.getElementById('deleteJobAd').submit();})
   //}
 
-    //----------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------
 
     //Job's titles hyperlink-modal
   document.addEventListener('DOMContentLoaded', (event) => {
@@ -436,9 +476,9 @@
     };
   });
 
-  //-----------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------
 
-//Edit Job ad Modal
+  //Edit Job ad Modal
   async function openEditJobModal(jobId) {
       const modal = document.getElementById('editJobModal');
       const span = document.getElementsByClassName('btn-close')[3];
@@ -492,49 +532,120 @@
 
 //-----------------------------------------------------------------------------------------------
 
-//Messages modal
-function openApplicantProfilesModal(jobTitle, jobId) {
-  const modal = document.getElementById('applicantProfilesModal');
-  const span = document.getElementsByClassName('btn-close')[4];
-  const profilesContainer = document.getElementById('applicantProfilesContainer');
-  const h2Text = document.getElementById('h2Text');
-  h2Text.innerHTML= 'Applicants for ' +jobTitle;
+  //Messages modal
+  function openApplicantProfilesModal(jobTitle, jobId) {
+    const modal = document.getElementById('applicantProfilesModal');
+    const span = document.getElementsByClassName('btn-close')[4];
+    const profilesContainer = document.getElementById('applicantProfilesContainer');
+    const h2Text = document.getElementById('h2Text');
+    h2Text.innerHTML= 'Applicants for ' +jobTitle;
 
-  // Fetch applicant profiles for the job
-  axios.get(`http://localhost:3000/v1/application/byJobId/${jobId}`)
-    .then(response => {
-      const applicants = response.data;
-      profilesContainer.innerHTML = '';
-      if(Array.isArray(applicants)){
-        applicants.forEach(applicant => {
-          const profileCard = `
-            <div class="profile-card">
-              <h5>${applicant.firstName} ${applicant.lastName}</h5>
-              <p>Email: ${applicant.email}</p>
-            </div>
-          `;
-        profilesContainer.innerHTML += profileCard;
+    // Fetch applicant profiles for the job
+    axios.get(`http://localhost:3000/v1/application/byJobId/${jobId}`)
+      .then(response => {
+        const applicants = response.data;
+
+        //const applicantCount = Array.isArray(applicants) ? applicants.length : 0;
+        //updateMessageButton(applicantCount);
+
+        profilesContainer.innerHTML = '';
+        if(Array.isArray(applicants)){
+          applicants.forEach(applicant => {
+            const profileCard = `
+              <div class="profile-card">
+                <a href="#" onclick="openEmployeeProfileModal('${applicant.id}')">${applicant.firstName} ${applicant.lastName}</a>
+              </div>
+            `;
+          profilesContainer.innerHTML += profileCard;
+        });
+      }else {
+        profilesContainer.innerHTML = '<p>No applicants found.</p>';
+      }
+        modal.style.display = 'block';
+      })
+      .catch(error => {
+        console.error('Error fetching applicant profiles:', error);
       });
-    }else {
-      profilesContainer.innerHTML = '<p>No applicants found.</p>';
-    }
-      modal.style.display = 'block';
-    })
-    .catch(error => {
-      console.error('Error fetching applicant profiles:', error);
-    });
 
-  span.onclick = function() {
-    modal.style.display = 'none';
-  };
-
-  window.onclick = function(event) {
-    if (event.target == modal) {
+    span.onclick = function() {
       modal.style.display = 'none';
-    }
-  };
+    };
+
+    window.onclick = function(event) {
+      if (event.target == modal) {
+        modal.style.display = 'none';
+      }
+    };
+  }
+
+  function updateMessageButton(applicantCount) {
+    const messageButton = document.getElementById('messagesButton');
+    messageButton.innerText = `Applicants (${applicantCount})`;
 }
 
-// Ensure openApplicantProfilesModal is available globally
-window.openApplicantProfilesModal = openApplicantProfilesModal;
+
+document.addEventListener('DOMContentLoaded', function () {
+  const jobIdElement = document.getElementById('jobId');
+  const jobId = parseInt(jobIdElement.value);
+  console.log('AAA');
+  console.log(jobId);
+  axios.get(`http://localhost:3000/v1/application/count/byJobId/${jobId}`)
+    .then(response => {
+      const applicantCount = response.data;
+      console.log('Results');
+      console.log(applicantCount);
+      updateMessageButton(applicantCount);
+    })
+    .catch(error => {
+      console.error('Error fetching applicant count:', error);
+    });
+});
+
+  // Ensure openApplicantProfilesModal is available globally
+  window.openApplicantProfilesModal = openApplicantProfilesModal;
+
+//-----------------------------------------------------------------------------------------------
+
+  //Employee's profile Modal for the hyperlink in messages
+  function openEmployeeProfileModal(employeeId) {
+    const modal = document.getElementById('employeeProfileModal');
+    const span = document.getElementsByClassName('btn-close')[5]; 
+    const employeeName = document.getElementById('employeeName');
+    const employeeOccupation = document.getElementById('employeeOccupation');
+    const employeeEmail = document.getElementById('employeeEmail');
+    const employeePhone = document.getElementById('employeePhone');
+    const employeeAddress = document.getElementById('employeeAddress');
+    const employeePhone2 = document.getElementById('employeePhone2');
+
+    // Fetch employee profile data
+    axios.get(`http://localhost:3000/v1/employee/${employeeId}`)
+      .then(response => {
+        const employee = response.data;
+        employeeName.innerHTML = `${employee.firstName} ${employee.lastName}`;
+        employeeOccupation.innerHTML = `${employee.occupation}/${employee.specialty}`;
+        employeeEmail.innerHTML =  `${employee.email}`;
+        employeePhone.innerHTML =  `${employee.phone1}`;
+        employeeAddress.innerHTML = `${employee.address}/${employee.region}`;
+        employeePhone2.innerHTML = `${employee.phone2}`;
+        document.getElementById("employeeProf").src = employee.profilePicturePath;
+        console.log(employee.profilePicturePath);
+
+        modal.style.display = 'block';
+      })
+      .catch(error => {
+        console.error('Error fetching employee profile:', error);
+      });
+
+    span.onclick = function() {
+      modal.style.display = 'none';
+    };
+
+    window.onclick = function(event) {
+      if (event.target == modal) {
+        modal.style.display = 'none';
+      }
+    };
+}
+
+  window.openEmployeeProfileModal = openEmployeeProfileModal;
 </script>

@@ -16,4 +16,6 @@ router.put(`/${version}/submition/:id`, submitionController.updateById);
 
 router.delete(`/${version}/submition/:id`, submitionController.deleteById);
 
+router.get(`/${version}/submition/getEmployerEmail/:id`,submitionController.getEmployerEmailByJobId);
+
 module.exports = router;

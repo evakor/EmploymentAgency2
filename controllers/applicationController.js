@@ -96,6 +96,44 @@ const deleteById = async (req, res) => {
     }
 };
 
+const countApplicationsByJobId = async (req, res) => {
+  const { id } = req.body;
+  try {
+    const result = await database.query(
+      `SELECT COUNT(*) count FROM "${tableName}" WHERE "jobId" = $1`,
+      [parseInt(id)]
+    );
+    const applicationCount = result.rows[0].count;
+    console.log("Count:", applicationCount);
+    res.status(200).json(applicationCount );
+  } catch (error) {
+    console.error("Error counting the number of applications by JobId:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+const getEmployerEmailByJobId = async (res, req) => {
+  const { id } = req.params;
+  console.log('Controller');
+  console.log(id);
+
+  try {
+    const result = await database.query(
+      `SELECT e."email" 
+        FROM "EMPLOYER" e
+        JOIN "JOB" j ON j."employerId"=e."id"
+        WHERE j."jobId" = $1`,
+      [parseInt(id)]
+    );
+    console.log("Controller2");
+    console.log(result);
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error("Error retrieving employer email by job ID:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 module.exports = {
   getAll,
   getById,
@@ -104,4 +142,6 @@ module.exports = {
   updateById,
   deleteById,
   getApplicantsByJobId,
+  countApplicationsByJobId,
+  getEmployerEmailByJobId
 };

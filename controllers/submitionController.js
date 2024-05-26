@@ -61,6 +61,27 @@ const deleteById = async (req, res) => {
     }
 };
 
+const getEmployerEmailByJobId = async (res, req) => {
+  const { id } = req.params;
+  console.log("Controller");
+  console.log(id);
+
+  try {
+    const result = await database.query(
+      `SELECT e."email" 
+        FROM "EMPLOYER" e
+        JOIN "${tableName}" s ON s."employerId"=e."id"
+        WHERE s."jobId" = ${parseInt(id)}`
+     
+    );
+    console.log("Controller2");
+    console.log(result);
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error("Error retrieving employer email by job ID:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
 module.exports = {
   getAll,
   getById,
@@ -68,4 +89,5 @@ module.exports = {
   create,
   updateById,
   deleteById,
+  getEmployerEmailByJobId,
 };

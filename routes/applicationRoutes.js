@@ -18,4 +18,8 @@ router.put(`/${version}/application/:id`, applicationController.updateById);
 
 router.delete(`/${version}/application/:id`, applicationController.deleteById);
 
+router.get(`/${version}/application/count/byJobId/:id`, applicationController.countApplicationsByJobId);
+
+
+
 module.exports = router;

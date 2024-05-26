@@ -11,6 +11,7 @@ const app = express();
 const port = 3000;
 const exphbs = require("express-handlebars");
 const { v4: uuidv4 } = require('uuid');
+const nodemailer = require("nodemailer");
 
 saltRounds = 10;
 
@@ -189,6 +190,40 @@ const greekPrefectures = [
   "Xanthi",
   "Zakynthos",
 ];
+
+const transporter = nodemailer.createTransport({
+  service: "Gmail", // or your email service
+  auth: {
+    user: "employmenta626@gmail.com",
+    pass: "ergasiaomada7",
+  },
+});
+
+function sendApplicationEmail(employerEmail, employeeProfile) {
+  const mailOptions = {
+    from: "employmenta626@gmail.com",
+    to: employerEmail,
+    subject: "New Job Application",
+    text:
+      `You have a new job application from ${employeeProfile.firstName} ${employeeProfile.lastName}.\n\n` +
+      `Profile:\n` +
+      `Name: ${employeeProfile.firstName} ${employeeProfile.lastName}\n` +
+      `Email: ${employeeProfile.email}\n` +
+      `Region: ${employeeProfile.region}\n` +
+      `Address: ${employeeProfile.address}\n` +
+      `Phone1: ${employeeProfile.phone1}\n` +
+      `Phone2: ${employeeProfile.phone2}\n` +
+      `Occupation: ${employeeProfile.occupation}\n` +
+      `Specialty: ${employeeProfile.specialty}\n`,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      return console.log("Error sending email:", error);
+    }
+    console.log("Email sent:", info.response);
+  });
+}
 
 const assetsDir = path.join(__dirname, 'assets');
 if (!fs.existsSync(assetsDir)) {
@@ -580,6 +615,18 @@ app.post("/jobs", async (req, res) => {
   const formattedDate = moment(applicationDate).format("YYYY-MM-DD");
   if (userId) {
     try {
+
+      const [employeeResponse, employerEmail] = await Promise.all([
+        axios.get(`http://localhost:${port}/v1/employee/${userId}`),
+        axios.get(
+          `http://localhost:${port}/v1/submition/getEmployerEmail//${jobId}`
+        ),
+      ]);
+
+      const employeeProfile = employeeResponse.data;
+      const email = employerEmail.data;
+      console.log("Server", email);
+
       await axios({
         method: "post",
         url: `http://localhost:${port}/v1/application`,
@@ -589,6 +636,9 @@ app.post("/jobs", async (req, res) => {
           applicationDate: formattedDate,
         }
       });
+
+      sendApplicationEmail(email, employeeProfile);
+
       res.redirect("/jobs");
     } catch (error) {
       if (error.response.status === 409) {
